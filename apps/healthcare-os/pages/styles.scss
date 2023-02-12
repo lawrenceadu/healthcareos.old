@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'flatpickr/dist/themes/airbnb.css';
+
+@layer base {
+  // typography
+  h1 {
+    @apply text-[28px] leading-10 font-bold
+      lg:text-[38px];
+  }
+
+  h2 {
+    @apply text-[24px] leading-7 font-bold
+      lg:text-[28px];
+  }
+
+  h3 {
+    @apply text-[24px] leading-6 font-bold
+      lg:text-[20px];
+  }
+
+  h4 {
+    @apply text-[18px] leading-6 font-bold
+      lg:text-[20px];
+  }
+
+  // resets
+  html,
+  body {
+    @apply h-full overflow-auto;
+
+    #__next {
+      @apply h-full;
+    }
+  }
+
+  // table
+  table {
+    @apply text-left w-full whitespace-nowrap;
+
+    thead {
+      @apply bg-gray-50;
+
+      th {
+        font-weight: normal;
+        @apply px-6 py-3;
+      }
+    }
+
+    tbody {
+      td {
+        @apply px-6 py-3 align-middle;
+      }
+    }
+
+    tr {
+      @apply border-b border-gray-200;
+
+      th,
+      td {
+        @apply h-full;
+      }
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply disabled:opacity-75;
+
+    &-primary {
+      @apply bg-primary text-white #{!important};
+    }
+
+    &-secondary {
+      @apply bg-gray-100 text-gray-600 #{!important};
+    }
+
+    &-outline {
+      @apply border-primary text-primary #{!important};
+    }
+
+    &-input {
+      @apply border-gray-200 text-black #{!important};
+    }
+
+    &-light {
+      @apply bg-white text-gray-600 #{!important};
+    }
+  }
+}
+
+@layer utilities {
+  .text-muted {
+    @apply text-gray-600;
+  }
+}

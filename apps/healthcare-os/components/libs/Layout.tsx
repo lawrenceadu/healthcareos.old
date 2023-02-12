@@ -1,0 +1,201 @@
+import { HtmlHTMLAttributes, useState } from 'react';
+import { useRouter } from 'next/router';
+import { helpers } from '@healthcare/utils';
+import { Button } from '@healthcareos/react';
+import * as Icon from '@healthcare/icons'; // prettier-ignore
+import Head from 'next/head';
+
+import routes from '../../routes';
+import Link from 'next/link';
+
+export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
+  onBack?: (() => void) | boolean;
+  title?: string;
+}
+
+export function Layout({ onBack, title, children, className }: LayoutProps) {
+  /**
+   * routes
+   */
+  const router = useRouter();
+
+  /**
+   * state
+   */
+  const [toggle, setToggle] = useState(false);
+
+  /**
+   * variables
+   */
+  const navlinks = [
+    {
+      name: 'Patients',
+      icon: Icon.UsersIcon,
+      link: routes.dashboard.patients.index,
+    },
+    {
+      name: 'Inventory',
+      icon: Icon.PackageIcon,
+      link: routes.dashboard.inventory.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Queuing',
+      icon: Icon.UserQueueIcon,
+      link: routes.dashboard.queuing.index,
+    },
+    { name: 'Wards', icon: Icon.BedIcon, link: routes.dashboard.wards.index },
+    {
+      name: 'Settings',
+      icon: Icon.SettingsIcon,
+      link: routes.dashboard.settings.index.replace('[tab]', ''),
+    },
+  ];
+
+  /**
+   * functions
+   */
+  const handleActive = (link) => {
+    return router.pathname.startsWith(link);
+  };
+
+  return (
+    <>
+      {title && (
+        <Head>
+          <title>{title}</title>
+        </Head>
+      )}
+
+      <div
+        className={helpers.classNames(
+          'h-full w-full',
+          'lg:grid lg:grid-cols-[280px_minmax(0,1fr)]'
+        )}
+      >
+        {/* sidenav */}
+        <div
+          className={helpers.classNames(
+            'w-[280px] h-full overflow-y-auto',
+            'fixed left-0 top-0 lg:relative',
+            'border-r border-gray-300 bg-white',
+            'flex flex-col gap-10',
+            'lg:ml-0 px-6 py-4',
+            'transition-[margin]',
+            toggle ? 'ml-0 z-[100]' : '-ml-[280px]'
+          )}
+        >
+          <div className="flex items-center gap-2 text-primary">
+            <div className="w-10 h-10 rounded-full bg-primary flex">
+              <Icon.HeartHandIcon className="text-white m-auto" />
+            </div>
+            <p className="font-bold">{process.env.NX_APP_NAME}</p>
+          </div>
+
+          <div>
+            {navlinks.map(({ link, name, ...item }, key) => (
+              <Link
+                key={key}
+                href={link}
+                className={helpers.classNames(
+                  'rounded-lg',
+                  'p-3 h-12 mb-1',
+                  'flex gap-3 items-center',
+                  handleActive(link) && 'bg-primary font-semibold text-white'
+                )}
+              >
+                <span>
+                  <item.icon
+                    {...(handleActive(link) && { variant: 'solid' })}
+                  />
+                </span>
+                <span>{name}</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-auto flex items-center">
+            <div className="rounded-full w-10 h-10 flex bg-primary text-white mr-2">
+              <p className="text-lg m-auto font-bold">AO</p>
+            </div>
+            <div>
+              <p className="text-sm font-bold">Agnes Ofori</p>
+              <p className="text-xs text-muted font-semibold">Doctor</p>
+            </div>
+
+            <Button aria-label="Logout" className="ml-auto text-red-500">
+              <Icon.LogoutIcon />
+            </Button>
+          </div>
+        </div>
+        {/* end of sidenav */}
+
+        {/* content */}
+        <div className="h-full overflow-y-auto">
+          {/* top nav */}
+          <div
+            className={helpers.classNames(
+              'top-0 sticky',
+              'bg-white z-10',
+              'h-14 md:h-[4.5rem]',
+              'flex items-center',
+              'px-4 md:px-12 lg:px-10'
+            )}
+          >
+            <div className={helpers.classNames('-ml-3', !onBack && 'lg:ml-0')}>
+              {onBack && (
+                <Button
+                  aria-label="Go back"
+                  className="!px-0 w-12 mr-2"
+                  onClick={() => {
+                    if (typeof onBack === 'function') {
+                      return onBack();
+                    }
+
+                    router.back();
+                  }}
+                >
+                  <Icon.ArrowLeftIcon />
+                </Button>
+              )}
+              {!onBack && (
+                <Button
+                  aria-label="Toggle menu"
+                  className="lg:!hidden !px-0 w-12 mr-2"
+                  onClick={() => setToggle(true)}
+                >
+                  <Icon.MenuIcon />
+                </Button>
+              )}
+            </div>
+
+            {title && <h4>{title}</h4>}
+          </div>
+          {/* end of top nav */}
+
+          {/* main content */}
+          <div
+            className={helpers.classNames(
+              className || 'p-4 md:px-12 lg:px-10 lg:py-6'
+            )}
+          >
+            {children}
+          </div>
+          {/* end of main content */}
+        </div>
+        {/* end of content */}
+      </div>
+
+      <div
+        onClick={() => setToggle(!toggle)}
+        className={helpers.classNames(
+          'transition',
+          toggle
+            ? 'cursor-pointer fixed w-full h-full top-0 left-0 bg-black z-[99] opacity-60'
+            : 'hidden'
+        )}
+      />
+    </>
+  );
+}
+
+export default Layout;
