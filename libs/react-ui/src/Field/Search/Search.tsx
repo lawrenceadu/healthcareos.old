@@ -1,16 +1,23 @@
 import { ChangeEvent, HtmlHTMLAttributes, useCallback, useState } from 'react';
+import { SearchIcon } from '@healthcare/icons';
+import { helpers } from '@healthcare/utils';
 import debounce from 'lodash/debounce';
 
-import { SearchIcon } from '@healthcare/icons';
 import { Group } from '../Group/Group';
 import { Input } from '../Input/Input';
-import { helpers } from '@healthcare/utils';
 
 export interface SearchProps extends HtmlHTMLAttributes<HTMLInputElement> {
+  delay?: number;
   onSearch: (search: string) => void;
 }
 
-export function Search({ onSearch, className, ...props }: SearchProps) {
+export function Search({
+  delay = 500,
+  onSearch,
+  className,
+  placeholder,
+  ...props
+}: SearchProps) {
   /**
    * state
    */
@@ -22,7 +29,7 @@ export function Search({ onSearch, className, ...props }: SearchProps) {
   const handleSearch = useCallback(
     debounce((search) => {
       onSearch(search);
-    }, 500),
+    }, delay),
     []
   );
 
@@ -40,7 +47,7 @@ export function Search({ onSearch, className, ...props }: SearchProps) {
         name="search"
         value={search || ''}
         withFormik={false}
-        placeholder="Search ..."
+        placeholder={placeholder || 'Search ...'}
         className={helpers.classNames('px-0', className)}
         onChange={({
           currentTarget: { value },
@@ -52,3 +59,5 @@ export function Search({ onSearch, className, ...props }: SearchProps) {
     </Group>
   );
 }
+
+export default Search;

@@ -26,6 +26,10 @@
       lg:text-[20px];
   }
 
+  small {
+    @apply text-sm;
+  }
+
   // resets
   html,
   body {
@@ -44,7 +48,7 @@
       @apply bg-gray-50;
 
       th {
-        font-weight: normal;
+        font-weight: 600;
         @apply px-6 py-3;
       }
     }
@@ -71,11 +75,11 @@
     @apply disabled:opacity-75;
 
     &-primary {
-      @apply bg-primary text-white #{!important};
+      @apply bg-primary border-primary text-white #{!important};
     }
 
     &-secondary {
-      @apply bg-gray-100 text-gray-600 #{!important};
+      @apply bg-gray-100 border-gray-100 text-gray-600 #{!important};
     }
 
     &-outline {
@@ -87,7 +91,11 @@
     }
 
     &-light {
-      @apply bg-white text-gray-600 #{!important};
+      @apply bg-white border-white text-gray-600 #{!important};
+    }
+
+    &-error {
+      @apply bg-red-600 border-red-600 text-white #{!important};
     }
   }
 }

@@ -1,15 +1,15 @@
-import { Button, Field } from '@healthcareos/react';
 import { Form, Formik, FieldArray } from 'formik';
+import { DeleteIcon, PlusIcon } from '@healthcare/icons';
+import { Button, Field } from '@healthcareos/react';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
-import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 
 function Add() {
   return (
     <Formik
       validateOnMount
       validationSchema={object({
-        name: schema.requireArray('Name'),
+        name: schema.requireArray('Name').of(schema.requireString('Name')),
       })}
       initialValues={{
         name: [''],

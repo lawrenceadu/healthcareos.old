@@ -16,7 +16,7 @@ import { schema } from '@healthcare/utils';
 //   onSubmit: (values: ValueProps, actions: FormikHelpers<ValueProps>) => void;
 // }
 
-export function Insurance({ button, params = {}, onSubmit }) {
+export function Insurance({ header = true, button, params = {}, onSubmit }) {
   /**
    * function
    */
@@ -39,6 +39,7 @@ export function Insurance({ button, params = {}, onSubmit }) {
     <div className="mx-auto max-w-[528px] w-full">
       <Formik
         validateOnMount
+        enableReinitialize
         validationSchema={object({
           has_insurance: schema.requireString('Has insurance'),
           insurance_type: string().when(
@@ -91,23 +92,25 @@ export function Insurance({ button, params = {}, onSubmit }) {
           setFieldTouched,
         }) => (
           <Form>
-            <h4 className="mb-4">Insurance details</h4>
+            {header && <h4 className="mb-4">Insurance details</h4>}
 
             <div className="mb-10">
-              <div className="mb-6">
-                <p className="mb-4">Does patient have insurance</p>
-                <div className="flex gap-6">
-                  <Field.Radio name="has_insurance" value="yes">
-                    Yes
-                  </Field.Radio>
-                  <Field.Radio name="has_insurance" value="no">
-                    No
-                  </Field.Radio>
-                  <Field.Radio name="has_insurance" value="not_enough">
-                    Not enough information
-                  </Field.Radio>
+              {!params?.has_insurance && (
+                <div className="mb-6">
+                  <p className="mb-4">Does patient have insurance</p>
+                  <div className="flex gap-6">
+                    <Field.Radio name="has_insurance" value="yes">
+                      Yes
+                    </Field.Radio>
+                    <Field.Radio name="has_insurance" value="no">
+                      No
+                    </Field.Radio>
+                    <Field.Radio name="has_insurance" value="not_enough">
+                      Not enough information
+                    </Field.Radio>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {['yes', 'not_enough'].includes(values.has_insurance) && (
                 <>
@@ -167,7 +170,7 @@ export function Insurance({ button, params = {}, onSubmit }) {
                         <Field.Group
                           name="nhis_claim_code"
                           label="Claim check code"
-                          wrapperClassName="w-full"
+                          wrapperClassName="w-full !mb-0"
                         >
                           <Field.Input
                             name="nhis_claim_code"

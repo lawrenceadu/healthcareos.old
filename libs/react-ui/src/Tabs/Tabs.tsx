@@ -40,7 +40,7 @@ export default function ({
           </Tab>
         ))}
       </Nav>
-      <div>{tab && <tab.component {...childProps} />}</div>
+      <div className="relative">{tab && <tab.component {...childProps} />}</div>
     </Tabs>
   );
 }

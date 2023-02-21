@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 
 import Layout from '../../components/libs/Layout';
+import routes from '../../routes';
 
 function Search() {
   /**
@@ -25,7 +26,16 @@ function Search() {
           </thead>
           <tbody>
             {Array.from({ length: 2 }, (_, i) => (
-              <tr key={i}>
+              <tr
+                key={i}
+                role="button"
+                onClick={() =>
+                  router.push({
+                    pathname: routes.dashboard.patients.details.index,
+                    query: { id: `${i + 1}`, tab: 'history' },
+                  })
+                }
+              >
                 <td>Lawrence</td>
                 <td>Kweku</td>
                 <td>Adu</td>

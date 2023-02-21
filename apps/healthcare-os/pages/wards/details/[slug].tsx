@@ -60,8 +60,8 @@ function Details() {
                 className="cursor-pointer"
                 onClick={() =>
                   router.push({
-                    pathname: routes.dashboard.patients.in.index,
-                    query: { slug: i + 1 },
+                    pathname: routes.dashboard.patients.details.index,
+                    query: { id: i + 1, tab: 'history' },
                   })
                 }
               >

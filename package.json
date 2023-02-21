@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "serve": "nx run healthcare-os:serve:development --port=13001",
+    "dev": "nx run healthcare-os:serve:development --port=13001",
     "build": "nx run healthcare-os:build:production"
   },
   "private": true,
@@ -74,6 +74,7 @@
     "@types/react-is": "17.0.3",
     "@types/react-select-country-list": "^2.2.1",
     "@types/styled-components": "5.1.26",
+    "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "autoprefixer": "10.4.13",

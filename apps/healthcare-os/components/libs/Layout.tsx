@@ -135,7 +135,7 @@ export function Layout({ onBack, title, children, className }: LayoutProps) {
           <div
             className={helpers.classNames(
               'top-0 sticky',
-              'bg-white z-10',
+              'bg-white z-[100]',
               'h-14 md:h-[4.5rem]',
               'flex items-center',
               'px-4 md:px-12 lg:px-10'

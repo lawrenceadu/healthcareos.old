@@ -1,4 +1,5 @@
 import { font, helpers, http } from '@healthcare/utils';
+import { SSRProvider } from '@restart/ui/ssr';
 import { SWRConfig } from 'swr';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -25,9 +26,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
           revalidateOnFocus: true,
         }}
       >
-        <main className={helpers.classNames('app h-full overflow-auto')}>
-          <Component {...pageProps} />
-        </main>
+        <SSRProvider>
+          <main className={helpers.classNames('app h-full overflow-auto')}>
+            <Component {...pageProps} />
+          </main>
+        </SSRProvider>
       </SWRConfig>
     </>
   );

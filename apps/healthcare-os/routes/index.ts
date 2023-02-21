@@ -11,14 +11,13 @@ const routes = {
       index: '/patients',
       new: '/patients/new',
       search: '/patients/search',
-      in: {
-        index: '/patients/in/[slug]',
-      },
-      out: {
-        index: '/patients/out/[slug]',
-      },
       card: {
         activate: '/patients/card/activate/[slug]',
+      },
+      details: {
+        index: '/patients/[id]/details/[tab]',
+        info: '/patients/[id]/info',
+        edit: '/patients/[id]/edit',
       },
     },
     inventory: {

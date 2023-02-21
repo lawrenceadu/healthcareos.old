@@ -85,8 +85,8 @@ function Index() {
                     <Link
                       key={i}
                       href={{
-                        pathname: routes.dashboard.patients.out.index,
-                        query: { slug: i + 1 },
+                        pathname: routes.dashboard.patients.details.index,
+                        query: { id: i + 1, tab: 'history' },
                       }}
                       className={helpers.classNames(
                         'py-3',
@@ -97,9 +97,7 @@ function Index() {
                       <p className="font-bold">Some name</p>
 
                       <div className="flex items-center gap-1 ml-auto">
-                        <small className="text-sm text-muted">
-                          0h 15 min
-                        </small>
+                        <small className="text-sm text-muted">0h 15 min</small>
                         <ChevronRightIcon />
                       </div>
                     </Link>

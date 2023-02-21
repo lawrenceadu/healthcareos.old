@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { XMarkIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import * as Restart from '@restart/ui';
@@ -10,14 +11,16 @@ export interface ModalProps extends Restart.ModalProps {
   show: boolean;
   header?: string;
   onHide?: () => void;
-  size?: 'sm' | 'lg' | 'full';
+  size?: 'sm' | 'lg' | 'xl' | 'full';
 }
 
 export function Modal({
   size,
   header,
+  onHide,
   children,
   index = 0,
+  backdrop,
   ...props
 }: ModalProps) {
   /**
@@ -28,7 +31,9 @@ export function Modal({
       case 'sm':
         return 'max-w-[432px] rounded-lg';
       case 'lg':
-        return 'max-w-[752px] rounded-lg';
+        return 'max-w-[820px] rounded-lg';
+      case 'xl':
+        return 'max-w-[1200px] rounded-lg';
       case 'full':
         return 'max-w-full h-screen overflow-y-auto';
       default:
@@ -38,36 +43,53 @@ export function Modal({
 
   const zIndex = 1050 + index * 5;
 
+  /**
+   * function
+   */
+  const handleClick = (e: any) => {
+    if (backdrop === 'static') {
+      return;
+    }
+
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+
+    onHide?.();
+  };
+
   return (
     <Restart.Modal
+      onClick={handleClick}
       aria-labelledby="modal"
-      renderBackdrop={(props) => (
-        <div
-          {...props}
-          style={{ zIndex }}
-          className={helpers.classNames(
-            'w-full h-full',
-            `fixed top-0 left-0`,
-            'bg-black opacity-25'
-          )}
-        />
-      )}
+      renderBackdrop={(props) => {
+        return (
+          <div
+            {...props}
+            style={{ zIndex }}
+            className={helpers.classNames(
+              'w-full h-full',
+              `fixed top-0 left-0`,
+              'bg-black opacity-25'
+            )}
+          />
+        );
+      }}
       style={{ zIndex: zIndex + 5 }}
       className={helpers.classNames(
         'w-full h-full',
         `fixed left-0 top-0`,
-        'pointer-events-none',
         'overflow-x-hidden overflow-y-auto'
       )}
-      {...props}
+      {...{ backdrop, onHide, ...props }}
     >
       <div
         className={helpers.classNames(
           sizeClassName,
+          'relative',
           'flex items-center',
           'mx-auto w-full my-6',
-          'min-h-[calc(100%-3rem)]',
-          'relative pointer-events-none'
+          'min-h-[calc(100%-3rem)]'
         )}
       >
         <div
@@ -81,7 +103,7 @@ export function Modal({
               <h5 className="mb-0 text-xl font-bold">{header}</h5>
               <Button
                 className="ml-auto !px-0 !h-6 !w-6 border-0 text-muted active:shadow-none"
-                onClick={() => props.onHide && props.onHide()}
+                onClick={() => onHide?.()}
               >
                 <XMarkIcon />
               </Button>
