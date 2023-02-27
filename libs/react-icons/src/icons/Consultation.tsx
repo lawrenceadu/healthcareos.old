@@ -3,7 +3,7 @@ import { Template, IconProps } from './Template';
 function Consultation({ variant = 'line', ...props }: IconProps) {
   return (
     <Template {...props}>
-      {variant === 'solid' && (
+      {variant === 'line' && (
         <>
           <g clipPath="url(#clip0_88_1379)">
             <path
@@ -19,7 +19,7 @@ function Consultation({ variant = 'line', ...props }: IconProps) {
         </>
       )}
 
-      {variant === 'line' && (
+      {variant === 'solid' && (
         <>
           <g clipPath="url(#clip0_88_1380)">
             <path

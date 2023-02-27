@@ -38,3 +38,11 @@ export { default as ChevronLeftIcon } from './icons/ChevronLeft';
 export { default as StethoscopeIcon } from './icons/Stethoscope';
 export { default as ChevronRightIcon } from './icons/ChevronRight';
 export { default as ConsultationIcon } from './icons/Consultation';
+
+export { default as HeartPulseIcon } from './icons/HeartPulse';
+export { default as HeartBookIcon } from './icons/HeartBook';
+export { default as MedicineIcon } from './icons/Medicine';
+export { default as PasscodeIcon } from './icons/Passcode';
+export { default as QrCodeIcon } from './icons/QrCode';
+export { default as LungIcon } from './icons/Lung';
+export { default as NotesIcon } from './icons/Notes';

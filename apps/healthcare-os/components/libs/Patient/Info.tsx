@@ -1,7 +1,7 @@
 import { HtmlHTMLAttributes } from 'react';
+import { helpers, useWidth } from '@healthcare/utils';
 import { Accordion, Badge } from '@healthcareos/react';
 import { CheckIcon } from '@healthcare/icons';
-import { helpers } from '@healthcare/utils';
 
 // eslint-disable-next-line
 export interface InfoProps extends HtmlHTMLAttributes<HTMLDivElement> {}
@@ -29,15 +29,18 @@ export function Info({ className, ...props }: InfoProps) {
     },
   ];
 
+  const width = useWidth();
+
   return (
     <Accordion
       className={helpers.classNames(
-        'pb-6',
+        'xl:pb-6',
         'border-b border-gray-200',
         className
       )}
     >
       <Accordion.Item
+        defaultOpen={width && width >= 1280}
         header={<p className="text-lg font-bold">Patient information</p>}
       >
         <div className="flex flex-col gap-1">

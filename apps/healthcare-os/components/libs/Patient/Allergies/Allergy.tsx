@@ -66,7 +66,7 @@ export function Allergy({ className, ...props }: AllergyProps) {
       <div className="flex flex-col">
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
-            <div className="flex-[0_0_120px]">
+            <div className="flex-[0_0_144px]">
               <small className="text-muted text-sm">{i.label}:</small>
             </div>
             <small className="text-sm">{i.value}</small>

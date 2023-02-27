@@ -1,61 +1,41 @@
-import { AddIcon, VirusIcon } from '@healthcare/icons';
-import { Button } from '@healthcareos/react';
+import { ReactElement, useState } from 'react';
+import { Modal, Tabs } from '@healthcareos/react';
 
-import Prescription from './Allergies/Allergy';
-import AddForm from './Allergies/Add';
+import Index from './Allergies/Index';
+import Add from './Allergies/Add';
 
-export function Allergies() {
+export interface AllergiesProps {
+  children: (props: { proceed: () => void }) => ReactElement;
+}
+
+export function Allergies({ children }: AllergiesProps) {
   /**
    * variables
    */
-  const hasAllergies = true;
+  const tabs = [
+    { name: 'Allergies', slug: 'index', component: Index },
+    { name: 'Add allergies', slug: 'add', component: Add },
+  ];
+
+  /**
+   * state
+   */
+  const [show, setShow] = useState(false);
+  const [tab, setTab] = useState(tabs[0].slug);
 
   return (
     <>
-      {hasAllergies && (
-        <div>
-          <div className="flex justify-end mb-4">
-            <AddForm>
-              {({ proceed }) => (
-                <Button onClick={() => proceed()} className="btn-secondary">
-                  Add allergy
-                </Button>
-              )}
-            </AddForm>
-          </div>
+      {children({ proceed: () => setShow(true) })}
 
-          <div className="flex flex-col gap-6">
-            {Array.from({ length: 2 }, (_, i) => (
-              <Prescription
-                key={i}
-                className="p-4 border border-gray-200 rounded-lg"
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {!hasAllergies && (
-        <div className="max-w-[328px] w-full mx-auto text-center">
-          <div className="h-10 w-10 rounded-full bg-gray-100 flex mx-auto mb-4">
-            <VirusIcon variant="solid" className="text-primary m-auto" />
-          </div>
-          <div className="mb-6">
-            <p className="font-bold mb-1">No allergies added yet</p>
-            <p className="text-sm font-medium text-muted">
-              This patient doesn&apos;t have any allergies listed.
-            </p>
-          </div>
-          <AddForm>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary mx-auto">
-                <AddIcon />
-                <span>Add allergies</span>
-              </Button>
-            )}
-          </AddForm>
-        </div>
-      )}
+      <Modal show={show} onHide={() => setShow(false)} header="Allergies">
+        <Tabs
+          tabs={tabs}
+          activeKey={tab}
+          navClassName="px-6 pt-2"
+          onSelect={(key) => setTab(key)}
+          childProps={{ onHide: () => setShow(false) }}
+        />
+      </Modal>
     </>
   );
 }

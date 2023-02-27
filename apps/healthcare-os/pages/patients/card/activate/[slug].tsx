@@ -57,7 +57,7 @@ export default function Index() {
     <Layout
       onBack
       title="Activate card"
-      className="max-w-[528px] w-full mx-auto"
+      className="max-w-[544px] w-full mx-auto p-4"
     >
       <Formik
         validateOnMount

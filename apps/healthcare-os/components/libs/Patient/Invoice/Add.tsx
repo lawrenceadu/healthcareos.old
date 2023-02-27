@@ -193,7 +193,7 @@ function Add({ children }: AddProps) {
                     Finalize invoice
                   </Button>
                   <Button type="button" className="btn-outline">
-                    <SaveIcon />
+                    <SaveIcon strokeWidth={1.5} />
                     <span>Save as draft</span>
                   </Button>
                 </div>

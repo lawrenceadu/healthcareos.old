@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { XMarkIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import * as Restart from '@restart/ui';
@@ -29,15 +28,15 @@ export function Modal({
   const sizeClassName = (() => {
     switch (size) {
       case 'sm':
-        return 'max-w-[432px] rounded-lg';
+        return 'max-w-[464px] rounded-lg';
       case 'lg':
-        return 'max-w-[820px] rounded-lg';
+        return 'max-w-[852px] rounded-lg';
       case 'xl':
-        return 'max-w-[1200px] rounded-lg';
+        return 'max-w-[1232px] rounded-lg';
       case 'full':
         return 'max-w-full h-screen overflow-y-auto';
       default:
-        return 'max-w-[532px] rounded-lg';
+        return 'max-w-[564px] rounded-lg';
     }
   })();
 
@@ -84,6 +83,7 @@ export function Modal({
       {...{ backdrop, onHide, ...props }}
     >
       <div
+        onClick={handleClick}
         className={helpers.classNames(
           sizeClassName,
           'relative',
@@ -95,7 +95,7 @@ export function Modal({
         <div
           className={helpers.classNames(
             'w-full rounded-lg mx-4',
-            'shadow-3xl bg-white pointer-events-auto relative'
+            'shadow-3xl bg-white relative'
           )}
         >
           {header && (

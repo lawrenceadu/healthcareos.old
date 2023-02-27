@@ -1,19 +1,13 @@
-import { useState } from 'react';
+import { AddIcon, ChevronRightIcon } from '@healthcare/icons';
 import { helpers, useWidth } from '@healthcare/utils';
-import { ChevronRightIcon } from '@healthcare/icons';
+import { Button, Tabs } from '@healthcareos/react';
 import { useRouter } from 'next/router';
-import { Tabs } from '@healthcareos/react';
 
 import Patient from '../../../../components/libs/Patient';
 import Layout from '../../../../components/libs/Layout';
 import routes from '../../../../routes';
 import NoSSR from '../../../../components/libs/NoSSR';
-
-export async function getServerSideProps(context) {
-  return {
-    props: {}, // will be passed to the page component as props
-  };
-}
+import Float from '../../../../components/libs/Float';
 
 function Details() {
   /**
@@ -34,9 +28,11 @@ function Details() {
   const tabs = [
     { name: 'Overview', slug: 'overview', component: Patient.Overview },
     { name: 'History', slug: 'history', component: Patient.History },
+    { name: 'Notes', slug: 'notes', component: Patient.Notes },
     { name: 'Insurance', slug: 'insurance', component: Patient.Insurance },
     { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
   ];
+  const isMobile = width && width < 1280;
 
   return (
     <Layout
@@ -44,41 +40,27 @@ function Details() {
       title="Patient profile"
       className={helpers.classNames(
         'p-4',
-        // md
         'md:px-12',
-        // xl
         'xl:grid xl:grid-cols-[minmax(0,1fr),504px]',
-        'xl:h-[calc(100%-4.5rem)] xl:px-0 xl:py-0 '
+        'xl:h-[calc(100%-4.5rem)] xl:px-0 xl:py-0'
       )}
+      topNav={<Patient.Dropdown />}
     >
       <NoSSR>
-        {width && width < 1280 && (
-          <div
-            role="button"
-            onClick={() =>
-              router.push({
-                pathname: routes.dashboard.patients.details.info,
-                query: { id },
-              })
-            }
+        {isMobile && (
+          <Patient.Info
             className={helpers.classNames(
               'py-3 px-4 mb-6',
-              'rounded-lg border border-gray-200',
-              'flex justify-between items-center'
+              'rounded-lg border border-gray-200'
             )}
-          >
-            <p className="text-lg font-bold">Patient information</p>
-            <div className="flex items-center gap-1">
-              <small>View</small>
-              <ChevronRightIcon />
-            </div>
-          </div>
+          />
         )}
 
-        <div className="xl:px-10 h-full xl:border-r xl:border-gray-200">
+        <div className="xl:px-10 h-full xl:overflow-y-auto xl:border-r xl:border-gray-200">
           <Tabs
             tabs={tabs}
             activeKey={tab || tabs[0].slug}
+            navClassName="sticky top-0 bg-white z-[1]"
             onSelect={(key) =>
               router.push({
                 pathname: routes.dashboard.patients.details.index
@@ -87,8 +69,26 @@ function Details() {
               })
             }
           />
+
+          {isMobile && (
+            <Patient.QuickActions>
+              {({ proceed }) => (
+                <Float>
+                  <Button
+                    className="btn btn-primary z-[10]"
+                    onClick={() => proceed()}
+                  >
+                    <AddIcon />
+                    <span>Perform action</span>
+                  </Button>
+                </Float>
+              )}
+            </Patient.QuickActions>
+          )}
         </div>
-        {width && width >= 1280 && (
+
+        {/* patient profile with quick actions */}
+        {!isMobile && (
           <div
             className={helpers.classNames(
               'hidden',
@@ -98,9 +98,8 @@ function Details() {
           >
             <div className="p-6">
               <Patient.Info className="mb-6" />
-              <Patient.SideTabs />
+              <Patient.QuickActions />
             </div>
-            <Patient.Actions className="mt-auto sticky bottom-0" />
           </div>
         )}
       </NoSSR>

@@ -1,8 +1,8 @@
-import { HtmlHTMLAttributes, useState } from 'react';
+import { HtmlHTMLAttributes, ReactElement, useState } from 'react';
 import { useRouter } from 'next/router';
 import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
-import * as Icon from '@healthcare/icons'; // prettier-ignore
+import * as Icon from '@healthcare/icons';
 import Head from 'next/head';
 
 import routes from '../../routes';
@@ -11,9 +11,16 @@ import Link from 'next/link';
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
   onBack?: (() => void) | boolean;
   title?: string;
+  topNav?: ReactElement;
 }
 
-export function Layout({ onBack, title, children, className }: LayoutProps) {
+export function Layout({
+  title,
+  onBack,
+  topNav,
+  children,
+  className,
+}: LayoutProps) {
   /**
    * routes
    */
@@ -168,7 +175,9 @@ export function Layout({ onBack, title, children, className }: LayoutProps) {
               )}
             </div>
 
-            {title && <h4>{title}</h4>}
+            {title && <h4 className="truncate">{title}</h4>}
+
+            {topNav}
           </div>
           {/* end of top nav */}
 

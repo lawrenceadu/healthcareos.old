@@ -52,7 +52,7 @@ const StyledButton = styled.button`
   user-select: none;
   white-space: nowrap;
   align-items: center;
-  padding: 0 0.875rem;
+  padding: 0 1.5rem;
   border-radius: 0.5rem;
   justify-content: center;
 

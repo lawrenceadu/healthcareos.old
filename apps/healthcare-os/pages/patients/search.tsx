@@ -31,8 +31,9 @@ function Search() {
                 role="button"
                 onClick={() =>
                   router.push({
-                    pathname: routes.dashboard.patients.details.index,
-                    query: { id: `${i + 1}`, tab: 'history' },
+                    pathname: routes.dashboard.patients.details.index
+                      .replace('[id]', `${i + 1}`)
+                      .replace('[tab]', 'history'),
                   })
                 }
               >

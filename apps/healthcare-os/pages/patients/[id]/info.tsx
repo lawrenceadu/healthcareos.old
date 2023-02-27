@@ -17,10 +17,7 @@ export function Info() {
         )}
       >
         <Patient.Info className="my-6" />
-        <Patient.SideTabs />
       </div>
-
-      <Patient.Actions className="fixed bottom-0 w-full lg:w-[calc(100%-280px)]" />
     </Layout>
   );
 }

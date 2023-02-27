@@ -1,61 +1,214 @@
-import { AddIcon, DrugIcon } from '@healthcare/icons';
-import { Button } from '@healthcareos/react';
+import { useState } from 'react';
+import { Button, Field, Modal as BaseModal, ModalProps, Dropdown } from '@healthcareos/react'; // prettier-ignore
+import { Form, Formik } from 'formik';
+import { object } from 'yup';
+import { helpers, schema } from '@healthcare/utils';
 
-import Prescription from './Dispense/Prescription';
-import AddForm from './Dispense/Add';
+import Select from '../Select';
+import { NotesIcon } from '@healthcare/icons';
 
-export function Dispense() {
+export interface DispenseProps {
+  prescriptions: string[];
+  children: (props: { proceed: () => void }) => void;
+}
+
+export function Dispense({ children, prescriptions }: DispenseProps) {
   /**
-   * variables
+   * state
    */
-  const hasDispense = true;
+  const [show, setShow] = useState(false);
 
   return (
     <>
-      {hasDispense && (
-        <div>
-          <div className="flex justify-end mb-4">
-            <AddForm>
-              {({ proceed }) => (
-                <Button onClick={() => proceed()} className="btn-secondary">
-                  Add prescription
-                </Button>
-              )}
-            </AddForm>
-          </div>
-          <div className="flex flex-col gap-6">
-            {Array.from({ length: 2 }, (_, i) => (
-              <Prescription
-                key={i}
-                className="p-4 border border-gray-200 rounded-lg"
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {!hasDispense && (
-        <div className="max-w-[328px] w-full mx-auto text-center">
-          <div className="h-10 w-10 rounded-full bg-gray-100 flex mx-auto mb-4">
-            <DrugIcon variant="solid" className="text-primary m-auto" />
-          </div>
-          <div className="mb-6">
-            <p className="font-bold mb-1">No prescription yet</p>
-            <p className="text-sm font-medium text-muted">
-              This patient hasn&apos;t received any prescription yet.
-            </p>
-          </div>
-          <AddForm>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary mx-auto">
-                <AddIcon />
-                <span>Add prescription</span>
-              </Button>
-            )}
-          </AddForm>
-        </div>
-      )}
+      {children({ proceed: () => setShow(true) })}
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        prescriptions={prescriptions}
+      />
     </>
+  );
+}
+
+export function Modal({ ...props }: ModalProps & { prescriptions: string[] }) {
+  /**
+   * variables
+   */
+  const initialValues = {
+    drug: '',
+    dose: '10',
+    dose_unit: 'ml',
+    quantity: '10',
+    type: 'dispense',
+  };
+
+  return (
+    <BaseModal {...props} header="Dispense drug" size="xl">
+      <div className="max-h-[600px] overflow-y-auto">
+        <Formik
+          validateOnMount
+          enableReinitialize
+          validationSchema={object({
+            prescriptions: schema.requireArray('Prescriptions').of(
+              object().shape({
+                drug: schema.requireString('Drug'),
+                dose: schema.requireNumber('Dose'),
+                dose_unit: schema.requireString('Dose unit'),
+                quantity: schema.requireNumber('Quantity'),
+                type: schema.requireString('Type'),
+              })
+            ),
+          })}
+          initialValues={{
+            prescriptions: [
+              {
+                ...initialValues,
+                drug: 'Dexamethasone (0.5 mg/5ml oral liquid)',
+              },
+              { ...initialValues, drug: 'Paracetamol 500 mg tablet' },
+            ],
+            notes: '',
+          }}
+          onSubmit={() => {
+            return;
+          }}
+        >
+          {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
+            <Form>
+              <div className="p-6">
+                <div className="grid gap-4 mb-6">
+                  {values.prescriptions.map((pres, key) => (
+                    <div
+                      key={key}
+                      className="grid gap-4 lg:grid-cols-[400px_repeat(3,minmax(0,1fr))_3rem]"
+                    >
+                      <Field.Group
+                        label="Drug"
+                        wrapperClassName="!mb-0"
+                        name={`prescriptions.${key}.drug`}
+                      >
+                        <Field.Input
+                          value={pres.drug}
+                          name={`prescriptions.${key}.drug`}
+                        />
+                      </Field.Group>
+
+                      <Field.Group
+                        label="Dose"
+                        wrapperClassName="!mb-0"
+                        name={`prescriptions.${key}.dose`}
+                      >
+                        <Field.Input
+                          name={`prescriptions.${key}.dose`}
+                          value={pres.dose}
+                        />
+                        <Select
+                          value={pres.dose_unit}
+                          options={[{ label: 'ml', value: 'ml' }]}
+                          onSelect={(value) =>
+                            setFieldValue('dose_unit', value)
+                          }
+                        />
+                      </Field.Group>
+
+                      <Field.Group
+                        wrapperClassName="!mb-0"
+                        label="Quantity to be dispensed"
+                        name={`prescription.${key}.quantity`}
+                      >
+                        <Field.Input
+                          type="number"
+                          value={pres.quantity}
+                          name={`prescription.${key}.quantity`}
+                        />
+                      </Field.Group>
+
+                      <Field.Group
+                        label="Dispense type"
+                        wrapperClassName="!mb-0"
+                        name={`prescription.${key}.type`}
+                      >
+                        <Field.Select
+                          value={pres.type}
+                          name={`prescription.${key}.type`}
+                          options={[
+                            { label: 'Dispense', value: 'dispense' },
+                            {
+                              label: 'Dispense alternative',
+                              value: 'alternative',
+                            },
+                            { label: 'Paper prescription', value: 'paper' },
+                          ]}
+                          onChange={({ value }: { value: string }) =>
+                            setFieldValue(`prescriptions.${key}.type`, value)
+                          }
+                        />
+                      </Field.Group>
+                      <div>
+                        {key === 0 && (
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              type="button"
+                              className="mt-6 px-3"
+                            >
+                              <NotesIcon />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu className="max-w-[300px] p-4">
+                              <div>
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Placeat nesciunt
+                                necessitatibus rem, at, fuga consequuntur
+                                doloribus veritatis aliquid recusandae velit id,
+                                quam expedita. Atque magnam, autem tempora in
+                                harum quaerat?
+                              </div>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Field.Group name="notes" label="Additional notes">
+                  <Field.Input
+                    as="textarea"
+                    className="py-4"
+                    value={values.notes}
+                  />
+                </Field.Group>
+              </div>
+
+              <div
+                className={helpers.classNames(
+                  'px-6 py-3',
+                  'sticky bottom-0 bg-white',
+                  'flex justify-end gap-6',
+                  'border-t border-gray-200'
+                )}
+              >
+                <Button
+                  type="button"
+                  className="btn-light"
+                  onClick={() => props.onHide?.()}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!isValid}
+                  className="btn btn-primary"
+                  onClick={() => handleSubmit()}
+                  {...{ isSubmitting }}
+                >
+                  Dispense
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </BaseModal>
   );
 }
 

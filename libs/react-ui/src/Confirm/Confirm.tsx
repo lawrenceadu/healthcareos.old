@@ -28,6 +28,7 @@ export interface ConfirmProps extends ReactConfirmProps {
 const Dialog = ({ show, proceed, message, header, buttons }: ConfirmProps) => {
   return (
     <Modal
+      index={2}
       show={show}
       header={header}
       backdrop="static"

@@ -1,6 +1,6 @@
 import { IconProps, Template } from './Template';
 
-export function Stethoscope({ variant, ...props }: IconProps) {
+export function Stethoscope({ variant = 'line', ...props }: IconProps) {
   return (
     <Template {...props}>
       {variant === 'line' && (

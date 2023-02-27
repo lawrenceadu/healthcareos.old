@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button, Field, Modal } from '@healthcareos/react';
 import { FieldArray, Form, Formik } from 'formik';
+import { Button, Field, Modal } from '@healthcareos/react';
 import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';

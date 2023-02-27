@@ -6,9 +6,10 @@ export function Investigation() {
    * variables
    */
   const items = [
-    { label: 'Outcome', value: 'Swollen lips and face.' },
-    { label: 'Notes', value: 'Stay away from any food with nuts in it.' },
-    { label: 'Date added', value: '12/01/2023' },
+    { label: 'Result', value: 'Negative' },
+    { label: 'Requested by', value: 'Doctor Francis Affram' },
+    { label: 'Submitted by', value: 'Technician Albert Johnson' },
+    { label: 'Notes', value: 'This is a test note for investigation' },
   ];
 
   return (
@@ -23,7 +24,7 @@ export function Investigation() {
         </>
       }
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col pb-2 border-b border-gray-200">
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
             <div className="flex-[0_0_120px]">

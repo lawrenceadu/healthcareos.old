@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Accordion, Field, Filter } from '@healthcareos/react';
 
 import Investigation from './History/Investigation';
+import Consultation from './History/Consultation';
+import Vitals from './History/Vitals';
 
 export function History() {
   /**
@@ -40,7 +42,11 @@ export function History() {
             className="rounded-lg p-4 border border-gray-200"
             header={<p className="text-lg font-bold">04 Jan. 2023</p>}
           >
-            <Investigation />
+            <div className="grid gap-2">
+              <Vitals />
+              <Consultation />
+              <Investigation />
+            </div>
           </Accordion.Item>
         ))}
       </Accordion>
