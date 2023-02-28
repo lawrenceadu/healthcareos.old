@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 
@@ -16,16 +16,7 @@ function Search() {
   /**
    * context
    */
-  const { patient, setPatient } = useContext(PatientContext);
-
-  /**
-   * effect
-   */
-  useEffect(() => {
-    if (patient && patient.id) {
-      setPatient({});
-    }
-  }, [patient, setPatient]);
+  const { setPatient } = useContext(PatientContext);
 
   return (
     <Layout title="Patient" onBack>
@@ -43,30 +34,30 @@ function Search() {
             </tr>
           </thead>
           <tbody>
-            {store.patients.map((patient, key) => (
+            {store.patients.map((pt, key) => (
               <tr
                 key={key}
                 role="button"
                 onClick={() => {
-                  setPatient(patient);
+                  setPatient(pt);
 
                   router.push({
                     pathname: routes.dashboard.patients.details.index
-                      .replace('[id]', patient.id)
+                      .replace('[id]', pt.id)
                       .replace('[tab]', 'history'),
                   });
                 }}
               >
-                <td>{patient.first_name || '--'}</td>
-                <td>{patient.middle_name || '--'}</td>
-                <td>{patient.last_name || '--'}</td>
-                <td>{patient.sex || '--'}</td>
+                <td>{pt.first_name || '--'}</td>
+                <td>{pt.middle_name || '--'}</td>
+                <td>{pt.last_name || '--'}</td>
+                <td>{pt.sex || '--'}</td>
                 <td>
-                  {dayjs(patient.date_of_birth).format('DD/MM/YYYY') +
-                    ` (${dayjs().diff(patient.date_of_birth, 'year')})`}
+                  {dayjs(pt.date_of_birth).format('DD/MM/YYYY') +
+                    ` (${dayjs().diff(pt.date_of_birth, 'year')})`}
                 </td>
-                <td>{patient.phone || '--'}</td>
-                <td>{patient.id_number || '--'}</td>
+                <td>{pt.phone || '--'}</td>
+                <td>{pt.id_number || '--'}</td>
               </tr>
             ))}
           </tbody>
