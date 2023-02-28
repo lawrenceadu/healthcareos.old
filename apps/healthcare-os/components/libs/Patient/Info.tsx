@@ -32,9 +32,9 @@ export function Info({ className, ...props }: InfoProps) {
     {
       label: 'Address',
       value: [
-        patient.address.street,
-        patient.address.city,
-        patient.address.region,
+        patient.address?.street,
+        patient.address?.city,
+        patient.address?.region,
       ].join(', '),
     },
     { label: 'Language', value: patient.language },
