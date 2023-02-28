@@ -4,7 +4,7 @@ import { Tabs } from '@healthcareos/react';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
-import FiltersProvider from '../../context/Filters';
+import FiltersProvider from '../../contexts/Filters';
 import Inventory from '../../components/pages/inventory/index/Inventory';
 import Requests from '../../components/pages/inventory/index/Requests';
 

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { Tabs } from '@healthcareos/react';
 
-import FiltersProvider from '../../context/Filters';
+import FiltersProvider from '../../contexts/Filters';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 

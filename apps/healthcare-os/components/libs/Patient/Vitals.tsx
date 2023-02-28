@@ -3,6 +3,7 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 export interface VitalsProps {
   children: (props: { proceed: () => void }) => void;
@@ -50,7 +51,8 @@ export function Vitals({ children }: VitalsProps) {
             notes: '',
           }}
           onSubmit={() => {
-            return;
+            toast.success('Vitals added to history');
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

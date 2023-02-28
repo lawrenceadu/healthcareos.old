@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import { helpers } from '@healthcare/utils';
 import * as Icon from '@healthcare/icons';
@@ -13,15 +13,16 @@ import Detain from './Detain';
 import Vitals from './Vitals';
 import Admit from './Admit';
 
+import { PatientContext } from '../../../contexts/Patient';
 import routes from '../../../routes';
 import Move from './Move';
+import Discharge from './Discharge';
 
 export interface QuickActionsProps {
-  inVisistation?: boolean;
   children?: (props: { proceed: () => void }) => ReactElement;
 }
 
-function QuickActions({ children, inVisistation = true }: QuickActionsProps) {
+function QuickActions({ children }: QuickActionsProps) {
   /**
    * state
    */
@@ -55,23 +56,35 @@ function QuickActions({ children, inVisistation = true }: QuickActionsProps) {
                 'rounded-tl-3xl rounded-tr-3xl'
               )}
             >
-              <Actions {...{ inVisistation }} />
+              <Actions />
             </div>
           </div>
         </>
       ) : (
-        <Actions {...{ inVisistation }} />
+        <Actions />
       )}
     </>
   );
 }
 
-const Actions = ({ inVisistation }: Omit<QuickActionsProps, 'children'>) => {
+const Actions = () => {
   /**
    * routes
    */
   const router = useRouter();
   const { id } = router.query;
+
+  /**
+   * context
+   */
+  const { patient } = useContext(PatientContext);
+
+  /**
+   * variables
+   */
+  const inVisistation = patient.in_visitation;
+  const isInpatient = patient.is_inpatient;
+  const isAdmitted = patient.is_admitted;
 
   return (
     <div className="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -86,20 +99,18 @@ const Actions = ({ inVisistation }: Omit<QuickActionsProps, 'children'>) => {
         </Visitation>
       )}
 
-      {!inVisistation && (
-        <StyledCard
-          role="button"
-          onClick={() =>
-            router.push({
-              pathname: routes.dashboard.patients.details.edit,
-              query: { id },
-            })
-          }
-        >
-          <Icon.UserEditIcon />
-          <p>Edit profile</p>
-        </StyledCard>
-      )}
+      <StyledCard
+        role="button"
+        onClick={() =>
+          router.push({
+            pathname: routes.dashboard.patients.details.edit,
+            query: { id },
+          })
+        }
+      >
+        <Icon.UserEditIcon />
+        <p>Edit profile</p>
+      </StyledCard>
 
       {!inVisistation && (
         <StyledCard
@@ -116,12 +127,12 @@ const Actions = ({ inVisistation }: Omit<QuickActionsProps, 'children'>) => {
         </StyledCard>
       )}
 
-      {!inVisistation && (
+      {/* {!inVisistation && (
         <StyledCard role="button">
           <Icon.PasscodeIcon />
           <p>Re-issue PIN</p>
         </StyledCard>
-      )}
+      )} */}
 
       {inVisistation && (
         <Vitals>
@@ -183,43 +194,62 @@ const Actions = ({ inVisistation }: Omit<QuickActionsProps, 'children'>) => {
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
               <Icon.UsersIcon />
-              <p>Move to another location</p>
+              <p>Queueing</p>
             </StyledCard>
           )}
         </Move>
       )}
 
-      <Detain>
-        {({ proceed }) => (
-          <StyledCard role="button" onClick={() => proceed()}>
-            <Icon.HeartPulseIcon />
-            <p>Detain patient</p>
-          </StyledCard>
-        )}
-      </Detain>
+      {!isInpatient && (
+        <Detain>
+          {({ proceed }) => (
+            <StyledCard role="button" onClick={() => proceed()}>
+              <Icon.HeartPulseIcon />
+              <p>Detain patient</p>
+            </StyledCard>
+          )}
+        </Detain>
+      )}
 
-      <Admit>
-        {({ proceed }) => (
-          <StyledCard role="button" onClick={() => proceed()}>
-            <Icon.BedIcon />
-            <p>Admit patient</p>
-          </StyledCard>
-        )}
-      </Admit>
+      {isInpatient && !isAdmitted && (
+        <Admit>
+          {({ proceed }) => (
+            <StyledCard role="button" onClick={() => proceed()}>
+              <Icon.BedIcon />
+              <p>Admit patient</p>
+            </StyledCard>
+          )}
+        </Admit>
+      )}
 
-      {inVisistation && (
-        <Visitation end>
+      {inVisistation && !isInpatient && (
+        <Visitation>
           {({ proceed }) => (
             <StyledCard
               role="button"
-              className="!border-red-200 !bg-red-50"
               onClick={() => proceed()}
+              className="!border-red-200 !bg-red-50 !text-red-600"
             >
               <Icon.HeartBookIcon className="!text-red-600" />
               <p>End visitation</p>
             </StyledCard>
           )}
         </Visitation>
+      )}
+
+      {isInpatient && (
+        <Discharge>
+          {({ proceed }) => (
+            <StyledCard
+              role="button"
+              onClick={() => proceed()}
+              className="!border-red-200 !bg-red-50 !text-red-600"
+            >
+              <Icon.HeartBookIcon className="!text-red-600" />
+              <p>Discharge patient</p>
+            </StyledCard>
+          )}
+        </Discharge>
       )}
     </div>
   );

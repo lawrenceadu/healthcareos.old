@@ -3,10 +3,17 @@ import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { Button, Field } from '@healthcareos/react';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 import Select from '../../Select';
 
-function Add({ onHide }: { onHide: () => void }) {
+function Add({
+  onHide,
+  setTab,
+}: {
+  onHide: () => void;
+  setTab: (key: string) => void;
+}) {
   /**
    * variables
    */
@@ -42,6 +49,8 @@ function Add({ onHide }: { onHide: () => void }) {
         notes: '',
       }}
       onSubmit={() => {
+        toast.success('Prescriptions added');
+        setTab('index');
         return;
       }}
     >

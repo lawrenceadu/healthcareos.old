@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Button, Field, Modal as BaseModal, ModalProps, Dropdown } from '@healthcareos/react'; // prettier-ignore
-import { Form, Formik } from 'formik';
-import { object } from 'yup';
 import { helpers, schema } from '@healthcare/utils';
+import { Form, Formik } from 'formik';
+import { NotesIcon } from '@healthcare/icons';
+import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 import Select from '../Select';
-import { NotesIcon } from '@healthcare/icons';
 
 export interface DispenseProps {
   prescriptions: string[];
@@ -70,7 +71,8 @@ export function Modal({ ...props }: ModalProps & { prescriptions: string[] }) {
             notes: '',
           }}
           onSubmit={() => {
-            return;
+            toast.success('Prescriptions dispensed');
+            props.onHide?.();
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (

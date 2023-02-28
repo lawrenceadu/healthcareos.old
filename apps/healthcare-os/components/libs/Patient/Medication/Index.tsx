@@ -1,15 +1,21 @@
 import { useState } from 'react';
+import { helpers, schema } from '@healthcare/utils';
 import { Form, Formik } from 'formik';
 import { DrugIcon } from '@healthcare/icons';
 import { Button } from '@healthcareos/react';
-import { helpers, schema } from '@healthcare/utils';
 import { object } from 'yup';
 
 import { Modal } from '../Dispense';
 
 import Prescription from './Prescription';
 
-export function Medication({ onHide }: { onHide: () => void }) {
+export function Medication({
+  onHide,
+  setTab,
+}: {
+  onHide: () => void;
+  setTab: (key: string) => void;
+}) {
   /**
    * variables
    */

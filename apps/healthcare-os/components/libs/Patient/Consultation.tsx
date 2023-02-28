@@ -4,6 +4,7 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 export interface ConsultationProps {
   children: (props: { proceed: () => void }) => void;
@@ -39,7 +40,8 @@ export function Consultation({ children }: ConsultationProps) {
             diagnosis: [''] as string[],
           }}
           onSubmit={() => {
-            return;
+            toast.success('Consultation added');
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 
 import AddForm from './Invoice/Add';
+import EditForm from './Invoice/Edit';
 
 export function Invoice() {
   /**
@@ -33,12 +34,130 @@ export function Invoice() {
         {Array.from({ length: 3 }, (_, i) => (
           <Accordion.Item
             key={i}
-            className="rounded-lg p-4 border border-gray-200"
-            actions={<Badge variant="light">Draft</Badge>}
+            actions={
+              <Badge
+                variant={(() => {
+                  if (i === 0) return 'pending';
+                  if (i === 1) return 'success';
+                  return 'draft';
+                })()}
+              >
+                {(i === 0 && 'Unpaid') ||
+                  (i === 1 && 'Paid') ||
+                  (i === 2 && 'Draft')}
+              </Badge>
+            }
+            className="rounded-lg p-4 border border-gray-200 font-medium"
             header={
               <p className="text-lg font-bold">Invoice HMS-1281-012023</p>
             }
-          ></Accordion.Item>
+          >
+            <div className="grid gap-4">
+              <div>
+                <p className="text-xs text-green-600">Outpatient</p>
+                <p className="text-sm">
+                  Invoiced on 04 Jan. 2023 by Doctor Agnes Ofori
+                </p>
+              </div>
+              <div>
+                {Array.from({ length: 2 }, (_, i) => (
+                  <div
+                    key={i}
+                    className={helpers.classNames(
+                      'grid grid-cols-2 gap-x-4 gap-y-2 py-1',
+                      i !== 0 && 'border-t border-gray-200'
+                    )}
+                  >
+                    {[
+                      {
+                        label: 'Item',
+                        value: 'Acetazolamide 500mg solution for injection',
+                      },
+                      {
+                        label: 'Revenue dept',
+                        value: 'Inpatient - Paediatric',
+                      },
+                      { label: 'Quantity', value: '20' },
+                      { label: 'Price', value: 'Ghs 50.00' },
+                    ].map((i, key) => (
+                      <div key={key}>
+                        <p className="text-xs text-gray-600">{i.label}</p>
+                        <p className="text-sm">{i.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <p className="text-sm mb-1 font-bold">Insurance</p>
+
+                <div
+                  key={i}
+                  className={helpers.classNames(
+                    'grid grid-cols-2 gap-x-4 gap-y-2'
+                  )}
+                >
+                  {[
+                    {
+                      label: 'Item',
+                      value: 'Nationwide Medical Insurance',
+                    },
+                    { label: 'Amount', value: 'Ghs 20.00' },
+                  ].map((i, key) => (
+                    <div key={key}>
+                      <p className="text-xs text-gray-600">{i.label}</p>
+                      <p className="text-sm">{i.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm mb-1 font-bold">Invoice summary</p>
+
+                <div
+                  key={i}
+                  className={helpers.classNames(
+                    'grid grid-cols-3 gap-x-4 gap-y-2'
+                  )}
+                >
+                  {[
+                    { label: 'Total', value: 'Ghs 50.00' },
+                    { label: 'Insurance', value: 'Ghs 20.00' },
+                    { label: 'Balance', value: 'Ghs 30.00' },
+                  ].map((i, key) => (
+                    <div key={key}>
+                      <p className="text-xs text-gray-600">{i.label}</p>
+                      <p className="text-sm">{i.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {[0, 2].includes(i) && (
+                <div className="flex justify-end">
+                  {i === 0 && (
+                    <Button className="btn-sm btn-primary !h-10">
+                      Take payment
+                    </Button>
+                  )}
+                  {i === 2 && (
+                    <EditForm>
+                      {({ proceed }) => (
+                        <Button
+                          onClick={() => proceed()}
+                          className="btn-sm btn-primary !h-10"
+                        >
+                          Update Invoice
+                        </Button>
+                      )}
+                    </EditForm>
+                  )}
+                </div>
+              )}
+            </div>
+          </Accordion.Item>
         ))}
       </Accordion>
 

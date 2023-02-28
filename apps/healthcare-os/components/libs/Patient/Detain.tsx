@@ -4,6 +4,9 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+import { toast } from 'react-toastify';
+
+import { usePatient } from '../../../hooks';
 
 export interface DetainProps {
   children: (props: { proceed: () => void }) => void;
@@ -13,17 +16,18 @@ function Detain({ children }: DetainProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
+
+  /**
+   * context
+   */
+  const { patient, setPatient } = usePatient();
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
-      <Modal
-        show={state}
-        onHide={() => setState(false)}
-        header="Detain patient"
-      >
+      <Modal show={show} onHide={() => setShow(false)} header="Detain patient">
         <Formik
           validateOnMount
           validationSchema={object({
@@ -41,7 +45,9 @@ function Detain({ children }: DetainProps) {
             notes: '',
           }}
           onSubmit={() => {
-            return;
+            setPatient({ ...patient, is_inpatient: true, in_visitation: true });
+            toast.success('Patient detained');
+            setShow(false);
           }}
         >
           {({
@@ -99,7 +105,10 @@ function Detain({ children }: DetainProps) {
               <Field.Group name="ward" label="Ward">
                 <Field.Select
                   name="ward"
-                  options={[]}
+                  options={[
+                    { label: 'Male ward', value: 'male' },
+                    { label: 'Female ward 1', value: 'female1' },
+                  ]}
                   placeholder="Select ward"
                   value={values.ward}
                   onChange={({ value }: { value: string }) =>
@@ -111,7 +120,10 @@ function Detain({ children }: DetainProps) {
               <Field.Group name="department" label="Department">
                 <Field.Select
                   name="department"
-                  options={[]}
+                  options={[
+                    { label: 'Radiology', value: 'radiology' },
+                    { label: 'Lab', value: 'lab' },
+                  ]}
                   placeholder="Select department"
                   value={values.department}
                   onChange={({ value }: { value: string }) =>

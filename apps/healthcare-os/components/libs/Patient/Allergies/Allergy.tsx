@@ -2,6 +2,7 @@ import { HtmlHTMLAttributes, useState } from 'react';
 import { Accordion, Button, Confirm } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 
 // eslint-disable-next-line
 export interface AllergyProps extends HtmlHTMLAttributes<HTMLDivElement> {}
@@ -42,7 +43,7 @@ export function Allergy({ className, ...props }: AllergyProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        return;
+        toast.success('Allergy deleted successfully');
       }
     });
 

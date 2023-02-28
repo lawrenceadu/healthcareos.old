@@ -50,6 +50,7 @@ export function Notes() {
         {Array.from({ length: 3 }, (_, i) => (
           <Accordion.Item
             key={i}
+            defaultOpen={i === 0}
             className="rounded-lg p-4 border border-gray-200"
             header={<p className="text-lg font-bold">04 Jan. 2023</p>}
           >

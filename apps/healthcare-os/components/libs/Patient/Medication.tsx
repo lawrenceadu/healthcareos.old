@@ -39,7 +39,7 @@ function Medication({ children }: MedicationProps) {
             activeKey={tab}
             navClassName="px-6 pt-2"
             onSelect={(key) => setTab(key)}
-            childProps={{ onHide: () => setShow(false) }}
+            childProps={{ onHide: () => setShow(false), setTab }}
           />
         </div>
       </Modal>

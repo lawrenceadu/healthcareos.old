@@ -9,11 +9,13 @@ export interface LocalTabsProps extends Omit<TabsProps, 'onSelect'> {
   childProps?: { [x: string]: unknown };
   navClassName?: string;
   onSelect: (key: string) => void;
+  className?: string;
 }
 
 export default function ({
   tabs,
   onSelect,
+  className,
   activeKey,
   childProps,
   navClassName,
@@ -40,7 +42,9 @@ export default function ({
           </Tab>
         ))}
       </Nav>
-      <div className="relative">{tab && <tab.component {...childProps} />}</div>
+      <div className={helpers.classNames('relative', className)}>
+        {tab && <tab.component {...childProps} />}
+      </div>
     </Tabs>
   );
 }

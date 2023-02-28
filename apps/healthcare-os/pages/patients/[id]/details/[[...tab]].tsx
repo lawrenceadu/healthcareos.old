@@ -1,7 +1,7 @@
-import { AddIcon, ChevronRightIcon } from '@healthcare/icons';
 import { helpers, useWidth } from '@healthcare/utils';
 import { Button, Tabs } from '@healthcareos/react';
 import { useRouter } from 'next/router';
+import { AddIcon } from '@healthcare/icons';
 
 import Patient from '../../../../components/libs/Patient';
 import Layout from '../../../../components/libs/Layout';
@@ -9,11 +9,14 @@ import routes from '../../../../routes';
 import NoSSR from '../../../../components/libs/NoSSR';
 import Float from '../../../../components/libs/Float';
 
+import { usePatient } from '../../../../hooks';
+
 function Details() {
   /**
    * hooks
    */
   const width = useWidth();
+  const { patient } = usePatient();
 
   /**
    * routes
@@ -26,11 +29,31 @@ function Details() {
    */
   const tab = paths && paths[0];
   const tabs = [
-    { name: 'Overview', slug: 'overview', component: Patient.Overview },
-    { name: 'History', slug: 'history', component: Patient.History },
-    { name: 'Notes', slug: 'notes', component: Patient.Notes },
-    { name: 'Insurance', slug: 'insurance', component: Patient.Insurance },
-    { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
+    ...(patient.is_inpatient
+      ? [
+          { name: 'Overview', slug: 'overview', component: Patient.Overview },
+          { name: 'Notes', slug: 'notes', component: Patient.Notes },
+          { name: 'History', slug: 'history', component: Patient.History },
+          {
+            name: 'Drug chart',
+            slug: 'drug',
+            component: () => <div className="text-2xl font-bold">WIP</div>,
+          },
+          { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
+        ]
+      : []),
+
+    ...(!patient.is_inpatient
+      ? [
+          { name: 'History', slug: 'history', component: Patient.History },
+          {
+            name: 'Insurance',
+            slug: 'insurance',
+            component: Patient.Insurance,
+          },
+          { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
+        ]
+      : []),
   ];
   const isMobile = width && width < 1280;
 
@@ -59,6 +82,7 @@ function Details() {
         <div className="xl:px-10 h-full xl:overflow-y-auto xl:border-r xl:border-gray-200">
           <Tabs
             tabs={tabs}
+            className="pb-24"
             activeKey={tab || tabs[0].slug}
             navClassName="sticky top-0 bg-white z-[1]"
             onSelect={(key) =>

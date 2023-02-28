@@ -1,12 +1,25 @@
+import { useContext } from 'react';
+import { Dropdown as BaseDropdown } from '@healthcareos/react';
 import { ChevronDownIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
-import { Dropdown as BaseDropdown } from '@healthcareos/react';
+
+import { PatientContext } from '../../../contexts/Patient';
 
 function Dropdown() {
+  /**
+   * context
+   */
+  const { patient, setPatient } = useContext(PatientContext);
+
   return (
     <BaseDropdown className="ml-auto">
       <BaseDropdown.Toggle className="flex gap-2 items-center">
-        <span className="w-2 h-2 rounded-full bg-red-600" />
+        {patient.severity && (
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: patient.severity.color }}
+          />
+        )}
         <div
           className={helpers.classNames(
             'bg-gray-500',
@@ -14,15 +27,21 @@ function Dropdown() {
             'flex flex-[0_0_2.5rem]'
           )}
         >
-          <p className="text-lg m-auto text-white font-semibold">JK</p>
+          <p className="text-lg m-auto text-white font-semibold">
+            {[patient.first_name?.[0], patient.last_name?.[0]].join('')}
+          </p>
         </div>
 
-        <div className="text-left truncate">
-          <p className="text-sm font-semibold truncate">Consulting room</p>
-          <p className="text-xs text-gray-600 truncate">Vtial room</p>
-        </div>
+        {patient.queue && (
+          <div className="text-left truncate mr-3">
+            <p className="text-sm font-semibold truncate">
+              {patient.queue.location}
+            </p>
+            <p className="text-xs text-gray-600 truncate">Position in queue</p>
+          </div>
+        )}
 
-        <span className="ml-3">
+        <span>
           <ChevronDownIcon />
         </span>
       </BaseDropdown.Toggle>
@@ -32,7 +51,17 @@ function Dropdown() {
           { label: 'Mild', value: 'mild', color: '#d97706' },
           { label: 'None', value: 'none', color: '#16a34a' },
         ].map((i, key) => (
-          <BaseDropdown.Item key={key} className="gap-2">
+          <BaseDropdown.Item
+            key={key}
+            className="gap-2"
+            active={i.label === patient.severity?.name}
+            onClick={() =>
+              setPatient({
+                ...patient,
+                severity: { name: i.label, color: i.color },
+              })
+            }
+          >
             <span
               className="w-2 h-2 rounded-full bg-red-600"
               style={{ backgroundColor: i.color }}

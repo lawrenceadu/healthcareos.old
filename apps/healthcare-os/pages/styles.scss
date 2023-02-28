@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import 'flatpickr/dist/themes/airbnb.css';
+@import 'react-toastify/dist/ReactToastify.css';
 
 @layer base {
   // typography
@@ -96,6 +97,10 @@
 
     &-error {
       @apply bg-red-600 border-red-600 text-white #{!important};
+    }
+
+    &-error-outline {
+      @apply bg-white border-red-600 text-red-600 #{!important};
     }
   }
 }

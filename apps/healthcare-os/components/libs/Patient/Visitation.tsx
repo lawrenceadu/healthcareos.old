@@ -1,19 +1,31 @@
-import { schema } from '@healthcare/utils';
+import React, { useContext, useState } from 'react';
 import { Button, Confirm, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import dayjs from 'dayjs';
+
+import { PatientContext } from '../../../contexts/Patient';
 
 export interface VisitationProps {
   children: (props: { proceed: () => void }) => void;
-  end?: boolean;
 }
 
-function Visitation({ children, end = false }: VisitationProps) {
+function Visitation({ children }: VisitationProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * context
+   */
+  const { patient, setPatient } = useContext(PatientContext);
+
+  /**
+   * variable
+   */
+  const end = patient.in_visitation;
 
   /**
    * function
@@ -31,7 +43,12 @@ function Visitation({ children, end = false }: VisitationProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        return;
+        setPatient({
+          ...patient,
+          is_admitted: false,
+          is_inpatient: false,
+          in_visitation: false,
+        });
       }
     });
 
@@ -52,8 +69,14 @@ function Visitation({ children, end = false }: VisitationProps) {
             location: schema.requireString('Location'),
           })}
           initialValues={{ location: '' }}
-          onSubmit={() => {
-            return;
+          onSubmit={({ location }, { setSubmitting }) => {
+            setPatient({
+              ...patient,
+              in_visitation: true,
+              queue: { location, time: dayjs().toISOString() },
+            });
+
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
@@ -67,7 +90,13 @@ function Visitation({ children, end = false }: VisitationProps) {
                     name="location"
                     value={values.location}
                     placeholder="Select location"
-                    options={[{ label: 'Vitals checkup', value: 'vitals' }]}
+                    options={[
+                      { label: 'Vitals', value: 'vitals' },
+                      { label: 'Consultation room', value: 'consultation' },
+                      { label: 'Lab', value: 'lab' },
+                      { label: 'Investigation room', value: 'investigation' },
+                      { label: 'Pharmacy', value: 'pharmacy' },
+                    ]}
                     onChange={({ value }: { value: string }) =>
                       setFieldValue('location', value)
                     }

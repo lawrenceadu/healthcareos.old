@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
-import { Button, Field, Modal } from '@healthcareos/react';
+import { toast } from 'react-toastify';
 
 export interface AddProps {
   children: (props: { proceed: () => void }) => void;
@@ -24,7 +25,8 @@ export function Add({ children }: AddProps) {
           validationSchema={object({ notes: schema.requireString('Notes') })}
           initialValues={{ notes: '' }}
           onSubmit={() => {
-            return;
+            toast.success('Notes added');
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

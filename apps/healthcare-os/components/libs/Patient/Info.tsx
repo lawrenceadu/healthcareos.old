@@ -1,30 +1,66 @@
-import { HtmlHTMLAttributes } from 'react';
+import { HtmlHTMLAttributes, useContext } from 'react';
 import { helpers, useWidth } from '@healthcare/utils';
 import { Accordion, Badge } from '@healthcareos/react';
 import { CheckIcon } from '@healthcare/icons';
+import dayjs from 'dayjs';
+
+import { PatientContext } from '../../../contexts/Patient';
 
 // eslint-disable-next-line
 export interface InfoProps extends HtmlHTMLAttributes<HTMLDivElement> {}
 
 export function Info({ className, ...props }: InfoProps) {
   /**
+   * context
+   */
+  const { patient } = useContext(PatientContext);
+
+  /**
    * variables
    */
   const items = [
-    { label: 'Name', value: 'Jennifer' },
-    { label: 'Surname', value: 'Koomson' },
-    { label: 'Date of birth', value: '14/01/1992' },
-    { label: 'Sex', value: 'Female' },
-    { label: 'Address', value: 'Greater Accra, Accra Metropolitan District' },
-    { label: 'Language', value: 'English, Spanish' },
-    { label: 'Marital status', value: 'Married' },
+    {
+      label: 'Name',
+      value: [patient.first_name, patient.middle_name].join(' ').trim(),
+    },
+    { label: 'Surname', value: patient.last_name },
+    {
+      label: 'Date of birth',
+      value: dayjs(patient.date_of_birth).format('DD/MM/YYYY'),
+    },
+    { label: 'Sex', value: patient.sex },
+    {
+      label: 'Address',
+      value: [
+        patient.address.street,
+        patient.address.city,
+        patient.address.region,
+      ].join(', '),
+    },
+    { label: 'Language', value: patient.language },
+    { label: 'Marital status', value: patient.marital_status },
     {
       label: 'Insurance',
       value: (
-        <Badge variant="success">
-          <CheckIcon className="w-3 h-3" />
-          <span>valid</span>
-        </Badge>
+        <>
+          {!patient.insurance && <p>None</p>}
+          {patient.insurance && (
+            <Badge variant={patient.insurance.is_valid ? 'success' : 'danger'}>
+              {patient.insurance.is_valid && (
+                <>
+                  <CheckIcon className="w-3 h-3" />
+                  <span>valid</span>
+                </>
+              )}
+
+              {!patient.insurance.is_valid && (
+                <>
+                  <span>not valid</span>
+                </>
+              )}
+            </Badge>
+          )}
+        </>
       ),
     },
   ];

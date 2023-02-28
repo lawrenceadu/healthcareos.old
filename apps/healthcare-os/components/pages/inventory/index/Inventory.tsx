@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Button, Dropdown, Field } from '@healthcareos/react';
 import { ChevronDownIcon } from '@healthcare/icons';
 
-import { FiltersContext } from '../../../../context/Filters';
+import { FiltersContext } from '../../../../contexts/Filters';
 import DropdownFilter from '../../../libs/DropdownFilter';
 
 import ReceiveForm from './Inventory/Receive';

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Accordion, Field, Filter } from '@healthcareos/react';
+import { Accordion, Badge, Field, Filter } from '@healthcareos/react';
 
+import { usePatient } from '../../../hooks';
 import Investigation from './History/Investigation';
 import Consultation from './History/Consultation';
 import Vitals from './History/Vitals';
@@ -12,6 +13,11 @@ export function History() {
   const [filters, setFilters] = useState<
     Partial<{ search: string; filter: string }>
   >({});
+
+  /**
+   * context
+   */
+  const { patient, setPatient } = usePatient();
 
   return (
     <>
@@ -39,7 +45,15 @@ export function History() {
         {Array.from({ length: 3 }, (_, i) => (
           <Accordion.Item
             key={i}
+            defaultOpen={i === 0}
             className="rounded-lg p-4 border border-gray-200"
+            actions={
+              <>
+                {i === 0 && patient.in_visitation && (
+                  <Badge variant="pending">Ongoing visitation</Badge>
+                )}
+              </>
+            }
             header={<p className="text-lg font-bold">04 Jan. 2023</p>}
           >
             <div className="grid gap-2">

@@ -1,13 +1,31 @@
+import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 
+import { PatientContext } from '../../contexts/Patient';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
+import store from '../../store';
 
 function Search() {
   /**
    * routes
    */
   const router = useRouter();
+
+  /**
+   * context
+   */
+  const { patient, setPatient } = useContext(PatientContext);
+
+  /**
+   * effect
+   */
+  useEffect(() => {
+    if (patient && patient.id) {
+      setPatient({});
+    }
+  }, [patient, setPatient]);
 
   return (
     <Layout title="Patient" onBack>
@@ -25,25 +43,30 @@ function Search() {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 2 }, (_, i) => (
+            {store.patients.map((patient, key) => (
               <tr
-                key={i}
+                key={key}
                 role="button"
-                onClick={() =>
+                onClick={() => {
+                  setPatient(patient);
+
                   router.push({
                     pathname: routes.dashboard.patients.details.index
-                      .replace('[id]', `${i + 1}`)
+                      .replace('[id]', patient.id)
                       .replace('[tab]', 'history'),
-                  })
-                }
+                  });
+                }}
               >
-                <td>Lawrence</td>
-                <td>Kweku</td>
-                <td>Adu</td>
-                <td>Male</td>
-                <td>22/11/1995(28)</td>
-                <td>0249817978</td>
-                <td>GHA-000000000-0</td>
+                <td>{patient.first_name || '--'}</td>
+                <td>{patient.middle_name || '--'}</td>
+                <td>{patient.last_name || '--'}</td>
+                <td>{patient.sex || '--'}</td>
+                <td>
+                  {dayjs(patient.date_of_birth).format('DD/MM/YYYY') +
+                    ` (${dayjs().diff(patient.date_of_birth, 'year')})`}
+                </td>
+                <td>{patient.phone || '--'}</td>
+                <td>{patient.id_number || '--'}</td>
               </tr>
             ))}
           </tbody>

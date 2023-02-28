@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+import dayjs from 'dayjs';
+
+import { PatientContext } from '../../../contexts/Patient';
 
 export interface MoveProps {
   children: (props: { proceed: () => void }) => void;
@@ -13,6 +16,11 @@ function Move({ children }: MoveProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * context
+   */
+  const { patient, setPatient } = useContext(PatientContext);
 
   return (
     <>
@@ -29,8 +37,12 @@ function Move({ children }: MoveProps) {
             location: schema.requireString('Location'),
           })}
           initialValues={{ location: '' }}
-          onSubmit={() => {
-            return;
+          onSubmit={({ location }) => {
+            setPatient({
+              ...patient,
+              queue: { location, time: dayjs().toISOString() },
+            });
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
@@ -44,7 +56,13 @@ function Move({ children }: MoveProps) {
                     name="location"
                     value={values.location}
                     placeholder="Select location"
-                    options={[{ label: 'Vitals checkup', value: 'vitals' }]}
+                    options={[
+                      { label: 'Vitals', value: 'vitals' },
+                      { label: 'Consultation room', value: 'consultation' },
+                      { label: 'Lab', value: 'lab' },
+                      { label: 'Investigation room', value: 'investigation' },
+                      { label: 'Pharmacy', value: 'pharmacy' },
+                    ]}
                     onChange={({ value }: { value: string }) =>
                       setFieldValue('location', value)
                     }

@@ -1,8 +1,12 @@
 import { font, helpers, http } from '@healthcare/utils';
+import { ToastContainer } from 'react-toastify';
 import { SSRProvider } from '@restart/ui/ssr';
 import { SWRConfig } from 'swr';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+
+import PatientProvider from '../contexts/Patient';
+import StoreProvider from '../contexts/Store';
 
 import './styles.scss';
 
@@ -28,7 +32,12 @@ function CustomApp({ Component, pageProps }: AppProps) {
       >
         <SSRProvider>
           <main className={helpers.classNames('app h-full overflow-auto')}>
-            <Component {...pageProps} />
+            <StoreProvider>
+              <PatientProvider>
+                <Component {...pageProps} />
+              </PatientProvider>
+            </StoreProvider>
+            <ToastContainer hideProgressBar newestOnTop />
           </main>
         </SSRProvider>
       </SWRConfig>

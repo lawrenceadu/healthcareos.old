@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Button, Field, Modal } from '@healthcareos/react';
 import { FieldArray, Form, Formik } from 'formik';
+import { Button, Field, Modal } from '@healthcareos/react';
+import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
-import { DeleteIcon, PlusIcon } from '@healthcare/icons';
+import { toast } from 'react-toastify';
 
 export interface InvestigationProps {
   children: (props: { proceed: () => void }) => void;
@@ -42,7 +43,8 @@ export function Investigation({ children }: InvestigationProps) {
             notes: '',
           }}
           onSubmit={(params, { setSubmitting }) => {
-            return;
+            toast.success('Investigation added');
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

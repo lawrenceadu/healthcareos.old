@@ -2,11 +2,18 @@ import { Button, Field } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 // eslint-disable-next-line
 export interface AddProps {}
 
-export function Add({ onHide }: { onHide: () => void }) {
+export function Add({
+  onHide,
+  setTab,
+}: {
+  onHide: () => void;
+  setTab: (key: string) => void;
+}) {
   return (
     <Formik
       validateOnMount
@@ -23,7 +30,8 @@ export function Add({ onHide }: { onHide: () => void }) {
         notes: '',
       }}
       onSubmit={(params, { setSubmitting }) => {
-        return;
+        toast.success('Allergy added');
+        setTab('index');
       }}
     >
       {({ values, isValid, isSubmitting, handleSubmit }) => (

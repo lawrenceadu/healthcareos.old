@@ -4,6 +4,9 @@ import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 
+import { usePatient } from '../../../hooks';
+import { toast } from 'react-toastify';
+
 export interface AdmitProps {
   children: (props: { proceed: () => void }) => void;
 }
@@ -12,13 +15,18 @@ function Admit({ children }: AdmitProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
+
+  /**
+   * hook
+   */
+  const { patient, setPatient } = usePatient();
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
-      <Modal show={state} onHide={() => setState(false)} header="Admit patient">
+      <Modal show={show} onHide={() => setShow(false)} header="Admit patient">
         <Formik
           validateOnMount
           validationSchema={object({
@@ -28,7 +36,9 @@ function Admit({ children }: AdmitProps) {
             notes: '',
           }}
           onSubmit={() => {
-            return;
+            setPatient({ ...patient, is_admitted: true });
+            toast.success('Patient admitted');
+            setShow(false);
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

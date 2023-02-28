@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { boolean, object } from 'yup';
 import { Modal, Button } from '@healthcareos/react';
-import { SaveIcon } from '@healthcare/icons';
+import { DeleteIcon } from '@healthcare/icons';
 import { Formik } from 'formik';
 import { schema } from '@healthcare/utils';
-
-import Form from './Form';
 import { toast } from 'react-toastify';
 
-export interface AddProps {
+import Form from './Form';
+
+export interface EditProps {
   children: (props: { proceed: () => void }) => void;
 }
 
-function Add({ children }: AddProps) {
+function Edit({ children }: EditProps) {
   /**
    * state
    */
@@ -53,16 +53,23 @@ function Add({ children }: AddProps) {
           })}
           initialValues={{
             patient_type: 'outpatient',
-            items: [{ item: '', department: '', quantity: 1, price: 0 }],
+            items: [
+              {
+                item: 'registration',
+                department: 'pharmacy',
+                quantity: 1,
+                price: 13,
+              },
+            ],
             insurance: {
               name: 'Nationwide medical insurance',
               number: '12345678',
-              amount: 0,
+              amount: 13,
             },
-            apply_insurance: false,
+            apply_insurance: true,
           }}
           onSubmit={(params) => {
-            toast.success('Invoice created');
+            toast.error('Invoice has been finalized');
             setShow(false);
           }}
         >
@@ -84,9 +91,9 @@ function Add({ children }: AddProps) {
               >
                 Finalize invoice
               </Button>
-              <Button type="button" className="btn-outline">
-                <SaveIcon strokeWidth={1.5} />
-                <span>Save as draft</span>
+              <Button type="button" className="btn-error-outline">
+                <DeleteIcon />
+                <span>Delete</span>
               </Button>
             </Form>
           )}
@@ -96,4 +103,4 @@ function Add({ children }: AddProps) {
   );
 }
 
-export default Add;
+export default Edit;

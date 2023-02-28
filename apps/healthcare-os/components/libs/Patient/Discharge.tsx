@@ -4,6 +4,9 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
+
+import { usePatient } from '../../../hooks';
 
 export interface DischargeProps {
   children: (props: { proceed: () => void }) => void;
@@ -13,15 +16,20 @@ function Discharge({ children }: DischargeProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
+
+  /**
+   * hook
+   */
+  const { patient, setPatient } = usePatient();
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
       <Modal
-        show={state}
-        onHide={() => setState(false)}
+        show={show}
+        onHide={() => setShow(false)}
         header="Discharge patient"
       >
         <Formik
@@ -39,7 +47,14 @@ function Discharge({ children }: DischargeProps) {
             notes: '',
           }}
           onSubmit={() => {
-            return;
+            setPatient({
+              ...patient,
+              is_admitted: false,
+              is_inpatient: false,
+              in_visitation: false,
+            });
+            toast.success('Patient discharged');
+            setShow(false);
           }}
         >
           {({
