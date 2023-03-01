@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run healthcare-os:serve:development --port=13001",
-    "build": "nx run healthcare-os:build:production"
+    "build": "nx run healthcare-os:build:production",
+    "serve-facility": "nx serve healthcare-os --prod --port=13001"
   },
   "private": true,
   "dependencies": {

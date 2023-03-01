@@ -4,9 +4,9 @@ import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
 import * as Icon from '@healthcare/icons';
 import Head from 'next/head';
+import Link from 'next/link';
 
 import routes from '../../routes';
-import Link from 'next/link';
 
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
   onBack?: (() => void) | boolean;
