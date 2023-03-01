@@ -112,3 +112,7 @@ yarn-error.log
 
 
 apps/healthcare-mobile-e2e/artifacts
+
+# ENV
+.env 
+.env.*
