@@ -16,7 +16,7 @@ export function Consultation() {
         </div>
       ),
     },
-    { label: 'Plan', value: 'Run some tests to confirm this shit' },
+    { label: 'Plan', value: 'Take medicine' },
   ];
 
   return (
