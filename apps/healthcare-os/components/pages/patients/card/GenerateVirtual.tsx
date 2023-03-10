@@ -4,13 +4,15 @@ import { PrintIcon } from '@healthcare/icons';
 import { useRouter } from 'next/router';
 import QRCode from 'react-qr-code';
 
+import { PatientModel } from '../../../../models';
 import routes from '../../../../routes';
 
 export interface GenerateVirtualProps {
+  patient: PatientModel;
   children: ({ proceed }: { proceed: () => void }) => ReactElement;
 }
 
-function GenerateVirtual({ children }: GenerateVirtualProps) {
+function GenerateVirtual({ patient, children }: GenerateVirtualProps) {
   /**
    * state
    */
@@ -41,7 +43,7 @@ function GenerateVirtual({ children }: GenerateVirtualProps) {
             />
 
             <div className="text-center">
-              <p className="mb-4">Jennifer Afua Anderson</p>
+              <p className="mb-4">{patient.name}</p>
               <p>1058-3135-4482</p>
             </div>
           </div>

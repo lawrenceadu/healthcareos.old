@@ -8,14 +8,17 @@ export interface PatientModel {
   first_name: string;
   middle_name: string;
   last_name: string;
-  date_of_birth: string;
-  sex: string;
+  name: string;
+  dob: string;
+  gender: string;
+
   address: Partial<{
     region: string;
     district: string;
     city: string;
     street: string;
   }>;
+  
   language: string;
   marital_status: string;
   phone: string;

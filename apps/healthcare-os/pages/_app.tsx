@@ -9,6 +9,7 @@ import PatientProvider from '../contexts/Patient';
 import StoreProvider from '../contexts/Store';
 
 import './styles.scss';
+import NoSSR from '../components/libs/NoSSR';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -22,25 +23,27 @@ function CustomApp({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
-      <SWRConfig
-        value={{
-          fetcher: (url) => http.get(url).then((response) => response),
-          dedupingInterval: 1000 * 60 * 1,
-          shouldRetryOnError: false,
-          revalidateOnFocus: true,
-        }}
-      >
-        <SSRProvider>
-          <main className={helpers.classNames('app h-full overflow-auto')}>
-            <StoreProvider>
-              <PatientProvider>
-                <Component {...pageProps} />
-              </PatientProvider>
-            </StoreProvider>
-            <ToastContainer hideProgressBar newestOnTop />
-          </main>
-        </SSRProvider>
-      </SWRConfig>
+      <NoSSR>
+        <SWRConfig
+          value={{
+            fetcher: (url) => http.get(url).then((response) => response),
+            dedupingInterval: 1000 * 60 * 1,
+            shouldRetryOnError: false,
+            revalidateOnFocus: true,
+          }}
+        >
+          <SSRProvider>
+            <main className={helpers.classNames('app h-full overflow-auto')}>
+              <StoreProvider>
+                <PatientProvider>
+                  <Component {...pageProps} />
+                </PatientProvider>
+              </StoreProvider>
+              <ToastContainer hideProgressBar newestOnTop />
+            </main>
+          </SSRProvider>
+        </SWRConfig>
+      </NoSSR>
     </>
   );
 }

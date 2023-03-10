@@ -86,7 +86,7 @@ function Index() {
                     key={key}
                     href={{
                       pathname: routes.dashboard.wards.details,
-                      query: { slug: key + 1 },
+                      query: { id: key + 1 },
                     }}
                     className={helpers.classNames(
                       'py-3',

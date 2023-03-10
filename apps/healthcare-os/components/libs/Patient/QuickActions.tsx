@@ -14,9 +14,9 @@ import Vitals from './Vitals';
 import Admit from './Admit';
 
 import { PatientContext } from '../../../contexts/Patient';
+import Discharge from './Discharge';
 import routes from '../../../routes';
 import Move from './Move';
-import Discharge from './Discharge';
 
 export interface QuickActionsProps {
   children?: (props: { proceed: () => void }) => ReactElement;
@@ -118,7 +118,7 @@ const Actions = () => {
           onClick={() =>
             router.push({
               pathname: routes.dashboard.patients.card.activate,
-              query: { slug: id },
+              query: { id },
             })
           }
         >

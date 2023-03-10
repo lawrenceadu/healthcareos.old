@@ -15,6 +15,7 @@ import { default as Detain } from './Patient/Detain';
 import { default as Vitals } from './Patient/Vitals';
 import { default as Admit } from './Patient/Admit';
 import { default as Notes } from './Patient/Notes';
+import { default as Chart } from './Patient/Chart';
 import { default as Edit } from './Patient/Edit';
 import { default as Info } from './Patient/Info';
 import { default as Move } from './Patient/Move';
@@ -39,6 +40,7 @@ export default Object.assign(
     Vitals,
     Admit,
     Notes,
+    Chart,
     Edit,
     Info,
     Move,

@@ -2,15 +2,15 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { Button, Field } from '@healthcareos/react';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import dayjs from 'dayjs';
 
 type ValueProps = {
-  patient_type: string;
   first_name: string;
   middle_name: string;
   last_name: string;
-  date_of_birth: string;
-  ghana_card_number: string;
-  sex: string;
+  dob: string;
+  ghanacard: string;
+  gender: string;
 };
 
 export interface DetailsProps {
@@ -26,25 +26,20 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
         validateOnMount
         enableReinitialize
         validationSchema={object({
-          patient_type: schema.requireString('Type'),
           first_name: schema.requireString('First name'),
           middle_name: schema.requireString('Middle name', false),
           last_name: schema.requireString('Last name'),
-          date_of_birth: schema.requireString('Date of birth'),
-          ghana_card_number: schema.requireGhanaCardNumber(
-            'Card number',
-            false
-          ),
-          sex: schema.requireString('Sex'),
+          dob: schema.requireString('Date of birth'),
+          ghanacard: schema.requireGhanaCardNumber('Card number', false),
+          gender: schema.requireString('Sex'),
         })}
         initialValues={{
-          patient_type: params.patient_type || '',
           first_name: params.first_name || '',
           middle_name: params.middle_name || '',
           last_name: params.last_name || '',
-          date_of_birth: params.date_of_birth || '',
-          ghana_card_number: params.ghana_card_number || '',
-          sex: params.sex || '',
+          dob: params.dob || '',
+          ghanacard: params.ghanacard || '',
+          gender: params.gender || '',
         }}
         onSubmit={onSubmit}
       >
@@ -60,18 +55,6 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
             <h4 className="mb-4">Patient details</h4>
 
             <div className="mb-10">
-              <div className="mb-6">
-                <p className="mb-4">What type of patient is this patient?</p>
-                <div className="flex gap-6">
-                  <Field.Radio name="patient_type" value="outpatient">
-                    Outpatient
-                  </Field.Radio>
-                  <Field.Radio name="patient_type" value="inpatient">
-                    Inpatient
-                  </Field.Radio>
-                </div>
-              </div>
-
               <Field.Group name="first_name" label="First name">
                 <Field.Input
                   name="first_name"
@@ -96,22 +79,23 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
                 />
               </Field.Group>
 
-              <Field.Group name="date_of_birth" label="Date of birth">
+              <Field.Group name="dob" label="Date of birth">
                 <Field.Date
-                  name="date_of_birth"
-                  value={values.date_of_birth}
+                  name="dob"
+                  value={values.dob}
                   placeholder="01 -  jan - 2023"
                   options={{
                     dateFormat: 'd - M - Y',
+                    maxDate: dayjs().toDate(),
                   }}
                   {...{ setFieldValue, setFieldTouched }}
                 />
               </Field.Group>
 
-              <Field.Group name="ghana_card_number" label="Ghana card number">
+              <Field.Group name="ghanacard" label="Ghana card number">
                 <Field.ID
-                  name="ghana_card_number"
-                  value={values.ghana_card_number}
+                  name="ghanacard"
+                  value={values.ghanacard}
                   {...{ setFieldValue, setFieldTouched }}
                 />
               </Field.Group>
@@ -119,10 +103,10 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
               <div>
                 <p className="mb-4">Sex</p>
                 <div className="flex gap-6">
-                  <Field.Radio name="sex" value="male">
+                  <Field.Radio name="gender" value="male">
                     Male
                   </Field.Radio>
-                  <Field.Radio name="sex" value="female">
+                  <Field.Radio name="gender" value="female">
                     Female
                   </Field.Radio>
                 </div>

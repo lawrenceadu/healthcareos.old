@@ -4,6 +4,7 @@ const routes = {
     otp: '/otp',
     forgotten: '/forgotten-password',
     reset: '/reset-password',
+    facility: '/facility',
   },
 
   dashboard: {
@@ -12,7 +13,7 @@ const routes = {
       new: '/patients/new',
       search: '/patients/search',
       card: {
-        activate: '/patients/card/activate/[slug]',
+        activate: '/patients/card/activate/[id]',
       },
       details: {
         index: '/patients/[id]/details/[tab]',
@@ -28,7 +29,7 @@ const routes = {
     },
     wards: {
       index: '/wards',
-      details: '/wards/details/[slug]',
+      details: '/wards/details/[id]',
     },
     settings: {
       index: '/settings/[tab]',

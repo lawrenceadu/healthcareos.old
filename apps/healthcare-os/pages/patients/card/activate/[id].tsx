@@ -3,7 +3,9 @@ import { helpers, schema, useSession } from '@healthcare/utils';
 import { useRouter } from 'next/router';
 import { Formik } from 'formik';
 import { object } from 'yup';
+import useSWR from 'swr';
 
+import { PatientModel } from '../../../../models';
 import GenerateVirtual from '../../../../components/pages/patients/card/GenerateVirtual';
 import ScanCard from '../../../../components/libs/ScanCard';
 import Layout from '../../../../components/libs/Layout';
@@ -20,6 +22,16 @@ export default function Index() {
    * session
    */
   const [form, setForm] = useSession<any>('onboarding_form');
+
+  /**
+   * api
+   */
+  const { data } = useSWR<{ patient: PatientModel }>(`/patient/${patientId}`);
+
+  /**
+   * variables
+   */
+  const patient = data?.patient;
 
   /**
    * function
@@ -44,11 +56,8 @@ export default function Index() {
         router.push(routes.dashboard.patients.new);
       } else {
         router.push({
-          pathname:
-            routes.dashboard.patients[
-              form?.patient_type === 'inpatient' ? 'in' : 'out'
-            ].index,
-          query: { slug: patientId },
+          pathname: routes.dashboard.patients.details.index,
+          query: { id: patientId, tab: 'history' },
         });
       }
     });
@@ -116,7 +125,7 @@ export default function Index() {
           to generate a virtual card.
         </p>
 
-        <GenerateVirtual>
+        <GenerateVirtual patient={patient}>
           {({ proceed }) => (
             <Button
               onClick={() => proceed()}

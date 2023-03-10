@@ -1,13 +1,16 @@
-import { schema } from '@healthcare/utils';
-import { Button, Field } from '@healthcareos/react';
+import { useState } from 'react';
 import { Form, Formik, FormikHelpers } from 'formik';
+import { Button, Field } from '@healthcareos/react';
+import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+
+import { useDistricts, useRegions } from '../../../hooks';
 
 type ValueProps = {
   region: string;
   district: string;
   city: string;
-  street: string;
+  address: string;
 };
 
 export interface AddressProps {
@@ -17,6 +20,17 @@ export interface AddressProps {
 }
 
 export function Address({ button, params = {}, onSubmit }: AddressProps) {
+  /**
+   * state
+   */
+  const [regionId, setRegionId] = useState<string>(params?.region);
+
+  /**
+   * hooks
+   */
+  const regions = useRegions();
+  const districts = useDistricts(regionId);
+
   return (
     <div className="mx-auto max-w-[528px] w-full">
       <Formik
@@ -26,13 +40,13 @@ export function Address({ button, params = {}, onSubmit }: AddressProps) {
           region: schema.requireString('Region'),
           district: schema.requireString('District'),
           city: schema.requireString('City'),
-          street: schema.requireString('Street'),
+          address: schema.requireString('Street'),
         })}
         initialValues={{
           region: params.region || '',
           district: params.district || '',
           city: params.city || '',
-          street: params.street || '',
+          address: params.address || '',
         }}
         onSubmit={onSubmit}
       >
@@ -53,12 +67,15 @@ export function Address({ button, params = {}, onSubmit }: AddressProps) {
                   name="region"
                   value={values.region}
                   placeholder="Select region"
-                  options={[
-                    { label: 'Greater Accra', value: 'greater_accres' },
-                  ]}
-                  onChange={({ value }: { value }) =>
-                    setFieldValue('region', value)
-                  }
+                  options={regions?.map((i) => ({
+                    label: i.name,
+                    value: i.id,
+                  }))}
+                  onChange={({ value }: { value }) => {
+                    setFieldValue('region', value);
+                    setFieldValue('district', '');
+                    setRegionId(value);
+                  }}
                 />
               </Field.Group>
 
@@ -67,7 +84,10 @@ export function Address({ button, params = {}, onSubmit }: AddressProps) {
                   name="district"
                   value={values.district}
                   placeholder="Select district"
-                  options={[{ label: 'East La', value: 'east_la' }]}
+                  options={districts?.map((i) => ({
+                    label: i.name,
+                    value: i.id,
+                  }))}
                   onChange={({ value }: { value }) =>
                     setFieldValue('district', value)
                   }
@@ -75,19 +95,15 @@ export function Address({ button, params = {}, onSubmit }: AddressProps) {
               </Field.Group>
 
               <Field.Group name="city" label="City">
-                <Field.Select
+                <Field.Input
                   name="city"
                   value={values.city}
                   placeholder="Select city"
-                  options={[{ label: 'Tseaddo', value: 'tseaddo' }]}
-                  onChange={({ value }: { value }) =>
-                    setFieldValue('city', value)
-                  }
                 />
               </Field.Group>
 
-              <Field.Group name="street" label="Street/Landmark">
-                <Field.Input name="street" value={values.street} />
+              <Field.Group name="address" label="Street/Landmark">
+                <Field.Input name="address" value={values.address} />
               </Field.Group>
             </div>
 
