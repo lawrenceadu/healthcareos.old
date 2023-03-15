@@ -1,11 +1,13 @@
-import React, { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Button, Confirm, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import dayjs from 'dayjs';
 
-import { PatientContext } from '../../../contexts/Patient';
+import { useLocations, usePatient } from '../../../hooks';
+import { startVisitationService } from '../../../services/patient';
+import { toast } from 'react-toastify';
 
 export interface VisitationProps {
   children: (props: { proceed: () => void }) => void;
@@ -18,14 +20,15 @@ function Visitation({ children }: VisitationProps) {
   const [show, setShow] = useState(false);
 
   /**
-   * context
+   * hook
    */
-  const { patient, setPatient } = useContext(PatientContext);
+  const { patient, mutate } = usePatient();
+  const locations = useLocations();
 
   /**
    * variable
    */
-  const end = patient.in_visitation;
+  const end = false;
 
   /**
    * function
@@ -43,12 +46,7 @@ function Visitation({ children }: VisitationProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        setPatient({
-          ...patient,
-          is_admitted: false,
-          is_inpatient: false,
-          in_visitation: false,
-        });
+        console.log('hi');
       }
     });
 
@@ -69,14 +67,15 @@ function Visitation({ children }: VisitationProps) {
             location: schema.requireString('Location'),
           })}
           initialValues={{ location: '' }}
-          onSubmit={({ location }, { setSubmitting }) => {
-            setPatient({
-              ...patient,
-              in_visitation: true,
-              queue: { location, time: dayjs().toISOString() },
-            });
-
-            setShow(false);
+          onSubmit={({ location }, { setSubmitting, setErrors }) => {
+            startVisitationService({ location, patient: patient.id })
+              .then(() => {
+                mutate();
+                toast.success('Visitation started');
+                setShow(false);
+              })
+              .catch(() => setErrors({}))
+              .finally(() => setSubmitting(false));
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
@@ -90,13 +89,10 @@ function Visitation({ children }: VisitationProps) {
                     name="location"
                     value={values.location}
                     placeholder="Select location"
-                    options={[
-                      { label: 'Vitals', value: 'vitals' },
-                      { label: 'Consultation room', value: 'consultation' },
-                      { label: 'Lab', value: 'lab' },
-                      { label: 'Investigation room', value: 'investigation' },
-                      { label: 'Pharmacy', value: 'pharmacy' },
-                    ]}
+                    options={locations?.map((i) => ({
+                      label: i.name,
+                      value: i.id,
+                    }))}
                     onChange={({ value }: { value: string }) =>
                       setFieldValue('location', value)
                     }

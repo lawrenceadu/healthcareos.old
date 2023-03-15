@@ -7,9 +7,9 @@ import Head from 'next/head';
 
 import PatientProvider from '../contexts/Patient';
 import StoreProvider from '../contexts/Store';
+import NoSSR from '../components/libs/NoSSR';
 
 import './styles.scss';
-import NoSSR from '../components/libs/NoSSR';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -27,7 +27,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <SWRConfig
           value={{
             fetcher: (url) => http.get(url).then((response) => response),
-            dedupingInterval: 1000 * 60 * 1,
+            // dedupingInterval: 1000 * 60 * 1,
             shouldRetryOnError: false,
             revalidateOnFocus: true,
           }}

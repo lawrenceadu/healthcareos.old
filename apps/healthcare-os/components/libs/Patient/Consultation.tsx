@@ -6,15 +6,32 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
+import { usePatient } from '../../../hooks';
+import * as api from '../../../services/patient';
+import SearchSelect from '../SearchSelect';
+
+type ParamsProps = {
+  history_examination: string;
+  diagnosis: { label: string; value: string }[];
+  plan: string;
+  id: string;
+};
+
 export interface ConsultationProps {
+  params?: ParamsProps;
   children: (props: { proceed: () => void }) => void;
 }
 
-export function Consultation({ children }: ConsultationProps) {
+export function Consultation({ params, children }: ConsultationProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * hooks
+   */
+  const { patient, updateHistory } = usePatient();
 
   return (
     <>
@@ -23,36 +40,77 @@ export function Consultation({ children }: ConsultationProps) {
       <Modal
         show={show}
         onHide={() => setShow(false)}
-        header="Add consultation"
+        header={params ? 'Update consultation' : 'Add consultation'}
       >
         <Formik
           validateOnMount
+          enableReinitialize
           validationSchema={object({
-            history: schema.requireString('History and examination'),
-            diagnosis: schema
-              .requireArray('Diagnosis')
-              .of(schema.requireString('Diagnosis')),
+            history_examination: schema.requireString(
+              'History and examination'
+            ),
+            diagnosis: schema.requireArray('Diagnosis').of(
+              object().shape({
+                label: schema.requireString('Label'),
+                value: schema.requireString('Value'),
+              })
+            ),
             plan: schema.requireString('Plan'),
           })}
           initialValues={{
-            plan: '',
-            history: '',
-            diagnosis: [''] as string[],
+            plan: params?.plan || '',
+            history_examination: params?.history_examination,
+            diagnosis: params?.diagnosis || [{ label: '', value: '' }],
           }}
-          onSubmit={() => {
-            toast.success('Consultation added');
-            setShow(false);
+          onSubmit={(data, { setSubmitting, setErrors }) => {
+            // cleanup data
+            const formattedData = {
+              ...data,
+              diagnosis: data.diagnosis.map((i) => i.value),
+            };
+
+            // for new consultation
+            if (!params) {
+              api
+                .createConsultationService({
+                  ...formattedData,
+                  patient: patient.id,
+                })
+                .then(() => {
+                  toast.success('Consultation added');
+                  updateHistory();
+                  setShow(false);
+                })
+                .catch(() => null)
+                .finally(() => setSubmitting(false));
+            }
+
+            // update consultation
+            if (params) {
+              api
+                .updateConsultationService({ ...formattedData }, params.id)
+                .then(() => {
+                  toast.success('Consultation updated');
+                  updateHistory();
+                  setShow(false);
+                })
+                .catch(() => null)
+                .finally(() => setSubmitting(false));
+            }
           }}
         >
-          {({ values, isValid, isSubmitting, handleSubmit }) => (
+          {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
             <Form>
               <div className="p-6">
-                <Field.Group name="history" label="History and Examination">
+                <Field.Group
+                  name="history_examination"
+                  label="History and Examination"
+                >
                   <Field.Input
                     as="textarea"
-                    name="history"
                     className="py-4"
-                    value={values.history}
+                    name="history_examination"
+                    value={values.history_examination}
                   />
                 </Field.Group>
 
@@ -68,9 +126,16 @@ export function Consultation({ children }: ConsultationProps) {
                               name={`diagnosis.${key}`}
                               wrapperClassName="!mb-0"
                             >
-                              <Field.Input
+                              <SearchSelect.Diagnosis
                                 value={diagnosis}
-                                name={`diagnosis.${key}`}
+                                onChange={(option) => {
+                                  if (
+                                    !values.diagnosis
+                                      .map((i) => i.value)
+                                      .includes(option.value)
+                                  )
+                                    setFieldValue(`diagnosis.${key}`, option);
+                                }}
                               />
                               {key !== 0 && (
                                 <Button
@@ -109,7 +174,11 @@ export function Consultation({ children }: ConsultationProps) {
               </div>
 
               <div className="px-6 py-3 flex gap-6 justify-end border-t border-gray-200">
-                <Button className="btn-light" onClick={() => setShow(false)}>
+                <Button
+                  type="button"
+                  className="btn-light"
+                  onClick={() => setShow(false)}
+                >
                   Cancel
                 </Button>
                 <Button
@@ -119,7 +188,7 @@ export function Consultation({ children }: ConsultationProps) {
                   onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
-                  Add consultation
+                  {params ? 'Update consultation' : 'Add consultation'}
                 </Button>
               </div>
             </Form>

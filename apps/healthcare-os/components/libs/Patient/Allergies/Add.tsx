@@ -4,6 +4,9 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
+import { addAllergyService } from '../../../../services/patient';
+import { usePatient } from '../../../../hooks';
+
 // eslint-disable-next-line
 export interface AddProps {}
 
@@ -14,24 +17,35 @@ export function Add({
   onHide: () => void;
   setTab: (key: string) => void;
 }) {
+  /**
+   * hook
+   */
+  const { patient, updateHistory } = usePatient();
+
   return (
     <Formik
       validateOnMount
       validationSchema={object({
         substance: schema.requireString('Substance'),
-        severity: schema.requireString('Result'),
+        severity_of_reaction: schema.requireString('Result'),
         symptoms: schema.requireString('Symptoms'),
         notes: schema.requireString('Notes'),
       })}
       initialValues={{
         substance: '',
-        severity: '',
+        severity_of_reaction: '',
         symptoms: '',
         notes: '',
       }}
-      onSubmit={(params, { setSubmitting }) => {
-        toast.success('Allergy added');
-        setTab('index');
+      onSubmit={(params, { setSubmitting, setErrors }) => {
+        addAllergyService({ ...params, patient: patient.id })
+          .then(() => {
+            toast.success('Allergy added');
+            updateHistory();
+            setTab('index');
+          })
+          .catch((error) => setErrors(error?.fields || {}))
+          .finally(() => setSubmitting(false));
       }}
     >
       {({ values, isValid, isSubmitting, handleSubmit }) => (
@@ -44,13 +58,13 @@ export function Add({
             <div className="mb-6">
               <p className="mb-4">Severity of reaction</p>
               <div className="flex gap-6">
-                <Field.Radio name="severity" value="mild">
+                <Field.Radio name="severity_of_reaction" value="mild">
                   Mild
                 </Field.Radio>
-                <Field.Radio name="severity" value="moderate">
+                <Field.Radio name="severity_of_reaction" value="moderate">
                   Moderate
                 </Field.Radio>
-                <Field.Radio name="severity" value="severe">
+                <Field.Radio name="severity_of_reaction" value="severe">
                   Severe
                 </Field.Radio>
               </div>
@@ -71,7 +85,11 @@ export function Add({
           </div>
 
           <div className="flex gap-6 justify-end py-3 px-6 border-t border-gray-200">
-            <Button className="btn-light" onClick={() => onHide()}>
+            <Button
+              type="button"
+              className="btn-light"
+              onClick={() => onHide()}
+            >
               Cancel
             </Button>
             <Button

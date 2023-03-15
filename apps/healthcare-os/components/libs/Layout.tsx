@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
 import * as Icon from '@healthcare/icons';
+import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import { useStore } from '../../hooks';
 import routes from '../../routes';
-import Image from 'next/image';
 
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
   onBack?: (() => void) | boolean;
@@ -51,6 +51,16 @@ export function Layout({
       name: 'Inventory',
       icon: Icon.PackageIcon,
       link: routes.dashboard.inventory.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Pharmacy',
+      icon: Icon.DrugIcon,
+      link: routes.dashboard.pharmacy.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Investigations',
+      icon: Icon.MicroscopeIcon,
+      link: routes.dashboard.investigations.index,
     },
     {
       name: 'Queuing',

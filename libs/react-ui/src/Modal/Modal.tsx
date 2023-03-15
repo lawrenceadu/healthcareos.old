@@ -46,6 +46,8 @@ export function Modal({
    * function
    */
   const handleClick = (e: any) => {
+    e.stopPropagation();
+
     if (backdrop === 'static') {
       return;
     }
@@ -95,7 +97,7 @@ export function Modal({
         <div
           className={helpers.classNames(
             'w-full rounded-lg mx-4',
-            'shadow-3xl bg-white relative'
+            'shadow-3xl bg-white relative overflow-hidden'
           )}
         >
           {header && (

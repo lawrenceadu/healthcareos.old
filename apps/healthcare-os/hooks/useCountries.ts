@@ -1,12 +1,14 @@
-import useSWR from 'swr';
+import useSWR from 'swr/immutable';
+
+import { CountryModel } from '../models';
 
 function useCountries() {
   /**
    * api
    */
   const { data } = useSWR<{
-    countries: { id: string; code: string; name: string }[];
-  }>(`/location/country`);
+    countries: CountryModel[];
+  }>(`/geolocation/country`);
 
   return data?.countries || [];
 }

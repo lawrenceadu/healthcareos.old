@@ -20,15 +20,14 @@ function Details() {
    * hooks
    */
   const width = useWidth();
-  const { data } = usePatient(id as string);
+  const { patient } = usePatient();
 
   /**
    * variables
    */
-  const patient = data?.patient;
   const tab = paths && paths[0];
   const tabs = [
-    ...(patient?.is_inpatient
+    ...(['admitted', 'detained'].includes(patient?.status)
       ? [
           { name: 'Overview', slug: 'overview', component: Patient.Overview },
           { name: 'Notes', slug: 'notes', component: Patient.Notes },
@@ -43,7 +42,7 @@ function Details() {
         ]
       : []),
 
-    ...(!patient?.is_inpatient
+    ...(!['admitted', 'detained'].includes(patient?.status)
       ? [
           { name: 'History', slug: 'history', component: Patient.History },
           {
@@ -69,7 +68,7 @@ function Details() {
       )}
       topNav={<Patient.Dropdown />}
     >
-      {data && (
+      {patient && (
         <>
           {isMobile && (
             <Patient.Info

@@ -1,27 +1,42 @@
-import { HtmlHTMLAttributes, useState } from 'react';
+import { HtmlHTMLAttributes } from 'react';
 import { Accordion, Button, Confirm } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 
-// eslint-disable-next-line
-export interface AllergyProps extends HtmlHTMLAttributes<HTMLDivElement> {}
+import { deleteAllergyService } from '../../../../services/patient';
+import { AllergyModel } from '../../../../models';
+import { usePatient } from '../../../../hooks';
 
-export function Allergy({ className, ...props }: AllergyProps) {
-  /**
-   * state
-   */
-  const [toggle, setToggle] = useState(false);
+export interface AllergyProps extends HtmlHTMLAttributes<HTMLDivElement> {
+  allergy: AllergyModel;
+  mutate: () => void;
+}
 
+export function Allergy({
+  mutate,
+  allergy,
+  className,
+  ...props
+}: AllergyProps) {
   /**
    * variables
    */
   const items = [
-    { label: 'Severity of reaction', value: 'Moderate' },
-    { label: 'Symptoms', value: 'Swollen lips and face.' },
-    { label: 'Notes', value: 'Stay away from any food with nuts in it.' },
-    { label: 'Date added', value: '12/01/2023' },
+    { label: 'Severity of reaction', value: allergy.severity_of_reaction },
+    { label: 'Symptoms', value: allergy.symptoms },
+    { label: 'Notes', value: allergy.notes },
+    {
+      label: 'Date added',
+      value: dayjs(allergy.created_at).format('DD/MM/YYYY'),
+    },
   ];
+
+  /**
+   * hook
+   */
+  const { patient, updateHistory } = usePatient();
 
   /**
    * functions
@@ -31,7 +46,7 @@ export function Allergy({ className, ...props }: AllergyProps) {
       header: 'Delete Allergy',
       message: (
         <>
-          You are about to delete the <b>[insert substance name]</b>. Once you
+          You are about to delete the <b>{allergy.substance}</b>. Once you
           delete it you will lose it forever.
         </>
       ),
@@ -43,13 +58,17 @@ export function Allergy({ className, ...props }: AllergyProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        toast.success('Allergy deleted successfully');
+        deleteAllergyService(allergy.id).then(() => {
+          toast.success('Allergy deleted successfully');
+          updateHistory();
+          mutate();
+        });
       }
     });
 
   return (
     <Accordion.Item
-      header={<p className="text-lg font-bold">Peanuts</p>}
+      header={<p className="text-lg font-bold">{allergy.substance}</p>}
       actions={
         <Button
           aria-label="Delete"

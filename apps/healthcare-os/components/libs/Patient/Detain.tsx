@@ -21,7 +21,7 @@ function Detain({ children }: DetainProps) {
   /**
    * context
    */
-  const { patient, setPatient } = usePatient();
+  const { patient } = usePatient();
 
   return (
     <>
@@ -45,7 +45,6 @@ function Detain({ children }: DetainProps) {
             notes: '',
           }}
           onSubmit={() => {
-            setPatient({ ...patient, is_inpatient: true, in_visitation: true });
             toast.success('Patient detained');
             setShow(false);
           }}

@@ -103,6 +103,12 @@
       @apply bg-white border-red-600 text-red-600 #{!important};
     }
   }
+
+  .modal {
+    &-footer {
+      @apply flex gap-6 justify-end items-center py-3 px-6 border-t border-gray-200 sticky bottom-0 bg-white;
+    }
+  }
 }
 
 @layer utilities {

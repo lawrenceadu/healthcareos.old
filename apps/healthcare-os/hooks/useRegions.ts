@@ -1,5 +1,6 @@
-import useSWR from 'swr';
+import useSWR from 'swr/immutable';
 
+import { RegionModel } from '../models';
 import useStore from './useStore';
 
 function useRegions() {
@@ -8,8 +9,8 @@ function useRegions() {
    */
   const { store } = useStore();
 
-  const { data } = useSWR<{ regions: { id: string; name: string }[] }>(
-    `/location/region?country=${store.facility.country.id}`
+  const { data } = useSWR<{ regions: RegionModel[] }>(
+    `/geolocation/region?country=${store.facility.country.id}`
   );
 
   return data?.regions || [];

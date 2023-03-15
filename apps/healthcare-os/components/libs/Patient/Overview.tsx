@@ -12,7 +12,7 @@ function Overview() {
   /**
    * variables
    */
-  const { patient, setPatient } = usePatient();
+  const { patient } = usePatient();
 
   return (
     <>
@@ -41,30 +41,28 @@ function Overview() {
           </div>
         </Accordion.Item>
 
-        {patient.is_admitted && (
-          <Accordion.Item
-            defaultOpen
-            header={<h5 className="text-xl font-bold">Admission</h5>}
-          >
-            <div className="grid gap-4">
-              {[
-                { label: 'Admission diagnosis', value: 'Diarrhoea' },
-                { label: 'Admitted by', value: 'Doctor Fred Osei' },
-                { label: 'Admission date', value: '01 -  jan - 2023' },
-                {
-                  label: 'Notes',
-                  value:
-                    'This patient is being detain so we can conduct further investigations. ',
-                },
-              ].map((item, key) => (
-                <div key={key} className="font-medium">
-                  <small className="block text-muted">{item.label}</small>
-                  <p>{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </Accordion.Item>
-        )}
+        <Accordion.Item
+          defaultOpen
+          header={<h5 className="text-xl font-bold">Admission</h5>}
+        >
+          <div className="grid gap-4">
+            {[
+              { label: 'Admission diagnosis', value: 'Diarrhoea' },
+              { label: 'Admitted by', value: 'Doctor Fred Osei' },
+              { label: 'Admission date', value: '01 -  jan - 2023' },
+              {
+                label: 'Notes',
+                value:
+                  'This patient is being detain so we can conduct further investigations. ',
+              },
+            ].map((item, key) => (
+              <div key={key} className="font-medium">
+                <small className="block text-muted">{item.label}</small>
+                <p>{item.value}</p>
+              </div>
+            ))}
+          </div>
+        </Accordion.Item>
       </Accordion>
     </>
   );

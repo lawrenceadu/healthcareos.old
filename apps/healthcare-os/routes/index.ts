@@ -24,6 +24,12 @@ const routes = {
     inventory: {
       index: '/inventory/[tab]',
     },
+    pharmacy: {
+      index: '/pharmacy/[tab]',
+    },
+    investigations: {
+      index: '/investigations',
+    },
     queuing: {
       index: '/queuing',
     },

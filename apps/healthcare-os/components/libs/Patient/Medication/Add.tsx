@@ -5,6 +5,8 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
+import { MedicineModel } from '../../../../models';
+import SearchSelect from '../../SearchSelect';
 import Select from '../../Select';
 
 function Add({
@@ -18,7 +20,11 @@ function Add({
    * variables
    */
   const initialValues = {
-    drug: '',
+    drug: { label: '', value: '', medicine: {} } as {
+      label: string;
+      value: string;
+      medicine: MedicineModel;
+    },
     dose: '',
     dose_unit: 'ml',
     times: '',
@@ -33,7 +39,10 @@ function Add({
       validationSchema={object({
         prescriptions: schema.requireArray('Prescriptions').of(
           object().shape({
-            drug: schema.requireString('Drug'),
+            drug: object().shape({
+              label: schema.requireString('Drug'),
+              value: schema.requireString('Drug'),
+            }),
             dose: schema.requireNumber('Dose'),
             dose_unit: schema.requireString('Unit'),
             times: schema.requireNumber('Times'),
@@ -69,11 +78,13 @@ function Add({
                         <Field.Group
                           label="Drug"
                           wrapperClassName="!mb-0"
-                          name={`prescriptions.${key}.drug`}
+                          name={`prescriptions.${key}.drug.label`}
                         >
-                          <Field.Input
+                          <SearchSelect.Medicines
                             value={pres.drug}
-                            name={`prescriptions.${key}.drug`}
+                            onChange={(value) =>
+                              setFieldValue(`prescriptions.${key}.drug`, value)
+                            }
                           />
                         </Field.Group>
 

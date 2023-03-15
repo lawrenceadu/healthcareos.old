@@ -3,9 +3,9 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
+import { toast } from 'react-toastify';
 
 import { usePatient } from '../../../hooks';
-import { toast } from 'react-toastify';
 
 export interface AdmitProps {
   children: (props: { proceed: () => void }) => void;
@@ -20,7 +20,7 @@ function Admit({ children }: AdmitProps) {
   /**
    * hook
    */
-  const { patient, setPatient } = usePatient();
+  const { patient } = usePatient();
 
   return (
     <>
@@ -36,7 +36,6 @@ function Admit({ children }: AdmitProps) {
             notes: '',
           }}
           onSubmit={() => {
-            setPatient({ ...patient, is_admitted: true });
             toast.success('Patient admitted');
             setShow(false);
           }}

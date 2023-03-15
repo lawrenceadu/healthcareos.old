@@ -46,7 +46,7 @@ const Dialog = ({ show, proceed, message, header, buttons }: ConfirmProps) => {
             {buttons?.cancel?.value || 'Cancel'}
           </Button>
           <Button
-            className="btn-primary"
+            className="btn-error"
             onClick={() => proceed('true')}
             {...buttons?.proceed}
           >

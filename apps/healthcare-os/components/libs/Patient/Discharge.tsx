@@ -21,7 +21,7 @@ function Discharge({ children }: DischargeProps) {
   /**
    * hook
    */
-  const { patient, setPatient } = usePatient();
+  const { patient } = usePatient();
 
   return (
     <>
@@ -47,12 +47,6 @@ function Discharge({ children }: DischargeProps) {
             notes: '',
           }}
           onSubmit={() => {
-            setPatient({
-              ...patient,
-              is_admitted: false,
-              is_inpatient: false,
-              in_visitation: false,
-            });
             toast.success('Patient discharged');
             setShow(false);
           }}

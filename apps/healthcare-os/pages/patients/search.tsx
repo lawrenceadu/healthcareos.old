@@ -49,6 +49,15 @@ function Search() {
             {isLoading && <Skeleton.Table count={7} />}
             {data && (
               <>
+                {!patients.length && (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="text-center">
+                        <p>No patient matches search parameters</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 {patients.map((pt, key) => (
                   <tr
                     key={key}
@@ -70,7 +79,7 @@ function Search() {
                         ` (${dayjs().diff(pt.dob, 'year')})`}
                     </td>
                     <td>{pt.phone || '--'}</td>
-                    <td>{pt.id_number || '--'}</td>
+                    <td>{pt.ghanacard || '--'}</td>
                   </tr>
                 ))}
               </>

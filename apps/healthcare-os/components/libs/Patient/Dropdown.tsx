@@ -1,25 +1,36 @@
-import { useContext } from 'react';
 import { Dropdown as BaseDropdown } from '@healthcareos/react';
 import { ChevronDownIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
+import useSWR from 'swr/immutable';
 
-import { PatientContext } from '../../../contexts/Patient';
+import { TriageModel } from '../../../models';
+import { usePatient } from '../../../hooks';
 
 function Dropdown() {
   /**
    * context
    */
-  const { patient, setPatient } = useContext(PatientContext);
+  const { patient } = usePatient();
+
+  /**
+   * api
+   */
+  const { data } = useSWR<{ triages: TriageModel[] }>(`/triage`);
+
+  /**
+   * variables
+   */
+  const triages = data?.triages || [];
 
   return (
     <>
       {patient && (
         <BaseDropdown className="ml-auto">
           <BaseDropdown.Toggle className="flex gap-2 items-center">
-            {patient.severity && (
+            {patient.triage && (
               <span
                 className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: patient.severity.color }}
+                style={{ backgroundColor: patient.triage.colour }}
               />
             )}
             <div
@@ -37,7 +48,7 @@ function Dropdown() {
             {patient.queue && (
               <div className="text-left truncate mr-3">
                 <p className="text-sm font-semibold truncate">
-                  {patient.queue.location}
+                  {patient.queue.name}
                 </p>
                 <p className="text-xs text-gray-600 truncate">
                   Position in queue
@@ -50,27 +61,20 @@ function Dropdown() {
             </span>
           </BaseDropdown.Toggle>
           <BaseDropdown.Menu>
-            {[
-              { label: 'Critical', value: 'critical', color: '#DC2626' },
-              { label: 'Mild', value: 'mild', color: '#d97706' },
-              { label: 'None', value: 'none', color: '#16a34a' },
-            ].map((i, key) => (
+            {triages.map((i, key) => (
               <BaseDropdown.Item
                 key={key}
                 className="gap-2"
-                active={i.label === patient.severity?.name}
-                onClick={() =>
-                  setPatient({
-                    ...patient,
-                    severity: { name: i.label, color: i.color },
-                  })
-                }
+                active={i.id === patient.triage?.id}
+                onClick={() => {
+                  return;
+                }}
               >
                 <span
                   className="w-2 h-2 rounded-full bg-red-600"
-                  style={{ backgroundColor: i.color }}
+                  style={{ backgroundColor: i.colour }}
                 />
-                <span className="font-medium">{i.label}</span>
+                <span className="font-medium">{i.name}</span>
               </BaseDropdown.Item>
             ))}
           </BaseDropdown.Menu>

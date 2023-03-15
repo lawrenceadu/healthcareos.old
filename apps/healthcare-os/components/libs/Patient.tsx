@@ -1,4 +1,4 @@
-import { default as Investigation } from './Patient/Investigation';
+import { default as Investigations } from './Patient/Investigations';
 import { default as Consultation } from './Patient/Consultation';
 import { default as QuickActions } from './Patient/QuickActions';
 import { default as Medication } from './Patient/Medication';
@@ -23,7 +23,7 @@ import { default as Move } from './Patient/Move';
 export default Object.assign(
   {},
   {
-    Investigation,
+    Investigations,
     Consultation,
     QuickActions,
     Medication,

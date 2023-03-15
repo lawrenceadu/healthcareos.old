@@ -4,7 +4,7 @@ import { helpers } from '@healthcare/utils';
 import * as Icon from '@healthcare/icons';
 import styled from 'styled-components';
 
-import Investigation from './Investigation';
+import Investigations from './Investigations';
 import Consultation from './Consultation';
 import Medication from './Medication';
 import Visitation from './Visitation';
@@ -82,9 +82,9 @@ const Actions = () => {
   /**
    * variables
    */
-  const inVisistation = patient.in_visitation;
-  const isInpatient = patient.is_inpatient;
-  const isAdmitted = patient.is_admitted;
+  const inVisistation = patient.status === 'visiting';
+  const isInpatient = patient.status === 'detained';
+  const isAdmitted = patient.status === 'admitted';
 
   return (
     <div className="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -157,14 +157,14 @@ const Actions = () => {
       )}
 
       {inVisistation && (
-        <Investigation>
+        <Investigations>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
               <Icon.StethoscopeIcon />
               <p>Investigation</p>
             </StyledCard>
           )}
-        </Investigation>
+        </Investigations>
       )}
 
       {inVisistation && (

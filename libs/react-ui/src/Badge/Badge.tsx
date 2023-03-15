@@ -15,7 +15,7 @@ export function Badge({ variant, children }: BadgeProps) {
     <div
       className={helpers.classNames(
         'py-1 px-2 rounded-[4px] inline-flex items-center gap-1 text-xs font-medium',
-        ['success', 'fulfilled', 'active'].includes(variant) &&
+        ['success', 'fulfilled', 'active', 'submitted'].includes(variant) &&
           'text-green-500 bg-green-50',
         ['rejected', 'failed', 'suspended'].includes(variant) &&
           'text-red-600 bg-red-50',
