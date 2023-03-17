@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { useRouter } from 'next/router';
 import { helpers } from '@healthcare/utils';
 import * as Icon from '@healthcare/icons';
@@ -9,14 +9,14 @@ import Consultation from './Consultation';
 import Medication from './Medication';
 import Visitation from './Visitation';
 import Allergies from './Allergies';
+import Discharge from './Discharge';
 import Detain from './Detain';
 import Vitals from './Vitals';
 import Admit from './Admit';
-
-import { PatientContext } from '../../../contexts/Patient';
-import Discharge from './Discharge';
-import routes from '../../../routes';
 import Move from './Move';
+
+import { usePatient } from '../../../hooks';
+import routes from '../../../routes';
 
 export interface QuickActionsProps {
   children?: (props: { proceed: () => void }) => ReactElement;
@@ -77,13 +77,15 @@ const Actions = () => {
   /**
    * context
    */
-  const { patient } = useContext(PatientContext);
+  const { patient } = usePatient();
 
   /**
    * variables
    */
-  const inVisistation = patient.status === 'visiting';
-  const isInpatient = patient.status === 'detained';
+  const inVisistation = ['visiting', 'detained', 'admitted'].includes(
+    patient.status
+  );
+  const isDetained = patient.status === 'detained';
   const isAdmitted = patient.status === 'admitted';
 
   return (
@@ -112,7 +114,7 @@ const Actions = () => {
         <p>Edit profile</p>
       </StyledCard>
 
-      {!inVisistation && (
+      {/* {!inVisistation && (
         <StyledCard
           role="button"
           onClick={() =>
@@ -125,7 +127,7 @@ const Actions = () => {
           <Icon.QrCodeIcon />
           <p>Re-issue card</p>
         </StyledCard>
-      )}
+      )} */}
 
       {/* {!inVisistation && (
         <StyledCard role="button">
@@ -200,7 +202,7 @@ const Actions = () => {
         </Move>
       )}
 
-      {!isInpatient && (
+      {inVisistation && !isDetained && !isAdmitted && (
         <Detain>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -211,7 +213,7 @@ const Actions = () => {
         </Detain>
       )}
 
-      {isInpatient && !isAdmitted && (
+      {inVisistation && !isAdmitted && (
         <Admit>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -222,22 +224,24 @@ const Actions = () => {
         </Admit>
       )}
 
-      {inVisistation && !isInpatient && (
-        <Visitation>
-          {({ proceed }) => (
-            <StyledCard
-              role="button"
-              onClick={() => proceed()}
-              className="!border-red-200 !bg-red-50 !text-red-600"
-            >
-              <Icon.HeartBookIcon className="!text-red-600" />
-              <p>End visitation</p>
-            </StyledCard>
-          )}
-        </Visitation>
+      {inVisistation && ['visiting'].includes(patient.status) && (
+        <>
+          <Visitation>
+            {({ proceed }) => (
+              <StyledCard
+                role="button"
+                onClick={() => proceed()}
+                className="!border-red-200 !bg-red-50 !text-red-600"
+              >
+                <Icon.HeartBookIcon className="!text-red-600" />
+                <p>End visitation</p>
+              </StyledCard>
+            )}
+          </Visitation>
+        </>
       )}
 
-      {isInpatient && (
+      {inVisistation && ['detained', 'admitted'].includes(patient.status) && (
         <Discharge>
           {({ proceed }) => (
             <StyledCard

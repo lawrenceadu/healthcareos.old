@@ -16,4 +16,12 @@ export interface UserModel {
   created_at: string;
   active: boolean;
   facilities: FacilityModel[];
+  role: RoleModel;
+}
+
+export interface RoleModel {
+  id: string;
+  name: string;
+  code: string;
+  created_at: string;
 }

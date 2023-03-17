@@ -1,4 +1,5 @@
 export * from './user';
+export * from './ward';
 export * from './triage';
 export * from './history';
 export * from './patient';
@@ -7,8 +8,10 @@ export * from './facility';
 export * from './medicine';
 export * from './location';
 export * from './supplier';
+export * from './admission';
 export * from './insurance';
 export * from './diagnosis';
 export * from './inventory';
+export * from './department';
 export * from './geolocation';
 export * from './investigation';

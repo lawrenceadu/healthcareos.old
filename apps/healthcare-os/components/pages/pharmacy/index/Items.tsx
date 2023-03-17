@@ -22,11 +22,14 @@ function Items() {
     medicines: MedicineModel[];
     total: number;
   }>(
-    `/medicine?${queryString.stringify({
-      ...filters,
-      page: filters.page + 1,
-      per_page: 10,
-    })}`,
+    `/medicine?${queryString.stringify(
+      {
+        ...filters,
+        page: filters.page + 1,
+        per_page: 10,
+      },
+      { skipEmptyString: true, skipNull: true }
+    )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );

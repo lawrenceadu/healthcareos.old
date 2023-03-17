@@ -36,12 +36,12 @@ function Investigations({ value, options, onChange }: InvestigationsProps) {
   return (
     <AsyncSelect
       cacheOptions
-      value={value}
+      onChange={onChange}
       loadOptions={loadOptions}
+      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       placeholder="Start typing to search for an investigation"
       components={{ ...Field.Select.Components }}
-      onChange={onChange}
     />
   );
 }

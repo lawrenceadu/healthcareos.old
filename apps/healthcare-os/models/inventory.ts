@@ -40,3 +40,31 @@ export interface ItemStockModel {
   location: { id: string; name: string };
   created_at: string;
 }
+
+export interface ItemIssueModel {
+  id: string;
+  issue_to: 'user' | 'department' | 'location';
+  recipient: {
+    id: string;
+    name: string;
+  };
+  date: string;
+  details: {
+    id: string;
+    item: {
+      id: string;
+      name: string;
+    };
+    quantity: number;
+  }[];
+  notes: string;
+  status: 'pending' | 'rejected' | 'fulfilled' | 'returned';
+  attachment: string;
+  returned_by: string;
+  returned_at: string;
+  created_by: {
+    id: string;
+    name: string;
+  };
+  created_at: string;
+}

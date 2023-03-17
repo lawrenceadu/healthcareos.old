@@ -21,3 +21,30 @@ export const updateMedicineService = (payload: object, id: string) =>
 export const deleteMedicineService = (id: string) =>
   http.delete<never, any>(`/medicine/${id}`);
 // end of medicine
+
+// stock
+export const createMedicineStockService = (payload: object) =>
+  http.post<never, any>(`/medicine/stock`, payload);
+
+export const updateMedicineStockService = (payload: object, id: string) =>
+  http.patch<never, any>(`/medicine/stock/${id}`, payload);
+
+export const updateMedicineStockStatusService = (payload: object, id: string) =>
+  http.post<never, any>(`/medicine/stock/${id}`, payload);
+
+export const deleteMedicineStockService = (id: string) =>
+  http.delete<never, any>(`/medicine/stock/${id}`);
+// end of stock
+
+// prescriptions
+export const prescribeMedicationService = (payload: object) =>
+  http.post<never, any>(`/prescription`, payload);
+
+export const updatePrescribedMedicationService = (
+  payload: object,
+  id: string
+) => http.patch<never, any>(`/prescription/${id}`, payload);
+
+export const deletePrescribedMedicationService = (id: string) =>
+  http.delete<never, any>(`/prescription/${id}`);
+// end of prescriptions

@@ -29,6 +29,22 @@ export const createItemStockService = (payload: object) =>
 export const updateItemStockService = (payload: object, id: string) =>
   http.patch<never, any>(`/item/stock/${id}`, payload);
 
+export const updateItemStockStatusService = (payload: object, id: string) =>
+  http.post<never, any>(`/item/stock/${id}`, payload);
+
 export const deleteItemStockService = (id: string) =>
   http.delete<never, any>(`/item/stock/${id}`);
 // end of stock
+
+// request
+export const createItemRequestService = (payload: object) =>
+  http.post<never, any>('/item/issue', payload);
+
+export const updateItemRequestService = (payload: object, id: string) =>
+  http.patch<never, any>(`/item/issue/${id}`, payload);
+
+export const updateItemRequestStatusService = (payload: object, id: string) =>
+  http.post<never, any>(`/item/issue/${id}`, payload);
+
+export const deleteItemRequestService = (id: string) =>
+  http.delete<never, any>(`/item/issue/${id}`);

@@ -13,7 +13,7 @@ function Index() {
   /**
    * state
    */
-  const [filters, setFilters] = useState<any>();
+  const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
    * api
@@ -23,11 +23,14 @@ function Index() {
     total: number;
     page: number;
   }>(
-    `/investigation/request?${queryString.stringify({
-      ...filters,
-      per_page: 10,
-      page: (filters?.page || 0) + 1,
-    })}`
+    `/investigation/request?${queryString.stringify(
+      {
+        ...filters,
+        per_page: 10,
+        page: (filters?.page || 0) + 1,
+      },
+      { skipEmptyString: true, skipNull: true }
+    )}`
   );
 
   /**

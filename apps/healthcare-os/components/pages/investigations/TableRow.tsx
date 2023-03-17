@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 
 import { InvestigationRequestModel } from '../../../models';
 import Patient from '../../libs/Patient';
+import routes from '../../../routes';
 
 export interface TableRowProps {
   investigation: InvestigationRequestModel;
@@ -45,7 +46,15 @@ function TableRow({ investigation, mutate }: TableRowProps) {
                 <DotsHorizIcon />
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => router}>
+                <Dropdown.Item
+                  onClick={() =>
+                    router.push(
+                      routes.dashboard.patients.details.index
+                        .replace('[id]', investigation.patient.id)
+                        .replace('[tab]', 'history')
+                    )
+                  }
+                >
                   View patient
                 </Dropdown.Item>
                 <Patient.Investigations.Submit

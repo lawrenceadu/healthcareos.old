@@ -140,8 +140,8 @@ export function Consultation({ params, children }: ConsultationProps) {
                               {key !== 0 && (
                                 <Button
                                   type="button"
-                                  className="!py-0"
                                   aria-label="Remove"
+                                  className="!py-0"
                                   onClick={() => helpers.remove(key)}
                                 >
                                   <DeleteIcon />

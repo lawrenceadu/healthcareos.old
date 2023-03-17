@@ -19,11 +19,14 @@ function Items() {
    * api
    */
   const { data, error, mutate } = useSWR<{ items: ItemModel[]; total: number }>(
-    `/item?${queryString.stringify({
-      ...filters,
-      page: filters.page + 1,
-      per_page: 10,
-    })}`,
+    `/item?${queryString.stringify(
+      {
+        ...filters,
+        page: filters.page + 1,
+        per_page: 10,
+      },
+      { skipEmptyString: true, skipNull: true }
+    )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );
@@ -63,7 +66,7 @@ function Items() {
               <th>Category</th>
               <th>Group</th>
               <th>Unit</th>
-              <th className='text-right'>Quantity</th>
+              <th className="text-right">Quantity</th>
               <th className="text-right">Minimum Level</th>
               <th className="text-right">Reorder Level</th>
               <th>Action</th>

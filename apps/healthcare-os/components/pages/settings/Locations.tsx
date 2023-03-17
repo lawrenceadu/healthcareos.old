@@ -1,53 +1,82 @@
-import React, { useContext } from 'react';
-import { Button, Dropdown, Field } from '@healthcareos/react';
+import { useState } from 'react';
+import {
+  Button,
+  Confirm,
+  Dropdown,
+  Field,
+  Paginate,
+} from '@healthcareos/react';
 import { DotsHorizIcon } from '@healthcare/icons';
+import queryString from 'query-string';
+import useSWR from 'swr';
+import dayjs from 'dayjs';
 
-import { FiltersContext } from '../../../contexts/Filters';
-import DropdownFilter from '../../libs/DropdownFilter';
-
+import { deleteLocationService } from '../../../services/settings';
+import { LocationModel } from '../../../models';
 import CreateForm from './Locations/Create';
 import EditForm from './Locations/Edit';
+import Skeleton from '../../libs/Skeleton';
+import { toast } from 'react-toastify';
 
 export default function Locations() {
   /**
    * context
    */
-  const { filters, setFilters } = useContext(FiltersContext);
+  const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
-   * functions
+   * api
    */
-  const handleFilter = (name: string, value: unknown) =>
-    setFilters({
+  const { data, error, mutate } = useSWR<{
+    locations: LocationModel[];
+    total: number;
+  }>(
+    `/location?${queryString.stringify({
       ...filters,
-      locations: { ...(filters?.locations || {}), [name]: value },
+      page: filters?.page + 1,
+    })}`
+  );
+
+  /**
+   * variables
+   */
+  const locations = data?.locations || [];
+
+  /**
+   * function
+   */
+  const handleDelete = (location: LocationModel) =>
+    Confirm({
+      header: 'Delete location',
+      message: (
+        <>
+          You are about to delete <b>{location.name}</b>? Once you delete it you
+          will lose it forever.
+        </>
+      ),
+    }).then((proceed) => {
+      if (proceed) {
+        deleteLocationService(location.id)
+          .then(() => {
+            toast.success('Location deleted');
+            mutate();
+          })
+          .catch((error) =>
+            toast.error(error?.message || 'Unable to delete location')
+          );
+      }
     });
 
   return (
     <div>
       <div className="grid md:flex gap-4 mb-6">
-        <Field.Search onSearch={() => null} />
-
-        <DropdownFilter
-          name="Added by"
-          value={filters?.locations?.added_by}
-          options={[{ label: 'Lawrence Adu', value: 'lawrence' }]}
-          setValue={(value) => handleFilter('added_by', value)}
+        <Field.Search
+          onSearch={(search) =>
+            setFilters((filters) => ({ ...filters, search }))
+          }
         />
 
-        <Field.Group
-          name="date"
-          withFormik={false}
-          wrapperClassName="!mb-0 md:max-w-[190px]"
-        >
-          <Field.Date
-            name="date"
-            placeholder="Date added"
-            value={filters?.locations?.date}
-            setFieldValue={(name, value) => handleFilter(name, value)}
-          />
-        </Field.Group>
-        <CreateForm>
+        <CreateForm mutate={mutate}>
           {({ proceed }) => (
             <Button
               onClick={() => proceed()}
@@ -59,41 +88,70 @@ export default function Locations() {
         </CreateForm>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-8">
         <table>
           <thead>
             <tr>
               <th>Name</th>
+              <th>Type</th>
               <th>Added by</th>
               <th>Date Added</th>
               <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Consulting room 1</td>
-              <td>Doctor Agnes Ofori</td>
-              <td>06-Jan-2023</td>
-              <td>
-                <Dropdown>
-                  <Dropdown.Toggle className="mx-auto">
-                    <DotsHorizIcon />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <EditForm>
-                      {({ proceed }) => (
-                        <Dropdown.Item onClick={() => proceed()}>
-                          Edit location
-                        </Dropdown.Item>
-                      )}
-                    </EditForm>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </td>
-            </tr>
+            {!data && !error && <Skeleton.Table count={5} />}
+
+            {data && (
+              <>
+                {locations.map((location, key) => (
+                  <tr key={key}>
+                    <td>{location.name}</td>
+                    <td>{location.type}</td>
+                    <td>{location.created_by?.name}</td>
+                    <td>
+                      {dayjs(location.created_at).format('ddd DD, MM, YYYY')}
+                    </td>
+                    <td>
+                      <Dropdown>
+                        <Dropdown.Toggle className="mx-auto">
+                          <DotsHorizIcon />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <EditForm {...{ location, mutate }}>
+                            {({ proceed }) => (
+                              <Dropdown.Item onClick={() => proceed()}>
+                                Edit location
+                              </Dropdown.Item>
+                            )}
+                          </EditForm>
+
+                          <Dropdown.Item
+                            className="text-red-600"
+                            onClick={() => handleDelete(location)}
+                          >
+                            Delete
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>
+
+      {data && (
+        <div className="flex justify-end">
+          <Paginate
+            page={filters?.page}
+            pageCount={Math.ceil(data.total / 10)}
+            setPage={(page) => setFilters((filters) => ({ ...filters, page }))}
+          />
+        </div>
+      )}
     </div>
   );
 }

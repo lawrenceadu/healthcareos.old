@@ -22,10 +22,13 @@ function Stock() {
     stocks: ItemStockModel[];
     total: number;
   }>(
-    `/item/stock?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-    })}`,
+    `/item/stock?${queryString.stringify(
+      {
+        ...filters,
+        page: filters?.page + 1,
+      },
+      { skipEmptyString: true, skipNull: true }
+    )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );

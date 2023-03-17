@@ -1,11 +1,10 @@
-import { SpinnerIcon, SortAscIcon, ChevronRightIcon } from '@healthcare/icons';
+import { SpinnerIcon, ChevronRightIcon } from '@healthcare/icons';
 import { helpers, schema } from '@healthcare/utils';
-import { Button, Field } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { Field } from '@healthcareos/react';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
@@ -16,8 +15,6 @@ import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
 function Index() {
-  dayjs.extend(relativeTime);
-
   /**
    * state
    */

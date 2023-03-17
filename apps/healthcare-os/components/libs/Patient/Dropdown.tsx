@@ -3,14 +3,16 @@ import { ChevronDownIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import useSWR from 'swr/immutable';
 
+import { setPatientTriageService } from '../../../services/patient';
 import { TriageModel } from '../../../models';
 import { usePatient } from '../../../hooks';
+import { toast } from 'react-toastify';
 
 function Dropdown() {
   /**
    * context
    */
-  const { patient } = usePatient();
+  const { patient, mutate, updateHistory } = usePatient();
 
   /**
    * api
@@ -67,7 +69,15 @@ function Dropdown() {
                 className="gap-2"
                 active={i.id === patient.triage?.id}
                 onClick={() => {
-                  return;
+                  setPatientTriageService({
+                    patient: patient.id,
+                    triage: i.id,
+                  })
+                    .then(() => {
+                      updateHistory();
+                      mutate?.();
+                    })
+                    .catch(() => toast.error('Unable to set patient triage'));
                 }}
               >
                 <span

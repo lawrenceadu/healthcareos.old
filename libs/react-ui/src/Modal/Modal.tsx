@@ -34,7 +34,7 @@ export function Modal({
       case 'xl':
         return 'max-w-[1232px] rounded-lg';
       case 'full':
-        return 'max-w-full h-screen overflow-y-auto';
+        return 'max-w-full h-screen overflow-y-auto !my-0';
       default:
         return 'max-w-[564px] rounded-lg';
     }
@@ -61,6 +61,7 @@ export function Modal({
 
   return (
     <Restart.Modal
+      enforceFocus={false}
       onClick={handleClick}
       aria-labelledby="modal"
       renderBackdrop={(props) => {
@@ -88,15 +89,15 @@ export function Modal({
         onClick={handleClick}
         className={helpers.classNames(
           sizeClassName,
+          'flex',
           'relative',
-          'flex items-center',
           'mx-auto w-full my-6',
           'min-h-[calc(100%-3rem)]'
         )}
       >
         <div
           className={helpers.classNames(
-            'w-full rounded-lg mx-4',
+            'w-full rounded-lg mx-4 my-auto',
             'shadow-3xl bg-white relative overflow-hidden'
           )}
         >

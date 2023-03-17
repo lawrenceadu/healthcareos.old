@@ -72,7 +72,7 @@ export function Allergy({
       actions={
         <Button
           aria-label="Delete"
-          className="!px-0 !h-auto text-red-600"
+          className="!px-0 !h-auto"
           onClick={(e) => {
             e.stopPropagation();
             handleDelete();

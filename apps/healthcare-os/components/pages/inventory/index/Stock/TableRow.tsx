@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
 import { Badge, Confirm, Dropdown } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { deleteItemStockService } from '../../../../../services/inventory';
 import { ItemStockModel } from '../../../../../models';
 import { useStore } from '../../../../../hooks';
+import * as api from '../../../../../services/inventory';
 import Form from './Form';
-import { toast } from 'react-toastify';
 
 // import ChangeForm from './Change';
 // import MoveForm from './Move';
@@ -48,12 +48,38 @@ function TableRow({ stock, mutate }: TableRowProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        deleteItemStockService(stock.id)
+        api
+          .deleteItemStockService(stock.id)
           .then(() => {
             mutate?.();
             toast.success('Stock deleted');
           })
           .catch(() => toast.error('Unabe'));
+      }
+    });
+
+  const handleStatusUpdate = (status: ItemStockModel['status']) =>
+    Confirm({
+      header: 'Update status',
+      message: (
+        <>
+          Are you sure you want to mark this stock as <b>{status}</b>?
+        </>
+      ),
+      buttons: {
+        proceed: { className: 'btn-primary' },
+      },
+    }).then((proceed) => {
+      if (proceed) {
+        api
+          .updateItemStockStatusService({ status }, stock.id)
+          .then(() => {
+            toast.success('Stock status updated');
+            mutate?.();
+          })
+          .catch(() =>
+            toast.error('Unable to update stock status. Please try again')
+          );
       }
     });
 
@@ -77,31 +103,43 @@ function TableRow({ stock, mutate }: TableRowProps) {
           <Badge variant={stock.status}>{stock.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          <Dropdown>
-            <Dropdown.Toggle className="mx-auto">
-              <DotsHorizIcon />
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {stock.status === 'pending' && (
-                <>
-                  <Form params={stock} {...{ mutate }}>
-                    {({ proceed }) => (
-                      <Dropdown.Item onClick={() => proceed()}>
-                        Update
-                      </Dropdown.Item>
-                    )}
-                  </Form>
-
-                  <Dropdown.Item
-                    className="text-red-600"
-                    onClick={() => handleDelete()}
-                  >
-                    Delete
+          {['pending', 'ordered'].includes(stock.status) && (
+            <Dropdown>
+              <Dropdown.Toggle className="mx-auto">
+                <DotsHorizIcon />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {stock.status === 'pending' && (
+                  <Dropdown.Item onClick={() => handleStatusUpdate('ordered')}>
+                    Mark as ordered
                   </Dropdown.Item>
-                </>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
+                )}
+
+                {stock.status === 'ordered' && (
+                  <Dropdown.Item onClick={() => handleStatusUpdate('received')}>
+                    Mark as received
+                  </Dropdown.Item>
+                )}
+
+                <hr />
+
+                <Form params={stock} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </Form>
+
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </td>
       </tr>
 

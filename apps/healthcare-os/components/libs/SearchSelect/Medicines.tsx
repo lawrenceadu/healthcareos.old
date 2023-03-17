@@ -34,12 +34,12 @@ function Medicines({ value, options, onChange }: MedicinesProps) {
   return (
     <AsyncSelect
       cacheOptions
-      value={value}
+      onChange={onChange}
       loadOptions={loadOptions}
+      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       placeholder="Start typing to search for a medicine"
       components={{ ...Field.Select.Components }}
-      onChange={onChange}
     />
   );
 }

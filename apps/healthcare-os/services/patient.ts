@@ -43,3 +43,7 @@ export const addToQueueService = (payload: object) =>
 // investigation
 export const requestInvestigationService = (payload: object) =>
   http.post<never, any>('/investigation/request', payload);
+
+// triage
+export const setPatientTriageService = (payload: object) =>
+  http.post<never, any>('/visit/triage', payload);

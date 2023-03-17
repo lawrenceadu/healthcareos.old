@@ -32,8 +32,8 @@ function Items({ value, options, onChange }: ItemsProps) {
   return (
     <AsyncSelect
       cacheOptions
-      value={value}
       loadOptions={loadOptions}
+      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       placeholder="Start typing to search for an item"
       components={{ ...Field.Select.Components }}

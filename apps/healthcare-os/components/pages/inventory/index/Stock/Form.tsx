@@ -10,6 +10,7 @@ import { createItemStockService, updateItemStockService } from '../../../../../s
 import { useLocations, useStore } from '../../../../../hooks';
 import { ItemStockModel } from '../../../../../models';
 import SearchSelect from '../../../../libs/SearchSelect';
+import dayjs from 'dayjs';
 
 export interface FormInterface {
   mutate?: () => void;
@@ -248,7 +249,8 @@ function Form({ params, mutate, children }: FormInterface) {
                                 {!!key && (
                                   <Button
                                     type="button"
-                                    className="mt-6"
+                                    aria-label="Delete"
+                                    className="mt-6 !px-0 w-full"
                                     onClick={() => helper.remove(key)}
                                   >
                                     <DeleteIcon />
@@ -316,6 +318,7 @@ function Form({ params, mutate, children }: FormInterface) {
                   <Field.Date
                     name="date"
                     value={values.date}
+                    options={{ maxDate: dayjs().toDate() }}
                     {...{ setFieldValue, setFieldTouched }}
                   />
                 </Field.Group>

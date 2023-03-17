@@ -5,10 +5,11 @@ import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
 import FiltersProvider from '../../contexts/Filters';
+import Prescriptions from '../../components/pages/pharmacy/index/Prescriptions';
 import Inventory from '../../components/pages/pharmacy/index/Inventory';
-import Requests from '../../components/pages/pharmacy/index/Requests';
 import Category from '../../components/pages/pharmacy/index/Category';
 import Items from '../../components/pages/pharmacy/index/Items';
+import Stock from '../../components/pages/pharmacy/index/Stock';
 
 function Index() {
   /**
@@ -21,8 +22,9 @@ function Index() {
    * variables
    */
   const tabs = [
+    { name: 'Prescriptions', slug: 'prescriptions', component: Prescriptions },
     { name: 'Inventory', slug: 'inventory', component: Inventory },
-    { name: 'Requests', slug: 'requests', component: Requests },
+    { name: 'Stock', slug: 'stock', component: Stock },
     { name: 'Items', slug: 'items', component: Items },
     { name: 'Category', slug: 'category', component: Category },
   ];

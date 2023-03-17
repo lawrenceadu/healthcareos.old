@@ -28,7 +28,7 @@ function Visitation({ children }: VisitationProps) {
   /**
    * variable
    */
-  const end = false;
+  const end = patient.status === 'visiting';
 
   /**
    * function

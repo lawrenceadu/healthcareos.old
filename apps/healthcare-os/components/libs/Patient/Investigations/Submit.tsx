@@ -161,7 +161,7 @@ export function Submit({
                               {key !== 0 && (
                                 <Button
                                   type="button"
-                                  className="text-red-600 mt-6"
+                                  className="mt-6 !px-0 w-full"
                                   onClick={() => helper.remove(key)}
                                 >
                                   <DeleteIcon />

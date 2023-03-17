@@ -125,7 +125,8 @@ function Form({
                     </div>
                     {key !== 0 && (
                       <Button
-                        className="text-red-600 mt-6"
+                        type="button"
+                        className="mt-6 !px-0 w-full"
                         onClick={() => helper.remove(key)}
                       >
                         <DeleteIcon />
@@ -198,7 +199,7 @@ function Form({
             </Field.Group>
             <Button
               type="button"
-              className="mt-6 text-red-600"
+              className="mt-6 !px-0 w-full"
               onClick={() => setFieldValue('apply_insurance', false)}
             >
               <DeleteIcon />

@@ -31,6 +31,10 @@
     @apply text-sm;
   }
 
+  hr {
+    @apply border-gray-200;
+  }
+
   // resets
   html,
   body {
