@@ -71,4 +71,4 @@ const handleValue = ({
   return options.find((option) => option.value === value) || '';
 };
 
-export default Object.assign(Template, { handleValue });
+export default Object.assign(Template, { handleValue, Components });

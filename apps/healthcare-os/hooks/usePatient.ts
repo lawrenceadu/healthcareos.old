@@ -1,14 +1,35 @@
-import { useContext } from 'react';
+import useSWR, { useSWRConfig } from 'swr';
+import { useRouter } from 'next/router';
 
-import { PatientContext } from '../contexts/Patient';
+import { PatientModel } from '../models';
 
-function usePatient() {
+function usePatient(id?: string) {
   /**
-   * context
+   * routes
    */
-  const { patient, setPatient } = useContext(PatientContext);
+  const router = useRouter();
+  const patientId = router.query.id;
 
-  return { patient, setPatient };
+  /**
+   * api
+   */
+  const { mutate } = useSWRConfig();
+  const swr = useSWR<{ patient: PatientModel }>(
+    `/patient/${id || patientId}`,
+    null,
+    {
+      refreshInterval: 1000 * 60 * 5,
+      dedupingInterval: 1000 * 60 * 1,
+    }
+  );
+
+  /**
+   * function
+   */
+  const updateHistory = () =>
+    mutate(`/visit?patient=${swr?.data?.patient?.id}`);
+
+  return { ...swr, patient: swr?.data?.patient, updateHistory };
 }
 
 export default usePatient;

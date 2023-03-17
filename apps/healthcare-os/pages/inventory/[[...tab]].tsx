@@ -7,6 +7,9 @@ import routes from '../../routes';
 import FiltersProvider from '../../contexts/Filters';
 import Inventory from '../../components/pages/inventory/index/Inventory';
 import Requests from '../../components/pages/inventory/index/Requests';
+import Category from '../../components/pages/inventory/index/Category';
+import Items from '../../components/pages/inventory/index/Items';
+import Stock from '../../components/pages/inventory/index/Stock';
 
 function Index() {
   /**
@@ -21,6 +24,9 @@ function Index() {
   const tabs = [
     { name: 'Inventory', slug: 'inventory', component: Inventory },
     { name: 'Requests', slug: 'requests', component: Requests },
+    { name: 'Stock', slug: 'stock', component: Stock },
+    { name: 'Items', slug: 'items', component: Items },
+    { name: 'Category', slug: 'category', component: Category },
   ];
 
   return (

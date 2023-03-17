@@ -1,10 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 const useSession = <T>(key: string): [T | undefined, (value: T) => void] => {
   /**
    * state
    */
-  const [session, setSession] = useState<T>();
+  const [session, setSession] = useState<T>(() => {
+    if (typeof window !== 'undefined') {
+      const storage: Storage = window.sessionStorage;
+
+      try {
+        return JSON.parse(storage.getItem(key) || '');
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
 
   /**
    * functions
@@ -29,14 +40,6 @@ const useSession = <T>(key: string): [T | undefined, (value: T) => void] => {
       return null;
     }
   }, [key]);
-
-  /**
-   * effect
-   */
-  useEffect(() => {
-    const item = getItem();
-    setSession(item);
-  }, [key, getItem]);
 
   return [session, setItem];
 };

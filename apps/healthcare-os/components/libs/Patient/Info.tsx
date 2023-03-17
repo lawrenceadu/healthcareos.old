@@ -1,19 +1,28 @@
-import { HtmlHTMLAttributes, useContext } from 'react';
+import { HtmlHTMLAttributes } from 'react';
 import { helpers, useWidth } from '@healthcare/utils';
 import { Accordion, Badge } from '@healthcareos/react';
 import { CheckIcon } from '@healthcare/icons';
+import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
-import { PatientContext } from '../../../contexts/Patient';
+import { usePatient } from '../../../hooks';
 
 // eslint-disable-next-line
 export interface InfoProps extends HtmlHTMLAttributes<HTMLDivElement> {}
 
 export function Info({ className, ...props }: InfoProps) {
   /**
-   * context
+   * hook
    */
-  const { patient } = useContext(PatientContext);
+  const { patient } = usePatient();
+
+  /**
+   * variable
+   */
+  const activeInsurance =
+    patient?.insurances?.find((i) => i.active) ||
+    patient.insurances?.[0] ||
+    false;
 
   /**
    * variables
@@ -26,34 +35,30 @@ export function Info({ className, ...props }: InfoProps) {
     { label: 'Surname', value: patient.last_name },
     {
       label: 'Date of birth',
-      value: dayjs(patient.date_of_birth).format('DD/MM/YYYY'),
+      value: dayjs(patient.dob).format('DD/MM/YYYY'),
     },
-    { label: 'Sex', value: patient.sex },
+    { label: 'Sex', value: startCase(patient.gender) },
     {
       label: 'Address',
-      value: [
-        patient.address?.street,
-        patient.address?.city,
-        patient.address?.region,
-      ].join(', '),
+      value: [patient?.region?.name, patient?.district?.name].join(', '),
     },
-    { label: 'Language', value: patient.language },
-    { label: 'Marital status', value: patient.marital_status },
+    { label: 'Language', value: startCase(patient.language) },
+    { label: 'Marital status', value: startCase(patient.marital_status) },
     {
       label: 'Insurance',
       value: (
         <>
-          {!patient.insurance && <p>None</p>}
-          {patient.insurance && (
-            <Badge variant={patient.insurance.is_valid ? 'success' : 'danger'}>
-              {patient.insurance.is_valid && (
+          {!activeInsurance && <p>None</p>}
+          {activeInsurance && (
+            <Badge variant={activeInsurance.active ? 'success' : 'danger'}>
+              {activeInsurance.active && (
                 <>
                   <CheckIcon className="w-3 h-3" />
                   <span>valid</span>
                 </>
               )}
 
-              {!patient.insurance.is_valid && (
+              {!activeInsurance.active && (
                 <>
                   <span>not valid</span>
                 </>

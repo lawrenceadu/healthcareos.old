@@ -1,35 +1,49 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+import { toast } from 'react-toastify';
+
+import { updateLocationService } from '../../../../services/settings';
+import { LocationModel } from '../../../../models';
 
 export interface EditProps {
-  location?: string;
+  mutate: () => void;
+  location?: LocationModel;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Edit({ children, location }: EditProps) {
+function Edit({ mutate, children, location }: EditProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
-      <Modal show={state} onHide={() => setState(false)} header="Edit location">
+      <Modal show={show} onHide={() => setShow(false)} header="Edit location">
         <Formik
           validateOnMount
           validationSchema={object({
             name: schema.requireString('Name'),
+            type: schema.requireString('Type'),
           })}
           initialValues={{
-            name: 'Consulting room 1',
+            name: location?.name || '',
+            type: location?.type || '',
           }}
-          onSubmit={(params, { setSubmitting }) => {
-            return;
+          onSubmit={(params, { setSubmitting, setErrors }) => {
+            updateLocationService(params, location.id)
+              .then(() => {
+                toast.success('Location update');
+                setShow(false);
+                mutate?.();
+              })
+              .catch((error) => setErrors(error?.fields || {}))
+              .finally(() => setSubmitting(false));
           }}
         >
           {({
@@ -45,9 +59,13 @@ function Edit({ children, location }: EditProps) {
                 <Field.Group name="name" label="Name of location">
                   <Field.Input name="name" value={values.name} />
                 </Field.Group>
+
+                <Field.Group name="type" label="Type of location">
+                  <Field.Input name="type" value={values.type} />
+                </Field.Group>
               </div>
 
-              <div className="flex gap-6 justify-end py-3 px-6 border-t border-gray-200">
+              <div className="modal-footer">
                 <Button type="button" className="text-muted">
                   Cancel
                 </Button>
@@ -55,7 +73,6 @@ function Edit({ children, location }: EditProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   Save changes

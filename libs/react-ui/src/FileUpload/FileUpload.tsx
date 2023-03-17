@@ -1,9 +1,8 @@
 import { ChangeEvent, HtmlHTMLAttributes, useRef } from 'react';
-import { ArrowDownIcon, CheckIcon, FileIcon } from '@healthcare/icons';
-import styled from 'styled-components';
+import { FileIcon } from '@healthcare/icons';
+import { helpers } from '@healthcare/utils';
 
 import Button from '../Button/Button';
-import { helpers } from '@healthcare/utils';
 
 export interface FileUploadProps extends HtmlHTMLAttributes<HTMLDivElement> {
   name: string;

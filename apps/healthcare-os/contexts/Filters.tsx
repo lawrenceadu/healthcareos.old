@@ -8,7 +8,7 @@ export const FiltersContext = createContext<{
   filters: Partial<FiltersInterface | undefined>;
   setFilters: Dispatch<SetStateAction<Partial<FiltersInterface | undefined>>>;
 }>({
-  filters: {},
+  filters: { page: 0 },
   setFilters: () => null,
 });
 

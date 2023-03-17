@@ -5,54 +5,109 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
+import { usePatient } from '../../../hooks';
+import * as api from '../../../services/patient';
+
+type ParamsProps = {
+  respiratory_rate: string;
+  oxygen_saturations: string;
+  fraction_of_inspired_oxygen: string;
+  heart_rate: string;
+  systolic: string;
+  diastolic: string;
+  temperature: string;
+  height: string;
+  weight: string;
+  bmi: string;
+  body_surface_area: string;
+  notes: string;
+
+  id: string;
+};
+
 export interface VitalsProps {
+  params?: ParamsProps;
   children: (props: { proceed: () => void }) => void;
 }
 
-export function Vitals({ children }: VitalsProps) {
+export function Vitals({ params, children }: VitalsProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
 
+  /**
+   * hook
+   */
+  const { patient, updateHistory } = usePatient();
+
   return (
     <>
       {children({ proceed: () => setShow(true) })}
 
-      <Modal show={show} onHide={() => setShow(false)} header="Add vitals">
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        header={params ? 'Update vitals' : 'Add vitals'}
+      >
         <Formik
           validateOnMount
+          enableReinitialize
           validationSchema={object({
             respiratory_rate: schema.requireNumber('Respiratory rate', false),
-            oxygen_saturation: schema.requireNumber('Respiratory rate', false),
-            oxygen_fraction: schema.requireNumber('Respiratory rate', false),
-            heart_rate: schema.requireNumber('Respiratory rate', false),
-            systolic: schema.requireNumber('Respiratory rate', false),
-            diastolic: schema.requireNumber('Respiratory rate', false),
-            temperature: schema.requireNumber('Respiratory rate', false),
-            height: schema.requireNumber('Respiratory rate', false),
-            weight: schema.requireNumber('Respiratory rate', false),
-            bmi: schema.requireNumber('Respiratory rate', false),
-            body_surface_area: schema.requireNumber('Respiratory rate', false),
-            notes: schema.requireNumber('Respiratory rate', false),
+            oxygen_saturations: schema.requireNumber('Oxygen saturations', false), // prettier-ignore
+            fraction_of_inspired_oxygen: schema.requireNumber('Inspired oxygen', false), // prettier-ignore
+            heart_rate: schema.requireNumber('Heart rate', false),
+            systolic: schema.requireNumber('Systolic', false),
+            diastolic: schema.requireNumber('Diastolic', false),
+            temperature: schema.requireNumber('Temperature', false),
+            height: schema.requireNumber('Height', false),
+            weight: schema.requireNumber('Weight', false),
+            bmi: schema.requireNumber('BMI', false),
+            body_surface_area: schema.requireNumber('Body surface area', false),
+            notes: schema.requireString('Notes', false),
           })}
           initialValues={{
-            respiratory_rate: '',
-            oxygen_saturation: '',
-            oxygen_fraction: '',
-            heart_rate: '',
-            systolic: '',
-            diastolic: '',
-            temperature: '',
-            height: '',
-            weight: '',
-            bmi: '',
-            body_surface_area: '',
-            notes: '',
+            respiratory_rate: params?.respiratory_rate || '',
+            oxygen_saturations: params?.oxygen_saturations || '',
+            fraction_of_inspired_oxygen:
+              params?.fraction_of_inspired_oxygen || '',
+            heart_rate: params?.heart_rate || '',
+            systolic: params?.systolic || '',
+            diastolic: params?.diastolic || '',
+            temperature: params?.temperature || '',
+            height: params?.height || '',
+            weight: params?.weight || '',
+            bmi: params?.bmi || '',
+            body_surface_area: params?.body_surface_area || '',
+            notes: params?.notes || '',
           }}
-          onSubmit={() => {
-            toast.success('Vitals added to history');
-            setShow(false);
+          onSubmit={(data, { setSubmitting, setErrors }) => {
+            // if new vitals
+            if (!params) {
+              api
+                .createVitalsService({ ...data, patient: patient.id })
+                .then(() => {
+                  toast.success('Vitals added to history');
+                  updateHistory();
+                  setShow(false);
+                })
+                .catch((error) => setErrors(error?.fields || {}))
+                .finally(() => setSubmitting(false));
+            }
+
+            // if update vitals
+            if (params) {
+              api
+                .updateVitalsService(data, params.id)
+                .then(() => {
+                  toast.success('Vitals updated');
+                  updateHistory();
+                  setShow(false);
+                })
+                .catch((error) => setErrors(error?.fields || {}))
+                .finally(() => setSubmitting(false));
+            }
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (
@@ -67,23 +122,23 @@ export function Vitals({ children }: VitalsProps) {
                 </Field.Group>
 
                 <Field.Group
-                  name="oxygen_saturation"
+                  name="oxygen_saturations"
                   label="Oxygen saturations"
                 >
                   <Field.Input
-                    name="oxygen_saturation"
-                    value={values.oxygen_saturation}
+                    name="oxygen_saturations"
+                    value={values.oxygen_saturations}
                   />
                   <span className="px-4">%</span>
                 </Field.Group>
 
                 <Field.Group
-                  name="oxygen_fraction"
+                  name="fraction_of_inspired_oxygen"
                   label="Fraction of inspired oxygen"
                 >
                   <Field.Input
-                    name="oxygen_fraction"
-                    value={values.oxygen_fraction}
+                    name="fraction_of_inspired_oxygen"
+                    value={values.fraction_of_inspired_oxygen}
                   />
                   <span className="px-4">%</span>
                 </Field.Group>
@@ -150,7 +205,7 @@ export function Vitals({ children }: VitalsProps) {
                   className="btn btn-primary"
                   {...{ isSubmitting }}
                 >
-                  Add vitals
+                  {params ? 'Update vitals' : 'Add vitals'}
                 </Button>
               </div>
             </Form>

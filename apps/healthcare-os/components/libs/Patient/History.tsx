@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Accordion, Badge, Field, Filter } from '@healthcareos/react';
+import useSWR from 'swr';
+import dayjs from 'dayjs';
 
-import { usePatient } from '../../../hooks';
+import { usePatient, useStore } from '../../../hooks';
+import { HistoryModel } from '../../../models/history';
 import Investigation from './History/Investigation';
 import Consultation from './History/Consultation';
+import Location from './History/Location';
+import Allergy from './History/Allergy';
 import Vitals from './History/Vitals';
+import Queue from './History/Queue';
 
 export function History() {
   /**
@@ -17,7 +23,24 @@ export function History() {
   /**
    * context
    */
-  const { patient, setPatient } = usePatient();
+  const { store } = useStore();
+
+  /**
+   * context
+   */
+  const { patient, updateHistory } = usePatient();
+
+  /**
+   * api
+   */
+  const { data, error } = useSWR<{ visits: HistoryModel[] }>(
+    `/visit?patient=${patient?.id}`
+  );
+
+  /**
+   * variables
+   */
+  const histories = data?.visits || [];
 
   return (
     <>
@@ -25,6 +48,7 @@ export function History() {
         <Field.Search
           onSearch={(key) => setFilters({ ...filters, search: key })}
         />
+
         <Filter.Dropdown
           label="Filters"
           value={filters?.filter}
@@ -42,27 +66,66 @@ export function History() {
       </div>
 
       <Accordion className="flex flex-col gap-4">
-        {Array.from({ length: 3 }, (_, i) => (
-          <Accordion.Item
-            key={i}
-            defaultOpen={i === 0}
-            className="rounded-lg p-4 border border-gray-200"
-            actions={
-              <>
-                {i === 0 && patient.in_visitation && (
-                  <Badge variant="pending">Ongoing visitation</Badge>
-                )}
-              </>
-            }
-            header={<p className="text-lg font-bold">04 Jan. 2023</p>}
-          >
-            <div className="grid gap-2">
-              <Vitals />
-              <Consultation />
-              <Investigation />
-            </div>
-          </Accordion.Item>
-        ))}
+        {!data &&
+          !error &&
+          Array.from({ length: 2 }, (_, i) => (
+            <div
+              key={i}
+              className="h-[174px] rounded-lg bg-neutral-100 animate-pulse"
+            />
+          ))}
+
+        {data && (
+          <>
+            {histories.map((history, key) => (
+              <Accordion.Item
+                key={key}
+                defaultOpen={key === 0}
+                className="rounded-lg p-4 border border-gray-200"
+                actions={
+                  <>
+                    {!history.end_date && (
+                      <Badge variant="pending">Ongoing visitation</Badge>
+                    )}
+                  </>
+                }
+                header={
+                  <p className="text-lg font-bold">
+                    {dayjs(history.start_date).format('ddd MM. YYYY')}
+                    {history.end_date &&
+                      dayjs(history.end_date).format('- DD MM. YYYY')}
+                  </p>
+                }
+              >
+                <div className="grid gap-2">
+                  {history.logs.map((i, key) => (
+                    <Fragment key={key}>
+                      {i.reference === 'vital' && (
+                        <Vitals data={i} isOngoing={!history.end_date} />
+                      )}
+
+                      {i.reference === 'location' && <Location data={i} />}
+
+                      {i.reference === 'consultation' && (
+                        <Consultation data={i} isOngoing={!history.end_date} />
+                      )}
+
+                      {i.reference === 'allergy' && (
+                        <Allergy data={i} isOngoing={!history.end_date} />
+                      )}
+
+                      {i.reference === 'queue' && <Queue data={i} />}
+
+                      {i.reference === 'investigation' && (
+                        <Investigation data={i} />
+                      )}
+                    </Fragment>
+                  ))}
+                </div>
+              </Accordion.Item>
+            ))}
+          </>
+        )}
       </Accordion>
     </>
   );

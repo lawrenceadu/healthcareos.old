@@ -2,8 +2,11 @@ import { useSession } from '@healthcare/utils';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Progress } from '@healthcareos/react';
-import { v4 } from 'uuid';
+import { toast } from 'react-toastify';
 
+import { addPatientService } from '../../services/patient';
+import { PatientModel } from '../../models';
+import { useStore } from '../../hooks';
 import Onboarding from '../../components/libs/Onboarding';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
@@ -23,6 +26,36 @@ export default function New() {
    * routes
    */
   const router = useRouter();
+
+  /**
+   * store
+   */
+  const { store } = useStore();
+
+  /**
+   * functions
+   */
+  const handleSubmit = (stopLoading: () => void) => {
+    addPatientService(session)
+      .then(({ patient }: { patient: PatientModel }) => {
+        setSession(undefined);
+        router.push({
+          pathname: routes.dashboard.patients.card.activate,
+          query: { id: patient.id },
+        });
+      })
+      .catch((error) =>
+        toast.error(
+          error?.fields
+            ? Object.keys(error?.fields)
+                .map((i) => error?.fields[i])
+                .join(', ')
+            : error?.message || 'Unable to add patient.',
+          { delay: 1000 * 25 }
+        )
+      )
+      .finally(() => stopLoading());
+  };
 
   /**
    * variables
@@ -108,10 +141,7 @@ export default function New() {
             setSession({ ...(session || {}), ...params });
 
             setTimeout(() => {
-              router.push({
-                pathname: routes.dashboard.patients.card.activate,
-                query: { slug: v4() },
-              });
+              handleSubmit(() => setSubmitting(false));
             });
           }}
         />

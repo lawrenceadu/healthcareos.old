@@ -1,11 +1,12 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Button, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
-import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
 
-import { PatientContext } from '../../../contexts/Patient';
+import { useLocations, usePatient } from '../../../hooks';
+import { addToQueueService } from '../../../services/patient';
 
 export interface MoveProps {
   children: (props: { proceed: () => void }) => void;
@@ -20,7 +21,12 @@ function Move({ children }: MoveProps) {
   /**
    * context
    */
-  const { patient, setPatient } = useContext(PatientContext);
+  const { patient, updateHistory } = usePatient();
+
+  /**
+   * hook
+   */
+  const locations = useLocations();
 
   return (
     <>
@@ -37,12 +43,15 @@ function Move({ children }: MoveProps) {
             location: schema.requireString('Location'),
           })}
           initialValues={{ location: '' }}
-          onSubmit={({ location }) => {
-            setPatient({
-              ...patient,
-              queue: { location, time: dayjs().toISOString() },
-            });
-            setShow(false);
+          onSubmit={({ location }, { setSubmitting, setErrors }) => {
+            addToQueueService({ location, patient: patient.id })
+              .then(() => {
+                toast.success('Patient has been added to queue');
+                updateHistory();
+                setShow(false);
+              })
+              .catch((error) => setErrors(error?.fields || {}))
+              .finally(() => setSubmitting(false));
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
@@ -56,13 +65,10 @@ function Move({ children }: MoveProps) {
                     name="location"
                     value={values.location}
                     placeholder="Select location"
-                    options={[
-                      { label: 'Vitals', value: 'vitals' },
-                      { label: 'Consultation room', value: 'consultation' },
-                      { label: 'Lab', value: 'lab' },
-                      { label: 'Investigation room', value: 'investigation' },
-                      { label: 'Pharmacy', value: 'pharmacy' },
-                    ]}
+                    options={locations?.map((i) => ({
+                      label: i.name,
+                      value: i.id,
+                    }))}
                     onChange={({ value }: { value: string }) =>
                       setFieldValue('location', value)
                     }

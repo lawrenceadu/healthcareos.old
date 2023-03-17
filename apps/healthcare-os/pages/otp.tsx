@@ -1,18 +1,33 @@
+import { schema, useSession } from '@healthcare/utils';
 import { Field, Button } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import Head from 'next/head';
 
-import routes from '../routes';
+import { UserModel } from '../models';
+import { useStore } from '../hooks';
+import * as api from '../services/auth';
 import Layout from '../components/pages/auth/Layout';
+import routes from '../routes';
 
 function ForgottenPassword() {
   /**
    * routes
    */
   const router = useRouter();
+  const page = router.query.page as string;
+
+  /**
+   * session
+   */
+  const [email] = useSession<string>('email');
+  const [, setOTP] = useSession<string>('otp');
+
+  /**
+   * store
+   */
+  const { store, setStore } = useStore();
 
   return (
     <>
@@ -31,8 +46,28 @@ function ForgottenPassword() {
           initialValues={{
             otp: '',
           }}
-          onSubmit={(params, { setSubmitting }) => {
-            return;
+          onSubmit={({ otp }, { setSubmitting, setErrors }) => {
+            if (page === 'reset') {
+              api
+                .verifyOtpService({ email, otp })
+                .then(() => {
+                  setOTP(otp);
+                  router.push(routes.auth.reset);
+                })
+                .catch(() => setErrors({ otp: 'Invalid OTP' }))
+                .finally(() => setSubmitting(false));
+            }
+
+            if (page === 'signup') {
+              api
+                .verifyAccountUsingOtpService({ otp })
+                .then(({ user }: { user: UserModel }) => {
+                  setStore((store) => ({ ...store, user }));
+                  router.push(routes.dashboard.patients.index);
+                })
+                .catch(() => setErrors({ otp: 'Invalid OTP' }))
+                .finally(() => setSubmitting(false));
+            }
           }}
         >
           {({
@@ -46,7 +81,8 @@ function ForgottenPassword() {
             <Form>
               <div className="mb-10">
                 <p className="mb-6">
-                  Enter the 6-digit code sent to your phone number 020-000-1100
+                  Enter the 6-digit code sent to your email{' '}
+                  {email || store?.user?.email}
                 </p>
                 <Field.Group
                   name="otp"

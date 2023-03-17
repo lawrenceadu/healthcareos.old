@@ -4,8 +4,8 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 
 type ValueProps = {
-  kin_fullname: string;
-  kin_phone_number: string;
+  next_of_kin_name: string;
+  next_of_kin_phone: string;
 };
 
 export interface KinProps {
@@ -20,12 +20,12 @@ export function Kin({ button, params = {}, onSubmit }: KinProps) {
       <Formik
         validateOnMount
         validationSchema={object({
-          kin_fullname: schema.requireFullName('Full name'),
-          kin_phone_number: schema.requirePhoneNumber('Phone number'),
+          next_of_kin_name: schema.requireFullName('Full name'),
+          next_of_kin_phone: schema.requirePhoneNumber('Phone number'),
         })}
         initialValues={{
-          kin_fullname: params.kin_fullname || '',
-          kin_phone_number: params.kin_phone_number || '',
+          next_of_kin_name: params.next_of_kin_name || '',
+          next_of_kin_phone: params.next_of_kin_phone || '',
         }}
         onSubmit={onSubmit}
       >
@@ -42,20 +42,20 @@ export function Kin({ button, params = {}, onSubmit }: KinProps) {
 
             <div className="mb-10">
               <Field.Group
-                name="kin_fullname"
+                name="next_of_kin_name"
                 label="Full name (first, middle, last)"
               >
                 <Field.Input
-                  name="kin_fullname"
-                  value={values.kin_fullname}
+                  name="next_of_kin_name"
+                  value={values.next_of_kin_name}
                   placeholder="Enter full name"
                 />
               </Field.Group>
 
               <Field.Group name="phone_number" label="Phone number">
                 <Field.Phone
-                  name="kin_phone_number"
-                  value={values.kin_phone_number}
+                  name="next_of_kin_phone"
+                  value={values.next_of_kin_phone}
                   {...{ setFieldValue, setFieldTouched }}
                 />
               </Field.Group>

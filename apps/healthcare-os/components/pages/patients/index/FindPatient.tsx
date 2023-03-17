@@ -36,17 +36,17 @@ export function FindPatient() {
           first_name: schema.requireString('First name', false),
           last_name: schema.requireString('Last name', false),
           middle_name: schema.requireString('Middle name', false),
-          date_of_birth: schema.requireString('Date of birth', false),
+          dob: schema.requireString('Date of birth', false),
           phone_number: schema.requirePhoneNumber('Phone number', false),
-          id_number: schema.requireString('ID Number', false),
+          ghanacard: schema.requireString('ID Number', false),
         })}
         initialValues={{
           first_name: '',
           middle_name: '',
           last_name: '',
-          date_of_birth: '',
+          dob: '',
           phone_number: '',
-          id_number: '',
+          ghanacard: '',
         }}
         onSubmit={(params, { setSubmitting }) => {
           const data = {};
@@ -96,10 +96,10 @@ export function FindPatient() {
                 />
               </Field.Group>
 
-              <Field.Group name="date_of_birth" label="Date of birth">
+              <Field.Group name="dob" label="Date of birth">
                 <Field.Date
-                  name="date_of_birth"
-                  value={values.date_of_birth}
+                  name="dob"
+                  value={values.dob}
                   options={{
                     dateFormat: 'd - M - Y',
                   }}
@@ -115,10 +115,10 @@ export function FindPatient() {
                 />
               </Field.Group>
 
-              <Field.Group name="id_number" label="Ghana card number">
+              <Field.Group name="ghanacard" label="Ghana card number">
                 <Field.ID
-                  name="id_number"
-                  value={values.id_number}
+                  name="ghanacard"
+                  value={values.ghanacard}
                   {...{ setFieldValue, setFieldTouched }}
                 />
               </Field.Group>

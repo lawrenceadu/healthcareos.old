@@ -47,12 +47,12 @@ const StyledButton = styled.button`
   gap: 0.5rem;
   height: 3rem;
   display: flex;
+  padding: 0 1rem;
   font-size: 1rem;
   font-weight: 500;
   user-select: none;
   white-space: nowrap;
   align-items: center;
-  padding: 0 1.5rem;
   border-radius: 0.5rem;
   justify-content: center;
 

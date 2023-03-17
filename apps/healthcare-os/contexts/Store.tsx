@@ -1,11 +1,14 @@
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react'; // prettier-ignore
 import { useRouter } from 'next/router';
 
-import { UserModel } from '../models/user';
+import { FacilityModel, UserModel } from '../models';
 
 export interface StoreInterface {
   token: string;
   user: UserModel;
+  facility: FacilityModel;
+  role: FacilityModel['role'];
+  permissions: FacilityModel['permissions'];
   isAuthenticated: boolean;
   logout: () => void;
 }
@@ -22,7 +25,17 @@ const StoreProvider = ({ children }: { children: any }) => {
   /**
    * state
    */
-  const [store, setStore] = useState<Partial<StoreInterface>>();
+  const [store, setStore] = useState<Partial<StoreInterface>>(() => {
+    if (typeof window !== 'undefined') {
+      const store = window.localStorage.getItem(process.env['NX_STORAGE_KEY']);
+
+      if (store) {
+        return JSON.parse(store);
+      }
+    }
+
+    return null;
+  });
 
   /**
    * variables
@@ -38,8 +51,8 @@ const StoreProvider = ({ children }: { children: any }) => {
    * functions
    */
   const logout = () => {
-    setStore({ token: null, user: null, isAuthenticated: null });
-    router.push('/');
+    setStore({});
+    router.push({ pathname: '/login' });
   };
 
   /**
@@ -53,14 +66,6 @@ const StoreProvider = ({ children }: { children: any }) => {
       );
     }
   }, [store]);
-
-  useEffect(() => {
-    const store = window.localStorage.getItem(process.env['NX_STORAGE_KEY']);
-
-    if (store) {
-      setStore(JSON.parse(store));
-    }
-  }, []);
 
   return (
     <StoreContext.Provider

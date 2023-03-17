@@ -1,93 +1,131 @@
-import { useState } from 'react';
-import { Button, Field, Modal } from '@healthcareos/react';
+import { Dispatch, SetStateAction } from 'react';
+import { Button, Field } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+
+import { requestInvestigationService } from '../../../../services/patient';
+import { usePatient } from '../../../../hooks';
+import SearchSelect from '../../SearchSelect';
 
 export interface AddProps {
-  children: (props: { proceed: () => void }) => void;
+  onHide: () => void;
+  setTab: Dispatch<SetStateAction<string>>;
 }
 
-export function Add({ children }: AddProps) {
+export function Add({ onHide, setTab }: AddProps) {
   /**
-   * state
+   * hooks
    */
-  const [state, setState] = useState(false);
+  const { patient } = usePatient();
 
   return (
-    <>
-      {children({ proceed: () => setState(true) })}
+    <Formik
+      validateOnMount
+      validationSchema={object({
+        investigation: object().shape({
+          label: schema.requireString('Label'),
+          value: schema.requireString('Value'),
+        }),
+        expected_date: schema.requireString('Expected date', false),
+        notes: schema.requireString('Notes', false),
+      })}
+      initialValues={{
+        investigation: { label: '', value: '' },
+        expected_date: '',
+        notes: '',
+      }}
+      onSubmit={(
+        { investigation, ...params },
+        { setSubmitting, setErrors, resetForm }
+      ) => {
+        const data = { ...params, investigation: investigation.value };
 
-      <Modal
-        show={state}
-        onHide={() => setState(false)}
-        header="Add investigation"
-      >
-        <div className="p-6">
-          <Formik
-            validateOnMount
-            validationSchema={object({
-              investigation: schema.requireString('Investigation'),
-              result: schema.requireString('Result'),
-              notes: schema.requireString('Notes'),
-            })}
-            initialValues={{
-              investigation: '',
-              result: '',
-              notes: '',
-            }}
-            onSubmit={(params, { setSubmitting }) => {
-              return;
-            }}
-          >
-            {({ values, isValid, isSubmitting, handleSubmit }) => (
-              <Form>
-                <Field.Group name="investigation" label="Investigation title">
-                  <Field.Input
-                    name="investigation"
-                    value={values.investigation}
-                  />
-                </Field.Group>
+        requestInvestigationService({
+          ...data,
+          patient: patient.id,
+        })
+          .then(() => {
+            toast.success('Investigation added');
+            resetForm({});
+          })
+          .catch((error) =>
+            toast.error(error?.message || 'Unable to request for investigation')
+          )
+          .finally(() => setSubmitting(false));
+      }}
+    >
+      {({
+        values,
+        isValid,
+        isSubmitting,
+        handleSubmit,
+        setFieldValue,
+        setFieldTouched,
+      }) => (
+        <Form>
+          <div className="px-6 pb-6">
+            <div className="grid gap-6 lg:grid-cols-2 mb-6">
+              <Field.Group
+                name="investigation"
+                wrapperClassName="!mb-0"
+                label="Find investigation"
+              >
+                <SearchSelect.Investigations
+                  value={values.investigation}
+                  onChange={(value) => setFieldValue('investigation', value)}
+                />
+              </Field.Group>
 
-                <div className="mb-6">
-                  <p className="mb-4">Results</p>
-                  <div className="flex gap-6">
-                    <Field.Radio name="result" value="negative">
-                      Negative
-                    </Field.Radio>
-                    <Field.Radio name="result" value="positive">
-                      Positive
-                    </Field.Radio>
-                    <Field.Radio name="result" value="inconclusive">
-                      Inconclusive
-                    </Field.Radio>
-                  </div>
-                </div>
+              <Field.Group
+                name="expected_date"
+                label="Expected date"
+                wrapperClassName="!mb-0"
+              >
+                <Field.Date
+                  name="expected_date"
+                  value={values.expected_date}
+                  options={{
+                    minDate: dayjs().startOf('day').toDate(),
+                  }}
+                  {...{ setFieldValue, setFieldTouched }}
+                />
+              </Field.Group>
+            </div>
 
-                <Field.Group name="notes" label="Notes">
-                  <Field.Input
-                    as="textarea"
-                    className="py-4"
-                    name="notes"
-                    value={values.notes}
-                  />
-                </Field.Group>
+            <Field.Group name="notes" label="Notes">
+              <Field.Input
+                as="textarea"
+                className="py-4"
+                name="notes"
+                value={values.notes}
+              />
+            </Field.Group>
+          </div>
 
-                <Button
-                  type="submit"
-                  disabled={!isValid}
-                  onClick={() => handleSubmit()}
-                  className="btn btn-primary w-full"
-                  {...{ isSubmitting }}
-                >
-                  Add investigation
-                </Button>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </Modal>
-    </>
+          <div className="px-6 py-3 border-t border-gray-200 flex gap-6 justify-end">
+            <Button
+              type="button"
+              className="btn-light"
+              onClick={() => onHide()}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!isValid}
+              className="btn btn-primary"
+              onClick={() => handleSubmit()}
+              {...{ isSubmitting }}
+            >
+              Add investigation
+            </Button>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 }
 

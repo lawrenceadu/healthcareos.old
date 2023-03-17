@@ -1,5 +1,5 @@
 import { Button, Dropdown } from '@healthcareos/react';
-import { CheckIcon, ChevronDownIcon } from '@healthcare/icons';
+import { ChevronDownIcon } from '@healthcare/icons';
 
 export interface DropdownFilterProps {
   name: string;
@@ -24,7 +24,7 @@ function DropdownFilter({
       <Dropdown.Toggle
         as={Button}
         type="button"
-        className="btn-input w-full md:w-auto"
+        className="btn-input w-full md:w-auto !px-4"
         contentClassName="!justify-between w-full"
       >
         <span>{selectedOption ? selectedOption.label : name}</span>
