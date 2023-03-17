@@ -1,11 +1,11 @@
-import { schema } from '@healthcare/utils';
-import { Button, Field } from '@healthcareos/react';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
+import { Button, Field } from '@healthcareos/react';
+import { schema } from '@healthcare/utils';
 
 type ValueProps = {
-  phone_number_type: string;
-  phone_number: string;
+  phone_type: string;
+  phone: string;
 };
 
 export interface ContactProps {
@@ -21,21 +21,18 @@ export function Contact({ button, params = {}, onSubmit }: ContactProps) {
         validateOnMount
         enableReinitialize
         validationSchema={object({
-          phone_number_type: schema.requireString('Phone number type'),
-          phone_number: string().when(
-            'phone_number_type',
-            (phone_number_type, sch) => {
-              return schema.requirePhoneNumber(
-                'Phone number',
-                phone_number_type !== 'none',
-                sch
-              );
-            }
-          ),
+          phone_type: schema.requireString('Phone number type'),
+          phone: string().when('phone_type', (phone_type, sch) => {
+            return schema.requirePhoneNumber(
+              'Phone number',
+              phone_type !== 'none',
+              sch
+            );
+          }),
         })}
         initialValues={{
-          phone_number_type: params.phone_number_type || '',
-          phone_number: params.phone_number || '',
+          phone_type: params.phone_type || '',
+          phone: params.phone || '',
         }}
         onSubmit={onSubmit}
       >
@@ -54,22 +51,22 @@ export function Contact({ button, params = {}, onSubmit }: ContactProps) {
               <div className="mb-6">
                 <p className="mb-4">Type of phone</p>
                 <div className="flex gap-6">
-                  <Field.Radio name="phone_number_type" value="personal">
+                  <Field.Radio name="phone_type" value="personal">
                     Personal
                   </Field.Radio>
-                  <Field.Radio name="phone_number_type" value="shared">
+                  <Field.Radio name="phone_type" value="shared">
                     Shared
                   </Field.Radio>
-                  <Field.Radio name="phone_number_type" value="none">
+                  <Field.Radio name="phone_type" value="none">
                     No phone
                   </Field.Radio>
                 </div>
               </div>
 
-              <Field.Group name="phone_number" label="Phone number">
+              <Field.Group name="phone" label="Phone number">
                 <Field.Phone
-                  name="phone_number"
-                  value={values.phone_number}
+                  name="phone"
+                  value={values.phone}
                   {...{ setFieldValue, setFieldTouched }}
                 />
               </Field.Group>

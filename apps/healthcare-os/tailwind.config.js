@@ -15,7 +15,7 @@ module.exports = {
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
-        primary: '#008521',
+        primary: '#262626',
         gray: {
           50: '#F9FAFB',
           100: '#F3F4F6',

@@ -1,7 +1,9 @@
 import { Form, Formik, FormikHelpers } from 'formik';
-import { object } from 'yup';
 import { Button, Field } from '@healthcareos/react';
+import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+
+import { useCountries } from '../../../hooks';
 
 type ValueProps = {
   nationality: string;
@@ -20,6 +22,11 @@ export function AdditionalInfo({
   params = {},
   onSubmit,
 }: AdditionalInfoProps) {
+  /**
+   * hook
+   */
+  const countries = useCountries();
+
   return (
     <div className="mx-auto max-w-[528px] w-full">
       <Formik
@@ -54,7 +61,10 @@ export function AdditionalInfo({
                   name="nationality"
                   value={values.nationality}
                   placeholder="Select nationality"
-                  options={[{ label: 'Ghanaian', value: 'ghanaian' }]}
+                  options={countries.map((i) => ({
+                    label: i.name,
+                    value: i.id,
+                  }))}
                   onChange={({ value }: { value: string }) =>
                     setFieldValue('nationality', value)
                   }
@@ -76,7 +86,13 @@ export function AdditionalInfo({
                   name="marital_status"
                   value={values.marital_status}
                   placeholder="Select marital status"
-                  options={[{ label: 'Single', value: 'single' }]}
+                  options={[
+                    { label: 'Never married', value: 'single' },
+                    { label: 'Married', value: 'married' },
+                    { label: 'Separated', value: 'separated' },
+                    { label: 'Divorced', value: 'divorced' },
+                    { label: 'Widowed', value: 'widowed' },
+                  ]}
                   onChange={({ value }: { value: string }) =>
                     setFieldValue('marital_status', value)
                   }

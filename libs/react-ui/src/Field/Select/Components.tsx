@@ -69,10 +69,10 @@ export const styles: StylesConfig = {
     display: 'flex',
     borderRadius: 24,
     alignItems: 'center',
-    padding: '0.5rem 0.75rem',
+    padding: '0.375rem 0.75rem',
     backgroundColor: 'rgba(var(--color-primary-rgb), 0.15)',
   }),
-  multiValueLabel: (styles) => ({ fontSize: '0.875rem' }),
+  multiValueLabel: (styles) => ({ fontSize: '0.75rem' }),
   multiValueRemove: (styles) => ({
     ...styles,
     padding: '0',
@@ -85,7 +85,7 @@ export const styles: StylesConfig = {
     ...styles,
     gap: 4,
     height: '100%',
-    padding: '0rem 0.875rem',
+    padding: '0.375rem 0.875rem',
   }),
   singleValue: (styles) => ({
     ...styles,
@@ -97,6 +97,7 @@ export const styles: StylesConfig = {
     ...styles,
     color: 'var(--color-gray-500)',
     fontWeight: 400,
+    whiteSpace: 'nowrap',
   }),
   indicatorsContainer: (styles) => ({ ...styles, cursor: 'pointer' }),
 };

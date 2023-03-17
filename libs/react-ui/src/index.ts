@@ -7,6 +7,7 @@ export { default as Filter } from './Filter/Filter';
 export { default as Tabs } from './Tabs/Tabs';
 
 export * from './FileUpload/FileUpload';
+export * from './Paginate/Paginate';
 export * from './Progress/Progress';
 export * from './Button/Button';
 export * from './Badge/Badge';

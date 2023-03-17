@@ -1,10 +1,11 @@
 import { Field, Button } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import { schema } from '@healthcare/utils';
+import { schema, useSession } from '@healthcare/utils';
 import { object } from 'yup';
 import Head from 'next/head';
 
+import { sendResetOtpService } from '../services/auth';
 import routes from '../routes';
 import Layout from '../components/pages/auth/Layout';
 
@@ -13,6 +14,11 @@ function ForgottenPassword() {
    * routes
    */
   const router = useRouter();
+
+  /**
+   * session
+   */
+  const [, setEmail] = useSession('email');
 
   return (
     <>
@@ -31,8 +37,19 @@ function ForgottenPassword() {
           initialValues={{
             email: '',
           }}
-          onSubmit={(params, { setSubmitting }) => {
-            router.push(routes.auth.otp);
+          onSubmit={(params, { setSubmitting, setErrors }) => {
+            sendResetOtpService(params)
+              .then(() => {
+                setEmail(params.email);
+                router.push({
+                  pathname: routes.auth.otp,
+                  query: { page: 'reset' },
+                });
+              })
+              .catch((error) =>
+                setErrors(error?.fields || { email: 'Invalid email provided' })
+              )
+              .finally(() => setSubmitting(false));
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

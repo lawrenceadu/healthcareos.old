@@ -1,7 +1,10 @@
-import { schema } from '@healthcare/utils';
 import { Button, Field } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object, ref } from 'yup';
+import { schema } from '@healthcare/utils';
+import { toast } from 'react-toastify';
+
+import { updatePasswordService } from '../../../services/settings';
 
 export default function Password() {
   return (
@@ -10,17 +13,28 @@ export default function Password() {
         validateOnMount
         validationSchema={object({
           current_password: schema.requireString('Password'),
-          password: schema.requirePassword('New Password'),
-          password_confirm: schema
+          new_password: schema.requirePassword('New Password'),
+          confirm_password: schema
             .requirePassword('Password confirm')
-            .oneOf([ref('password'), null], 'Passwords must match'),
+            .oneOf([ref('new_password'), null], 'Passwords must match'),
         })}
         initialValues={{
           current_password: '',
-          password: '',
-          password_confirm: '',
+          new_password: '',
+          confirm_password: '',
         }}
-        onSubmit={() => {
+        onSubmit={(params, { setSubmitting, setErrors, resetForm }) => {
+          updatePasswordService(params)
+            .then(() => {
+              toast.success('Password updated');
+              resetForm({});
+            })
+            .catch((error) =>
+              setErrors(
+                error?.fields || { current_password: 'Password is incorrect' }
+              )
+            )
+            .finally(() => setSubmitting(false));
           return;
         }}
       >
@@ -35,18 +49,18 @@ export default function Password() {
                 />
               </Field.Group>
 
-              <Field.Group name="password" label="New password">
+              <Field.Group name="new_password" label="New password">
                 <Field.Password
-                  name="password"
-                  value={values.password}
+                  name="new_password"
+                  value={values.new_password}
                   placeholder="Enter your new password"
                 />
               </Field.Group>
 
-              <Field.Group name="password_confirm" label="Confirm password">
+              <Field.Group name="confirm_password" label="Confirm password">
                 <Field.Password
-                  name="password_confirm"
-                  value={values.password_confirm}
+                  name="confirm_password"
+                  value={values.confirm_password}
                   placeholder="Repeat your new password"
                 />
               </Field.Group>

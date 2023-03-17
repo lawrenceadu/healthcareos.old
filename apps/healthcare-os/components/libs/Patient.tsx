@@ -1,4 +1,4 @@
-import { default as Investigation } from './Patient/Investigation';
+import { default as Investigations } from './Patient/Investigations';
 import { default as Consultation } from './Patient/Consultation';
 import { default as QuickActions } from './Patient/QuickActions';
 import { default as Medication } from './Patient/Medication';
@@ -15,6 +15,7 @@ import { default as Detain } from './Patient/Detain';
 import { default as Vitals } from './Patient/Vitals';
 import { default as Admit } from './Patient/Admit';
 import { default as Notes } from './Patient/Notes';
+import { default as Chart } from './Patient/Chart';
 import { default as Edit } from './Patient/Edit';
 import { default as Info } from './Patient/Info';
 import { default as Move } from './Patient/Move';
@@ -22,7 +23,7 @@ import { default as Move } from './Patient/Move';
 export default Object.assign(
   {},
   {
-    Investigation,
+    Investigations,
     Consultation,
     QuickActions,
     Medication,
@@ -39,6 +40,7 @@ export default Object.assign(
     Vitals,
     Admit,
     Notes,
+    Chart,
     Edit,
     Info,
     Move,

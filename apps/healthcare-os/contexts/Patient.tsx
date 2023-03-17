@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react'; // prettier-ignore
+import { Dispatch, SetStateAction, createContext, useState } from 'react';
 
 import { PatientModel } from '../models/patient';
 
@@ -14,30 +14,7 @@ const PatientProvider = ({ children }: { children: any }) => {
   /**
    * state
    */
-  const [patient, setPatient] = useState<Partial<PatientModel>>();
-
-  /**
-   * effect
-   */
-  useEffect(() => {
-    if (patient) {
-      window.localStorage.setItem(
-        `${process.env['NX_STORAGE_KEY']}.patient`,
-        JSON.stringify(patient)
-      );
-    }
-  }, [patient]);
-
-  useEffect(() => {
-    const pt = window.localStorage.getItem(
-      `${process.env['NX_STORAGE_KEY']}.patient`
-    );
-
-    if (pt) {
-      const patient = JSON.parse(pt);
-      setPatient(patient);
-    }
-  }, []);
+  const [patient, setPatient] = useState<PatientModel>();
 
   return (
     <PatientContext.Provider value={{ patient: { ...patient }, setPatient }}>

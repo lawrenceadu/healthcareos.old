@@ -3,19 +3,41 @@ import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 import { Button, Field } from '@healthcareos/react';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 
-function Add() {
+import { createLocationService } from '../../../../../services/settings';
+
+export interface AddProps {
+  onHide: () => void;
+  mutate: () => void;
+}
+
+function Add({ onHide, mutate }: AddProps) {
   return (
     <Formik
       validateOnMount
       validationSchema={object({
-        name: schema.requireArray('Name').of(schema.requireString('Name')),
+        locations: schema.requireArray('location').of(
+          object().shape({
+            name: schema.requireString('Name'),
+            type: schema.requireString('Type'),
+          })
+        ),
       })}
       initialValues={{
-        name: [''],
+        locations: [{ name: '', type: '' }],
       }}
-      onSubmit={(params, { setSubmitting }) => {
-        return;
+      onSubmit={({ locations }, { setSubmitting }) => {
+        Promise.all(locations.map((i) => createLocationService(i)))
+          .then(() => {
+            toast.success('Location(s) added');
+            onHide?.();
+            mutate?.();
+          })
+          .catch(() => {
+            toast.error('Unable to add location');
+          })
+          .finally(() => setSubmitting(false));
       }}
     >
       {({
@@ -34,33 +56,49 @@ function Add() {
             </p>
 
             <FieldArray
-              name="name"
+              name="locations"
               render={(helpers) => (
                 <>
                   <div>
-                    <p className="text-sm mb-2">Name of location</p>
                     <div className="flex gap-2 flex-col mb-2">
-                      {values.name.map((i, key) => (
-                        <Field.Group
+                      {values.locations.map((i, key) => (
+                        <div
                           key={key}
-                          name={`name.${key}`}
-                          wrapperClassName="!mb-0"
+                          className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,1fr))_3rem]"
                         >
-                          <Field.Input
-                            value={i}
-                            name={`name.${key}`}
-                            placeholder="Enter the name of the location"
-                          />
+                          <Field.Group
+                            label="Name"
+                            name={`locations.${key}.name`}
+                            wrapperClassName="!mb-0"
+                          >
+                            <Field.Input
+                              name={`locations.${key}.name`}
+                              placeholder="Eg. Pharmacy Annex"
+                            />
+                          </Field.Group>
+
+                          <Field.Group
+                            label="Type"
+                            name={`locations.${key}.type`}
+                            wrapperClassName="!mb-0"
+                          >
+                            <Field.Input
+                              name={`locations.${key}.type`}
+                              placeholder="Eg. pharmacy"
+                            />
+                          </Field.Group>
+
                           {key !== 0 && (
                             <Button
                               type="button"
+                              className="mt-6"
                               aria-label="Remove"
                               onClick={() => helpers.remove(key)}
                             >
                               <DeleteIcon />
                             </Button>
                           )}
-                        </Field.Group>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -81,14 +119,17 @@ function Add() {
           </div>
 
           <div className="flex gap-6 justify-end py-3 px-6 border-t border-gray-200">
-            <Button type="button" className="text-muted">
+            <Button
+              type="button"
+              onClick={() => onHide?.()}
+              className="text-muted"
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!isValid}
               className="btn btn-primary"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Add location

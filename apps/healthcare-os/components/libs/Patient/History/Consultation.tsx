@@ -1,23 +1,79 @@
-import { Accordion, Badge } from '@healthcareos/react';
-import React from 'react';
+import { Accordion, Badge, Button, Confirm } from '@healthcareos/react';
+import { DeleteIcon } from '@healthcare/icons';
 
-export function Consultation() {
+import { ConsultationHistoryModel, HistoryLog } from '../../../../models/history'; // prettier-ignore
+import { deleteConsultationService } from '../../../../services/patient';
+import { usePatient } from '../../../../hooks';
+import ConsultationForm from '../Consultation';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+
+export interface ConsultationProps {
+  data: Omit<HistoryLog, 'details'> & { details: ConsultationHistoryModel };
+  isOngoing: boolean;
+}
+
+export function Consultation({ data, isOngoing }: ConsultationProps) {
   /**
    * variables
    */
   const items = [
-    { label: 'Problem', value: 'Headache and stomach pains' },
+    { label: 'Problem', value: data.details.history_examination },
     {
       label: 'Diagnosis',
       value: (
         <div className="flex gap-1">
-          <Badge variant="light">Malaria (confirm)</Badge>
-          <Badge variant="light">Fever</Badge>
+          {data.details.diagnoses.map((i, key) => (
+            <Badge key={key} variant="light">
+              {i.name}
+            </Badge>
+          ))}
         </div>
       ),
     },
-    { label: 'Plan', value: 'Take medicine' },
+    { label: 'Plan', value: data.details.plan },
+    { label: 'Added by', value: data.created_by.name },
+    {
+      label: 'Added at',
+      value: dayjs(data.created_at).format("ddd DD, MMM YYYY @ hh:mma"),
+    },
   ];
+
+  const description = Array.from(
+    { length: 2 },
+    (_, i) => data.details.diagnoses?.[i]?.name
+  )
+    .filter((i) => i)
+    .join(', ');
+
+  /**
+   * hook
+   */
+  const { updateHistory } = usePatient();
+
+  /**
+   * functions
+   */
+  const handleDelete = () =>
+    Confirm({
+      header: 'Delete consultation',
+      message:
+        'Are you sure you want to delete these consultation? This action is not reversible',
+      buttons: {
+        proceed: {
+          value: 'Delete',
+          className: 'btn-error',
+        },
+      },
+    }).then((proceed) => {
+      if (proceed) {
+        deleteConsultationService(data.details.id)
+          .then(() => {
+            updateHistory();
+          })
+          .catch(() => toast.error('Unable to delete consultation'));
+      }
+    });
 
   return (
     <Accordion.Item
@@ -25,7 +81,48 @@ export function Consultation() {
       header={
         <>
           <p className="text-xs !text-yellow-500">Consultation</p>
-          <p className="text-sm font-bold">Malaria (confirm), Fever</p>
+          <p className="text-sm font-bold">{description}</p>
+        </>
+      }
+      actions={
+        <>
+          {isOngoing && (
+            <>
+              <ConsultationForm
+                params={{
+                  id: data.details.id,
+                  plan: data.details.plan,
+                  history_examination: data.details.history_examination,
+                  diagnosis: data.details.diagnoses.map((i) => ({
+                    label: i.name,
+                    value: i.id,
+                  })),
+                }}
+              >
+                {({ proceed }) => (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      proceed();
+                    }}
+                    className="btn-secondary !h-8 !px-4"
+                  >
+                    update
+                  </Button>
+                )}
+              </ConsultationForm>
+
+              <Button
+                className="!h-8 !px-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete();
+                }}
+              >
+                <DeleteIcon size={20} />
+              </Button>
+            </>
+          )}
         </>
       }
     >

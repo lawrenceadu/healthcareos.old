@@ -3,16 +3,24 @@ import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
-
-import routes from '../routes';
-import Layout from '../components/pages/auth/Layout';
 import Head from 'next/head';
+
+import { loginService, sendOtpService } from '../services/auth';
+import { UserModel } from '../models';
+import { useStore } from '../hooks';
+import Layout from '../components/pages/auth/Layout';
+import routes from '../routes';
 
 function Login() {
   /**
    * routes
    */
   const router = useRouter();
+
+  /**
+   * hooks
+   */
+  const { setStore } = useStore();
 
   return (
     <>
@@ -25,26 +33,76 @@ function Login() {
         <Formik
           validateOnMount
           validationSchema={object({
-            email: schema.requireEmail('Email'),
+            username: schema.requireEmail('Email'),
             password: schema.requireString('Password'),
           })}
           initialValues={{
-            email: '',
+            username: '',
             password: '',
           }}
-          onSubmit={(params, { setSubmitting }) => {
-            return;
+          onSubmit={(params, { setSubmitting, setErrors }) => {
+            loginService(params)
+              .then(
+                ({
+                  user,
+                  access_token,
+                }: {
+                  user: UserModel;
+                  access_token: string;
+                }) => {
+                  const facility =
+                    user.facilities.length === 1 ? user.facilities[0] : null;
+
+                  setStore((store) => ({
+                    ...store,
+                    user,
+                    token: access_token,
+                    ...(facility && {
+                      facility,
+                      role: facility.role,
+                      permissions: facility.permissions,
+                    }),
+                  }));
+
+                  if (user.email_verified_at) {
+                    if (user.facilities.length === 1) {
+                      router.push(routes.dashboard.patients.index);
+                    } else {
+                      router.push(routes.auth.facility);
+                    }
+                  } else {
+                    sendOtpService({ email: user.email });
+                    router.push({
+                      pathname: routes.auth.otp,
+                      query: { page: 'signup' },
+                    });
+                  }
+                }
+              )
+              .catch((error) =>
+                setErrors(
+                  error?.fields || { username: 'Invalid credentials provided' }
+                )
+              )
+              .finally(() => setSubmitting(false));
           }}
         >
-          {({ values, isValid, isSubmitting, handleSubmit }) => (
+          {({
+            values,
+            isValid,
+            isSubmitting,
+            handleSubmit,
+            setFieldValue,
+            setFieldTouched,
+          }) => (
             <Form>
               <div className="mb-10">
-                <Field.Group name="email" label="Email">
+                <Field.Group name="username" label="Email address">
                   <Field.Input
                     type="email"
-                    name="email"
-                    value={values.email}
-                    placeholder="Enter your email address"
+                    name="username"
+                    value={values.username}
+                    placeholder="Enter you email address"
                   />
                 </Field.Group>
 

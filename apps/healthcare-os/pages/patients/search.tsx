@@ -1,22 +1,34 @@
-import { useContext } from 'react';
 import { useRouter } from 'next/router';
+import queryString from 'query-string';
+import useSWR from 'swr';
 import dayjs from 'dayjs';
 
-import { PatientContext } from '../../contexts/Patient';
+import { PatientModel } from '../../models';
+import Skeleton from '../../components/libs/Skeleton';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
-import store from '../../store';
 
 function Search() {
   /**
    * routes
    */
   const router = useRouter();
+  const query = router.query;
 
   /**
-   * context
+   * api
    */
-  const { setPatient } = useContext(PatientContext);
+  const { data, isLoading } = useSWR<{ patients: PatientModel[] }>(
+    `/patient?${queryString.stringify(
+      { ...query },
+      { skipEmptyString: true, skipNull: true }
+    )}`
+  );
+
+  /**
+   * variables
+   */
+  const patients = data?.patients || [];
 
   return (
     <Layout title="Patient" onBack>
@@ -34,32 +46,44 @@ function Search() {
             </tr>
           </thead>
           <tbody>
-            {store.patients.map((pt, key) => (
-              <tr
-                key={key}
-                role="button"
-                onClick={() => {
-                  setPatient(pt);
-
-                  router.push({
-                    pathname: routes.dashboard.patients.details.index
-                      .replace('[id]', pt.id)
-                      .replace('[tab]', 'history'),
-                  });
-                }}
-              >
-                <td>{pt.first_name || '--'}</td>
-                <td>{pt.middle_name || '--'}</td>
-                <td>{pt.last_name || '--'}</td>
-                <td>{pt.sex || '--'}</td>
-                <td>
-                  {dayjs(pt.date_of_birth).format('DD/MM/YYYY') +
-                    ` (${dayjs().diff(pt.date_of_birth, 'year')})`}
-                </td>
-                <td>{pt.phone || '--'}</td>
-                <td>{pt.id_number || '--'}</td>
-              </tr>
-            ))}
+            {isLoading && <Skeleton.Table count={7} />}
+            {data && (
+              <>
+                {!patients.length && (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="text-center">
+                        <p>No patient matches search parameters</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {patients.map((pt, key) => (
+                  <tr
+                    key={key}
+                    role="button"
+                    onClick={() => {
+                      router.push({
+                        pathname: routes.dashboard.patients.details.index
+                          .replace('[id]', pt.id)
+                          .replace('[tab]', 'history'),
+                      });
+                    }}
+                  >
+                    <td>{pt.first_name || '--'}</td>
+                    <td>{pt.middle_name || '--'}</td>
+                    <td>{pt.last_name || '--'}</td>
+                    <td>{pt.gender || '--'}</td>
+                    <td>
+                      {dayjs(pt.dob).format('DD/MM/YYYY') +
+                        ` (${dayjs().diff(pt.dob, 'year')})`}
+                    </td>
+                    <td>{pt.phone || '--'}</td>
+                    <td>{pt.ghanacard || '--'}</td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>

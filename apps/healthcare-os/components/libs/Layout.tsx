@@ -1,11 +1,13 @@
-import { HtmlHTMLAttributes, ReactElement, useState } from 'react';
+import { HtmlHTMLAttributes, ReactElement, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
 import * as Icon from '@healthcare/icons';
+import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 
+import { useStore } from '../../hooks';
 import routes from '../../routes';
 
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
@@ -27,6 +29,11 @@ export function Layout({
   const router = useRouter();
 
   /**
+   * store
+   */
+  const { store } = useStore();
+
+  /**
    * state
    */
   const [toggle, setToggle] = useState(false);
@@ -44,6 +51,16 @@ export function Layout({
       name: 'Inventory',
       icon: Icon.PackageIcon,
       link: routes.dashboard.inventory.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Pharmacy',
+      icon: Icon.DrugIcon,
+      link: routes.dashboard.pharmacy.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Investigations',
+      icon: Icon.MicroscopeIcon,
+      link: routes.dashboard.investigations.index,
     },
     {
       name: 'Queuing',
@@ -65,144 +82,190 @@ export function Layout({
     return router.pathname.startsWith(link);
   };
 
+  /**
+   * effect
+   */
+  useEffect(() => {
+    if (store.user && !store.isAuthenticated) {
+      store.logout();
+    }
+
+    if (store.isAuthenticated && !store.facility) {
+      router.push(routes.auth.facility);
+    }
+
+    if (!store.isAuthenticated) {
+      router.push(routes.auth.login);
+    }
+  }, [store, router]);
+
   return (
     <>
       {title && (
         <Head>
-          <title>{title}</title>
+          <title>{`${title} - HealthcareOS`}</title>
         </Head>
       )}
 
-      <div
-        className={helpers.classNames(
-          'h-full w-full',
-          'lg:grid lg:grid-cols-[280px_minmax(0,1fr)]'
-        )}
-      >
-        {/* sidenav */}
-        <div
-          className={helpers.classNames(
-            'w-[280px] h-full overflow-y-auto',
-            'fixed left-0 top-0 lg:relative',
-            'border-r border-gray-300 bg-white',
-            'flex flex-col gap-10',
-            'lg:ml-0 px-6 py-4',
-            'transition-[margin]',
-            toggle ? 'ml-0 z-[100]' : '-ml-[280px]'
-          )}
-        >
-          <div className="flex items-center gap-2 text-primary">
-            <div className="w-10 h-10 rounded-full bg-primary flex">
-              <Icon.HeartHandIcon className="text-white m-auto" />
-            </div>
-            <p className="font-bold">{process.env.NX_APP_NAME}</p>
-          </div>
+      {store.isAuthenticated && (
+        <>
+          <div
+            className={helpers.classNames(
+              'h-full w-full',
+              'lg:grid lg:grid-cols-[280px_minmax(0,1fr)]'
+            )}
+          >
+            {/* sidenav */}
+            <div
+              className={helpers.classNames(
+                'w-[280px] h-full overflow-y-auto',
+                'fixed left-0 top-0 lg:relative',
+                'border-r border-gray-300 bg-white',
+                'flex flex-col gap-10',
+                'lg:ml-0 px-6 py-4',
+                'transition-[margin]',
+                toggle ? 'ml-0 z-[100]' : '-ml-[280px]'
+              )}
+            >
+              <div className="flex items-center gap-2 text-primary">
+                <div className="w-10 h-10 rounded-full bg-primary flex">
+                  <Icon.HeartHandIcon className="text-white m-auto" />
+                </div>
+                <p className="font-bold">{process.env.NX_APP_NAME}</p>
+              </div>
 
-          <div>
-            {navlinks.map(({ link, name, ...item }, key) => (
-              <Link
-                key={key}
-                href={link}
+              <div>
+                {navlinks.map(({ link, name, ...item }, key) => (
+                  <Link
+                    key={key}
+                    href={link}
+                    className={helpers.classNames(
+                      'rounded-lg',
+                      'p-3 h-12 mb-1',
+                      'flex gap-3 items-center',
+                      handleActive(link) &&
+                        'bg-primary font-semibold text-white'
+                    )}
+                  >
+                    <span>
+                      <item.icon
+                        {...(handleActive(link) && { variant: 'solid' })}
+                      />
+                    </span>
+                    <span>{name}</span>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-auto flex items-center">
+                <div className="rounded-full w-10 h-10 flex bg-primary text-white mr-2 relative overflow-hidden">
+                  {store?.user?.photo ? (
+                    <Image
+                      fill
+                      alt="Profile"
+                      src={store.user.photo}
+                      className="object-cover object-center"
+                    />
+                  ) : (
+                    <p className="text-lg m-auto font-bold">
+                      {store.user?.name
+                        ?.split(' ')
+                        ?.map((n) => n[0])
+                        .join('') || '--'}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-bold">
+                    {store?.user?.name || '--'}
+                  </p>
+                  <p className="text-xs text-muted font-semibold">
+                    {store?.role?.name || '--'}
+                  </p>
+                </div>
+
+                <Button
+                  aria-label="Logout"
+                  className="ml-auto text-red-500"
+                  onClick={() => store.logout()}
+                >
+                  <Icon.LogoutIcon />
+                </Button>
+              </div>
+            </div>
+            {/* end of sidenav */}
+
+            {/* content */}
+            <div className="h-full overflow-y-auto">
+              {/* top nav */}
+              <div
                 className={helpers.classNames(
-                  'rounded-lg',
-                  'p-3 h-12 mb-1',
-                  'flex gap-3 items-center',
-                  handleActive(link) && 'bg-primary font-semibold text-white'
+                  'top-0 sticky',
+                  'bg-white z-[100]',
+                  'h-14 md:h-[4.5rem]',
+                  'flex items-center',
+                  'px-4 md:px-12 lg:px-10'
                 )}
               >
-                <span>
-                  <item.icon
-                    {...(handleActive(link) && { variant: 'solid' })}
-                  />
-                </span>
-                <span>{name}</span>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-auto flex items-center">
-            <div className="rounded-full w-10 h-10 flex bg-primary text-white mr-2">
-              <p className="text-lg m-auto font-bold">AO</p>
-            </div>
-            <div>
-              <p className="text-sm font-bold">Agnes Ofori</p>
-              <p className="text-xs text-muted font-semibold">Doctor</p>
-            </div>
-
-            <Button aria-label="Logout" className="ml-auto text-red-500">
-              <Icon.LogoutIcon />
-            </Button>
-          </div>
-        </div>
-        {/* end of sidenav */}
-
-        {/* content */}
-        <div className="h-full overflow-y-auto">
-          {/* top nav */}
-          <div
-            className={helpers.classNames(
-              'top-0 sticky',
-              'bg-white z-[100]',
-              'h-14 md:h-[4.5rem]',
-              'flex items-center',
-              'px-4 md:px-12 lg:px-10'
-            )}
-          >
-            <div className={helpers.classNames('-ml-3', !onBack && 'lg:ml-0')}>
-              {onBack && (
-                <Button
-                  aria-label="Go back"
-                  className="!px-0 w-12 mr-2"
-                  onClick={() => {
-                    if (typeof onBack === 'function') {
-                      return onBack();
-                    }
-
-                    router.back();
-                  }}
+                <div
+                  className={helpers.classNames('-ml-3', !onBack && 'lg:ml-0')}
                 >
-                  <Icon.ArrowLeftIcon />
-                </Button>
-              )}
-              {!onBack && (
-                <Button
-                  aria-label="Toggle menu"
-                  className="lg:!hidden !px-0 w-12 mr-2"
-                  onClick={() => setToggle(true)}
-                >
-                  <Icon.MenuIcon />
-                </Button>
-              )}
+                  {onBack && (
+                    <Button
+                      aria-label="Go back"
+                      className="!px-0 w-12 mr-2"
+                      onClick={() => {
+                        if (typeof onBack === 'function') {
+                          return onBack();
+                        }
+
+                        router.back();
+                      }}
+                    >
+                      <Icon.ArrowLeftIcon />
+                    </Button>
+                  )}
+                  {!onBack && (
+                    <Button
+                      aria-label="Toggle menu"
+                      className="lg:!hidden !px-0 w-12 mr-2"
+                      onClick={() => setToggle(true)}
+                    >
+                      <Icon.MenuIcon />
+                    </Button>
+                  )}
+                </div>
+
+                {title && <h4 className="truncate">{title}</h4>}
+
+                {topNav}
+              </div>
+              {/* end of top nav */}
+
+              {/* main content */}
+              <div
+                className={helpers.classNames(
+                  className || 'p-4 md:px-12 lg:px-10 lg:py-6'
+                )}
+              >
+                {children}
+              </div>
+              {/* end of main content */}
             </div>
-
-            {title && <h4 className="truncate">{title}</h4>}
-
-            {topNav}
+            {/* end of content */}
           </div>
-          {/* end of top nav */}
 
-          {/* main content */}
           <div
+            onClick={() => setToggle(!toggle)}
             className={helpers.classNames(
-              className || 'p-4 md:px-12 lg:px-10 lg:py-6'
+              'transition',
+              toggle
+                ? 'cursor-pointer fixed w-full h-full top-0 left-0 bg-black z-[99] opacity-60'
+                : 'hidden'
             )}
-          >
-            {children}
-          </div>
-          {/* end of main content */}
-        </div>
-        {/* end of content */}
-      </div>
-
-      <div
-        onClick={() => setToggle(!toggle)}
-        className={helpers.classNames(
-          'transition',
-          toggle
-            ? 'cursor-pointer fixed w-full h-full top-0 left-0 bg-black z-[99] opacity-60'
-            : 'hidden'
-        )}
-      />
+          />
+        </>
+      )}
     </>
   );
 }

@@ -3,7 +3,12 @@ import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
 
-function Add() {
+export interface AddProps {
+  onHide: () => void;
+  mutate: () => void;
+}
+
+function Add({ onHide, mutate }: AddProps) {
   return (
     <Formik
       validateOnMount

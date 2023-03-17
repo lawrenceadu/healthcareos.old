@@ -50,8 +50,8 @@ export function Date({
         placeholder={placeholder || '01 -  jan - 2023'}
         {...props}
       />
-      <span className="px-4">
-        <CalendarIcon />
+      <span className="px-4 pointer-events-none absolute right-0">
+        <CalendarIcon className="text-neutral-500" />
       </span>
     </>
   );

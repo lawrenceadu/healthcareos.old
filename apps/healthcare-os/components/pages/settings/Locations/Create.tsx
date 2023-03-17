@@ -5,10 +5,11 @@ import Upload from './Create/Upload';
 import Add from './Create/Add';
 
 export interface CreateProps {
+  mutate: () => void;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Create({ children }: CreateProps) {
+function Create({ mutate, children }: CreateProps) {
   /**
    * variables
    */
@@ -20,19 +21,20 @@ function Create({ children }: CreateProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
   const [tab, setTab] = useState(tabs[0].slug);
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
-      <Modal show={state} onHide={() => setState(false)} header="Add location">
+      <Modal show={show} onHide={() => setShow(false)} header="Add location">
         <Tabs
           tabs={tabs}
           activeKey={tab}
           navClassName="px-6 mt-4"
           onSelect={(key) => setTab(key)}
+          childProps={{ mutate, onHide: () => setShow(false) }}
         />
       </Modal>
     </>

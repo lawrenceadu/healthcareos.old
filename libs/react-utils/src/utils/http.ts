@@ -18,20 +18,25 @@ export const http = axios.create({
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
+    AppId: 'web',
   },
 });
 
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = (() => {
-    // if (store) {
-    //   return store.getState().user.token;
-    // }
-    return null;
+  const store = (() => {
+    const store = JSON.parse(
+      localStorage.getItem(process.env['NX_STORAGE_KEY'] as string) as string
+    );
+    return store;
   })();
 
   if (config.headers) {
-    if (token) {
-      config.headers['authorization'] = `Bearer ${token}`;
+    if (store?.token) {
+      config.headers['authorization'] = `Bearer ${store.token}`;
+    }
+
+    if (store?.facility) {
+      config.headers['FacilityId'] = store?.facility?.id;
     }
   }
 
