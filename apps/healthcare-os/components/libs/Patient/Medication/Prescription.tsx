@@ -34,13 +34,13 @@ export function Prescription({
       {
         label: 'Start date',
         value: medicine.start_date
-          ? dayjs(medicine.start_date).format('ddd DD, MM YYYY')
+          ? dayjs(medicine.start_date).format('ddd DD, MMM YYYY')
           : '',
       },
       {
         label: 'Stop date',
         value: medicine.stop_date
-          ? dayjs(medicine.stop_date).format('ddd DD, MM YYYY')
+          ? dayjs(medicine.stop_date).format('ddd DD, MMM YYYY')
           : '',
       },
       {
@@ -64,7 +64,7 @@ export function Prescription({
     { label: 'Prescribed by', value: prescription.created_by.name },
     {
       label: 'Prescribed at',
-      value: dayjs(prescription.created_at).format('ddd DD, MM YYYY @ h:mm a'),
+      value: dayjs(prescription.created_at).format('ddd DD, MMM YYYY @ h:mm a'),
     },
     { label: 'Notes', value: prescription.notes },
   ];
@@ -97,7 +97,7 @@ export function Prescription({
     <Accordion.Item
       header={
         <p className="text-lg font-bold">
-          {dayjs(prescription.created_at).format('ddd DD, MM YYYY')}
+          {dayjs(prescription.created_at).format('ddd DD, MMM YYYY')}
         </p>
       }
       actions={

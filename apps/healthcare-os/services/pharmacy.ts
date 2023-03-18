@@ -48,3 +48,11 @@ export const updatePrescribedMedicationService = (
 export const deletePrescribedMedicationService = (id: string) =>
   http.delete<never, any>(`/prescription/${id}`);
 // end of prescriptions
+
+// dispense
+export const dispensePrescriptionService = (payload: object) =>
+  http.post<never, any>(`/dispense`, payload);
+
+export const getDispenseTotalService = (payload: object) =>
+  http.post<never, any>(`/dispense/total`, payload);
+// end of dispense

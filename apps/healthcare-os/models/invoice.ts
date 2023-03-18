@@ -1,0 +1,33 @@
+import { DepartmentModel } from './department';
+
+export interface InvoiceModel {
+  id: string;
+  discount: number;
+  notes: number;
+  paid_by: { id: string; name: string };
+  status: string;
+  subtotal: number;
+  total: number;
+  created_at: string;
+  created_by: { id: string; name: string };
+  reference: string;
+
+  details: {
+    charge: ChargeModel;
+    department: DepartmentModel;
+    description: string;
+    id: string;
+    quantity: number;
+    total: number;
+    unit_price: number;
+  }[];
+}
+
+export interface ChargeModel {
+  id: string;
+  name: string;
+  type: string;
+  nhis_price: number;
+  regular_price: number;
+  private_price: number;
+}

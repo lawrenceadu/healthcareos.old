@@ -81,21 +81,23 @@ function Edit({ children }: EditProps) {
             setFieldValue,
             setFieldTouched,
           }) => (
-            <Form {...{ values, setFieldValue }}>
-              <Button
-                type="submit"
-                disabled={!isValid}
-                className="btn btn-primary"
-                onClick={() => handleSubmit()}
-                {...{ isSubmitting }}
-              >
-                Finalize invoice
-              </Button>
-              <Button type="button" className="btn-error-outline">
-                <DeleteIcon />
-                <span>Delete</span>
-              </Button>
-            </Form>
+            <div>
+              {/* <Form {...{ values, setFieldValue }}>
+                <Button
+                  type="submit"
+                  disabled={!isValid}
+                  className="btn btn-primary"
+                  onClick={() => handleSubmit()}
+                  {...{ isSubmitting }}
+                >
+                  Finalize invoice
+                </Button>
+                <Button type="button" className="btn-error-outline">
+                  <DeleteIcon />
+                  <span>Delete</span>
+                </Button>
+              </Form> */}
+            </div>
           )}
         </Formik>
       </Modal>

@@ -47,3 +47,8 @@ export const requestInvestigationService = (payload: object) =>
 // triage
 export const setPatientTriageService = (payload: object) =>
   http.post<never, any>('/visit/triage', payload);
+
+// invoice
+export const createPatientInvoiceService = (payload: object) =>
+  http.post<never, any>(`/invoice`, payload);
+// end of invoice

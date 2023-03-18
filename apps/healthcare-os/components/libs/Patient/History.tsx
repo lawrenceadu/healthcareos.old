@@ -77,6 +77,7 @@ export function History() {
 
         {data && (
           <>
+            {!histories.length && <p>Patient has no history yet</p>}
             {histories.map((history, key) => (
               <Accordion.Item
                 key={key}
