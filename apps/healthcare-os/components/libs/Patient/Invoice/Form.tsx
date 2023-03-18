@@ -1,7 +1,30 @@
-import { DeleteIcon, PlusIcon, SaveIcon } from '@healthcare/icons';
 import { Form as BaseForm, FieldArray, FormikProps } from 'formik';
+import { DeleteIcon, PlusIcon } from '@healthcare/icons';
+import { helpers, schema } from '@healthcare/utils';
 import { Button, Field } from '@healthcareos/react';
-import { helpers } from '@healthcare/utils';
+import { object } from 'yup';
+
+import { usePatient, useStore } from '../../../../hooks';
+import { ChargeModel } from '../../../../models';
+import SearchSelect from '../../SearchSelect';
+
+export const validationSchema = object({
+  notes: schema.requireString('Notes', false),
+  charges: schema.requireArray('Charges').of(
+    object().shape({
+      charge: object().shape({
+        label: schema.requireString('Charge'),
+        value: schema.requireString('Charge'),
+      }),
+      department: object().shape({
+        label: schema.requireString('Department'),
+        value: schema.requireString('Department'),
+      }),
+      quantity: schema.requireNumber('Quantity'),
+      description: schema.requireString('Description', false),
+    })
+  ),
+});
 
 function Form({
   values,
@@ -9,40 +32,60 @@ function Form({
   setFieldValue,
 }: Partial<
   FormikProps<{
-    patient_type: string;
-    items: {
-      item: string;
-      department: string;
+    charges: {
+      charge: { label: string; value: string; charge?: ChargeModel };
+      department: { label: string; value: string };
       quantity: number;
-      price: number;
+      description: string;
     }[];
-    insurance: { name: string; number: string; amount: number };
-    apply_insurance: boolean;
+    insurance: boolean;
+    notes: string;
+    status: string;
   }>
 > & { children: any }) {
+  /**
+   * hook
+   */
+  const { patient } = usePatient();
+  const { store } = useStore();
+
+  /**
+   * functions
+   */
+  const handleCalculateAmount = (params: typeof values) => {
+    const insurance_type =
+      params.insurance &&
+      patient.insurances.length &&
+      patient.insurances[0].type;
+
+    const amounts = params.charges.map((i) => {
+      if (i.charge.charge && i.quantity) {
+        if (insurance_type) {
+          return (
+            (insurance_type === 'private'
+              ? i.charge.charge.private_price
+              : i.charge.charge.nhis_price) * i.quantity
+          );
+        } else {
+          return i.charge.charge.regular_price * i.quantity;
+        }
+      } else {
+        return 0;
+      }
+    });
+
+    return amounts.reduce((a, b) => a + b, 0).toFixed(2);
+  };
+
   return (
     <BaseForm>
-      <div className="mx-6 py-6 border-b border-gray-200">
-        <p className="mb-4">What type of patient is this patient?</p>
-
-        <div className="flex gap-6">
-          {[
-            { label: 'Outpatient', value: 'outpatient' },
-            { label: 'Inpatient', value: 'inpatient' },
-          ].map((i, key) => (
-            <Field.Radio name="patient_type" value={i.value} key={key}>
-              {i.label}
-            </Field.Radio>
-          ))}
-        </div>
-      </div>
-      <div className="mx-6 py-6 border-b border-gray-200">
+      <div className="mx-6 py-6 mb-6 border-b border-gray-200">
         <p className="text-xl mb-4 font-bold">Items</p>
         <FieldArray name="items">
           {(helper) => (
             <>
               <div className="grid gap-4">
-                {values.items.map((item, key) => (
+                {values.charges.map((charge, key) => (
                   <div
                     key={key}
                     className={helpers.classNames(
@@ -57,41 +100,27 @@ function Form({
                       <div className="grid gap-4 grid-cols-2">
                         <Field.Group
                           label="Item"
-                          name={`items.${key}.item`}
+                          name={`charges.${key}.charge.label`}
                           wrapperClassName="!mb-0"
                         >
-                          <Field.Select
-                            value={item.item}
-                            name={`items.${key}.item`}
-                            onChange={({ value }: { value: string }) => {
-                              setFieldValue(`items.${key}.item`, value);
-                              setFieldValue(`items.${key}.price`, 13);
-                            }}
-                            options={[
-                              {
-                                label: 'Registration',
-                                value: 'registration',
-                              },
-                            ]}
+                          <SearchSelect.Charges
+                            value={charge.charge}
+                            onChange={(value) =>
+                              setFieldValue(`charges.${key}.charge`, value)
+                            }
                           />
                         </Field.Group>
+
                         <Field.Group
                           label="Revenue dept"
-                          name={`items.${key}.department`}
+                          name={`charges.${key}.department`}
                           wrapperClassName="!mb-0"
                         >
-                          <Field.Select
-                            value={item.department}
-                            name={`items.${key}.department`}
-                            onChange={({ value }: { value: string }) =>
-                              setFieldValue(`items.${key}.department`, value)
+                          <SearchSelect.Departments
+                            value={charge.department}
+                            onChange={(value) =>
+                              setFieldValue(`charges.${key}.department`, value)
                             }
-                            options={[
-                              {
-                                label: 'Pharmacy',
-                                value: 'pharmacy',
-                              },
-                            ]}
                           />
                         </Field.Group>
                       </div>
@@ -103,8 +132,8 @@ function Form({
                         >
                           <Field.Input
                             type="number"
-                            name={`items.${key}.quantity`}
-                            value={item.quantity}
+                            name={`charges.${key}.quantity`}
+                            value={charge.quantity}
                           />
                         </Field.Group>
 
@@ -114,10 +143,33 @@ function Form({
                           wrapperClassName="!mb-0"
                           name={`items.${key}.price`}
                         >
-                          <span className="pl-4">GHS</span>
+                          <span className="pl-4">
+                            {store.facility.currency_symbol}
+                          </span>
                           <Field.Input
                             type="number"
-                            value={item.price || ''}
+                            value={(() => {
+                              if (charge.charge?.charge) {
+                                if (values.insurance) {
+                                  const insurance = patient.insurances?.[0];
+                                  if (insurance.type === 'nhis') {
+                                    return (
+                                      charge.charge?.charge?.nhis_price || 0
+                                    );
+                                  } else {
+                                    return (
+                                      charge.charge?.charge?.private_price || 0
+                                    );
+                                  }
+                                } else {
+                                  return (
+                                    charge.charge?.charge?.regular_price || 0
+                                  );
+                                }
+                              } else {
+                                return 0;
+                              }
+                            })()}
                             name={`items.${key}.price`}
                           />
                         </Field.Group>
@@ -156,65 +208,15 @@ function Form({
         </FieldArray>
       </div>
 
-      {values.apply_insurance ? (
-        <div className="p-6 mb-10">
-          <p className="text-xl font-bold mb-4">Insurance</p>
-
-          <div className="grid md:gap-4 md:grid-cols-[repeat(3,minmax(0,1fr))_3rem]">
-            <Field.Group
-              disabled
-              name="insurance.name"
-              label="Insurance name"
-              wrapperClassName="!mb-0"
-            >
-              <Field.Input
-                name="insurance.name"
-                value={values.insurance.name}
-              />
-            </Field.Group>
-
-            <Field.Group
-              disabled
-              name="insurance.number"
-              label="Membership number"
-              wrapperClassName="!mb-0"
-            >
-              <Field.Input
-                name="insurance.number"
-                value={values.insurance.number}
-              />
-            </Field.Group>
-
-            <Field.Group
-              label="Amount"
-              name="insurance.amount"
-              wrapperClassName="!mb-0"
-            >
-              <span className="pl-4">GHS</span>
-              <Field.Input
-                type="number"
-                name="insurance.amount"
-                value={values.insurance.amount || ''}
-              />
-            </Field.Group>
-            <Button
-              type="button"
-              className="mt-6 !px-0 w-full"
-              onClick={() => setFieldValue('apply_insurance', false)}
-            >
-              <DeleteIcon />
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="p-6">
-          <Button
-            type="button"
-            className="btn-outline"
-            onClick={() => setFieldValue('apply_insurance', true)}
+      {!!patient?.insurances?.length && (
+        <div className="mb-8 px-6">
+          <Field.Toggle
+            name="insurance"
+            checked={values.insurance}
+            onChange={(checked) => setFieldValue('insurance', checked)}
           >
-            Apply insurance
-          </Button>
+            <p className="ml-4">Apply insurance</p>
+          </Field.Toggle>
         </div>
       )}
 
@@ -226,17 +228,11 @@ function Form({
         )}
       >
         <div className="flex gap-4 flex-col md:flex-row md:gap-6">
-          <p>
-            Total: Ghs{' '}
-            {values.items.reduce((a, b) => a + Number(b.price * b.quantity), 0)}
-          </p>
-          <p>Insurance: Ghs {values.insurance.amount || 0}</p>
-          <p className="font-bold">
-            Balance: Ghs{' '}
-            {values.items.reduce(
-              (a, b) => a + Number(b.price * b.quantity),
-              0
-            ) - (values.insurance.amount || 0)}
+          <p className="font-semibold">
+            Total:{' '}
+            {store.facility.currency_symbol +
+              ' ' +
+              handleCalculateAmount(values)}
           </p>
         </div>
         <div className="flex gap-4">{children}</div>

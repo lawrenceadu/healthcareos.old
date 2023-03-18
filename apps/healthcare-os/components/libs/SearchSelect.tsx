@@ -1,6 +1,7 @@
 import Items from './SearchSelect/Items';
 import Users from './SearchSelect/Users';
 import Wards from './SearchSelect/Wards';
+import Charges from './SearchSelect/Charges';
 import Suppliers from './SearchSelect/Suppliers';
 import Diagnosis from './SearchSelect/Diagnosis';
 import Medicines from './SearchSelect/Medicines';
@@ -14,6 +15,7 @@ export default Object.assign(
     Items,
     Users,
     Wards,
+    Charges,
     Diagnosis,
     Medicines,
     Suppliers,

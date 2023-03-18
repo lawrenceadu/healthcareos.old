@@ -46,7 +46,7 @@ function Visitation({ children }: VisitationProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        console.log('hi');
+        // console.log('hi');
       }
     });
 

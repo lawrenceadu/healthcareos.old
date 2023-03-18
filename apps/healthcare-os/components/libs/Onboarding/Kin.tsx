@@ -27,7 +27,10 @@ export function Kin({ button, params = {}, onSubmit }: KinProps) {
           next_of_kin_name: params.next_of_kin_name || '',
           next_of_kin_phone: params.next_of_kin_phone || '',
         }}
-        onSubmit={onSubmit}
+        onSubmit={(params, actions) => {
+          actions.setSubmitting(true);
+          return onSubmit(params, actions);
+        }}
       >
         {({
           values,
@@ -64,7 +67,6 @@ export function Kin({ button, params = {}, onSubmit }: KinProps) {
             <Button
               type="submit"
               disabled={!isValid}
-              onClick={() => handleSubmit()}
               className="w-full btn btn-primary"
               {...{ isSubmitting }}
             >

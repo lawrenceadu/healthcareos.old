@@ -22,6 +22,7 @@ export interface MedicineModel {
   quantity: number;
   minimum_level: number;
   reorder_level: number;
+  stocks: { batch_no: string; expiry_date: string }[];
 }
 
 export interface MedicineStockModel {
@@ -63,6 +64,7 @@ export interface PrescriptionModel {
     administration_time: string[];
     medicine: MedicineModel;
   }[];
+  status: string;
   created_by: { id: string; name: string };
   created_at: string;
 }

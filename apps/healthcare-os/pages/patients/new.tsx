@@ -39,10 +39,11 @@ export default function New() {
     addPatientService(session)
       .then(({ patient }: { patient: PatientModel }) => {
         setSession(undefined);
-        router.push({
-          pathname: routes.dashboard.patients.card.activate,
-          query: { id: patient.id },
-        });
+        router.push(
+          routes.dashboard.patients.details.index
+            .replace('[id]', patient.id)
+            .replace('[tab]', 'history')
+        );
       })
       .catch((error) =>
         toast.error(
@@ -141,6 +142,8 @@ export default function New() {
             setSession({ ...(session || {}), ...params });
 
             setTimeout(() => {
+              setSubmitting(true);
+              toast.info('Creating patient....');
               handleSubmit(() => setSubmitting(false));
             });
           }}

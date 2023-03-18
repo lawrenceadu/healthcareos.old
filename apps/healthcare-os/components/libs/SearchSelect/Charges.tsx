@@ -4,15 +4,15 @@ import { http } from '@healthcare/utils';
 import AsyncSelect from 'react-select/async';
 import queryString from 'query-string';
 
-import { MedicineModel } from '../../../models';
+import { ChargeModel } from '../../../models';
 
-export interface MedicinesProps {
+export interface ChargesProps {
   value?: { label: string; value: string };
   options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
 }
 
-function Medicines({ value, options, onChange }: MedicinesProps) {
+function Charges({ value, options, onChange }: ChargesProps) {
   /**
    *
    * @param search
@@ -21,10 +21,10 @@ function Medicines({ value, options, onChange }: MedicinesProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/medicine?${queryString.stringify({ search })}`)
-        .then(({ medicines }: { medicines: MedicineModel[] }) => {
+        .get<never, any>(`/charge?${queryString.stringify({ search })}`)
+        .then(({ charges }: { charges: ChargeModel[] }) => {
           callback(
-            medicines.map((i) => ({ label: i.name, value: i.id, medicine: i }))
+            charges.map((i) => ({ label: i.name, value: i.id, charge: i }))
           );
         });
     },
@@ -38,10 +38,10 @@ function Medicines({ value, options, onChange }: MedicinesProps) {
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for a medicine"
+      placeholder="Start typing to search for an item"
       components={{ ...Field.Select.Components }}
     />
   );
 }
 
-export default Medicines;
+export default Charges;

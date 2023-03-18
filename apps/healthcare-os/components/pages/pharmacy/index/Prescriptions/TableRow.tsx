@@ -1,14 +1,12 @@
-import { helpers } from '@healthcare/utils';
-import { PrescriptionModel } from '../../../../../models';
 import { useState } from 'react';
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  DotsHorizIcon,
-} from '@healthcare/icons';
-import dayjs from 'dayjs';
+import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
 import { Badge, Dropdown } from '@healthcareos/react';
 import { startCase } from 'lodash';
+import { helpers } from '@healthcare/utils';
+import dayjs from 'dayjs';
+
+import { PrescriptionModel } from '../../../../../models';
+import Dispense from './Dispense';
 
 export interface TableRowProps {
   mutate: () => void;
@@ -40,15 +38,25 @@ function TableRow({ mutate, prescription }: TableRowProps) {
         <td>{prescription.created_by.name}</td>
         <td>{dayjs(prescription.created_at).format('ddd DD, MMM YYYY')}</td>
         <td>
-          <Badge variant="pending">pending</Badge>
+          <Badge variant={prescription.status}>{prescription.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          <Dropdown>
-            <Dropdown.Toggle className="mx-auto">
-              <DotsHorizIcon />
-            </Dropdown.Toggle>
-            <Dropdown.Menu></Dropdown.Menu>
-          </Dropdown>
+          {prescription.status === 'pending' && (
+            <Dropdown>
+              <Dropdown.Toggle className="mx-auto">
+                <DotsHorizIcon />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dispense {...{ prescription, mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Dispense medication
+                    </Dropdown.Item>
+                  )}
+                </Dispense>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </td>
       </tr>
 

@@ -1,22 +1,28 @@
 import { useState } from 'react';
-import { boolean, object } from 'yup';
 import { Modal, Button } from '@healthcareos/react';
 import { SaveIcon } from '@healthcare/icons';
 import { Formik } from 'formik';
-import { schema } from '@healthcare/utils';
-
-import Form from './Form';
 import { toast } from 'react-toastify';
 
+import { createPatientInvoiceService } from '../../../../services/patient';
+import Form, { validationSchema } from './Form';
+import { usePatient } from '../../../../hooks';
+
 export interface AddProps {
+  mutate: () => void;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Add({ children }: AddProps) {
+function Add({ mutate, children }: AddProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * hooks
+   */
+  const { patient } = usePatient();
 
   return (
     <>
@@ -29,41 +35,41 @@ function Add({ children }: AddProps) {
       >
         <Formik
           validateOnMount
-          validationSchema={object({
-            items: schema.requireArray('Items').of(
-              object().shape({
-                item: schema.requireString('Item'),
-                department: schema.requireString('Department'),
-                quantity: schema.requireNumber('Quantity'),
-                price: schema.requireNumber('Price'),
-              })
-            ),
-            apply_insurance: boolean(),
-            insurance: object().shape({
-              amount: schema
-                .requireNumber('Amount', false)
-                .when('apply_insurance', (applied, sch) => {
-                  if (applied) {
-                    return sch.required('Amount is required');
-                  } else {
-                    return sch;
-                  }
-                }),
-            }),
-          })}
+          validationSchema={validationSchema}
           initialValues={{
-            patient_type: 'outpatient',
-            items: [{ item: '', department: '', quantity: 1, price: 0 }],
-            insurance: {
-              name: 'Nationwide medical insurance',
-              number: '12345678',
-              amount: 0,
-            },
-            apply_insurance: false,
+            insurance: false,
+            notes: '',
+            status: 'unpaid',
+            charges: [
+              {
+                charge: { label: '', value: '' },
+                department: { label: '', value: '' },
+                quantity: 1,
+                description: '',
+              },
+            ],
           }}
-          onSubmit={(params) => {
-            toast.success('Invoice created');
-            setShow(false);
+          onSubmit={({ charges, ...params }, { setSubmitting }) => {
+            const data = {
+              ...params,
+              patient: patient.id,
+              charges: charges.map(({ charge, department, ...i }) => ({
+                ...i,
+                id: charge.value,
+                department: department.value,
+              })),
+            };
+
+            createPatientInvoiceService(data)
+              .then(() => {
+                toast.success('Invoice created');
+                setShow(false);
+                mutate?.();
+              })
+              .catch((error) =>
+                toast.error(error?.message || 'Unable to create invoice')
+              )
+              .finally(() => setSubmitting(false));
           }}
         >
           {({
@@ -76,15 +82,27 @@ function Add({ children }: AddProps) {
           }) => (
             <Form {...{ values, setFieldValue }}>
               <Button
-                type="submit"
-                disabled={!isValid}
+                type="button"
                 className="btn btn-primary"
-                onClick={() => handleSubmit()}
-                {...{ isSubmitting }}
+                disabled={!isValid || isSubmitting}
+                isSubmitting={values.status === 'unpaid' && isSubmitting}
+                onClick={() => {
+                  setFieldValue('status', 'unpaid');
+                  setTimeout(() => handleSubmit());
+                }}
               >
                 Finalize invoice
               </Button>
-              <Button type="button" className="btn-outline">
+              <Button
+                type="button"
+                className="btn-outline"
+                disabled={!isValid || isSubmitting}
+                onClick={() => {
+                  setFieldValue('status', 'draft');
+                  setTimeout(() => handleSubmit());
+                }}
+                isSubmitting={values.status === 'draft' && isSubmitting}
+              >
                 <SaveIcon strokeWidth={1.5} />
                 <span>Save as draft</span>
               </Button>

@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 
 import AddForm from './Notes/Add';
+import Float from '../Float';
 
 export function Notes() {
   /**
@@ -67,20 +68,19 @@ export function Notes() {
         ))}
       </Accordion>
 
-      <AddForm>
-        {({ proceed }) => (
-          <Button
-            onClick={() => proceed()}
-            className={helpers.classNames(
-              'btn-primary !rounded-full',
-              'fixed bottom-4 md:right-[3rem] xl:right-[544px]'
-            )}
-          >
-            <PlusIcon />
-            <span>Add notes</span>
-          </Button>
-        )}
-      </AddForm>
+      <Float>
+        <AddForm>
+          {({ proceed }) => (
+            <Button
+              onClick={() => proceed()}
+              className={helpers.classNames('btn-primary')}
+            >
+              <PlusIcon />
+              <span>Add notes</span>
+            </Button>
+          )}
+        </AddForm>
+      </Float>
     </>
   );
 }

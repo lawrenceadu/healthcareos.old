@@ -31,6 +31,20 @@ export const generateTimeRange = (
   return timeRange;
 };
 
+export const formatNumber = (num: number, precise?: boolean) => {
+  const suffixes = ['', 'k', 'mil', 'bil', 'tri', 'qua'];
+  let suffixIndex = 0;
+
+  // divide the number by 1000 until it is less than 1000
+  while (num >= 1000) {
+    num /= 1000;
+    suffixIndex++;
+  }
+
+  // round the number to 1 decimal place and add the suffix
+  return (precise ? num.toFixed(1) : Math.floor(num)) + suffixes[suffixIndex];
+};
+
 export const medicineUnits = (() => {
   return [
     { label: 'Gram (g)', value: 'g' },
