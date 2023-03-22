@@ -21,7 +21,13 @@ function Locations({ value, options, onChange }: LocationsProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/location?${queryString.stringify({ search })}`)
+        .get<never, any>(
+          `/location?${queryString.stringify({
+            search,
+            page: 1,
+            per_page: 30,
+          })}`
+        )
         .then(({ locations }: { locations: ItemModel[] }) => {
           callback(
             locations.map((i) => ({ label: i.name, value: i.id, item: i }))
@@ -34,12 +40,20 @@ function Locations({ value, options, onChange }: LocationsProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
       onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for a location"
       components={{ ...Field.Select.Components }}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No location matches your search query';
+        } else {
+          return 'Start typing to search for a location';
+        }
+      }}
     />
   );
 }

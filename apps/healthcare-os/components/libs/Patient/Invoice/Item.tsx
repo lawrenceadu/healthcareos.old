@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 
 import { InvoiceModel } from '../../../../models';
 import { useStore } from '../../../../hooks';
+import EditForm from './Edit';
 
 export interface ItemProps {
   invoice: InvoiceModel;
@@ -95,9 +96,18 @@ function Item({ invoice }: ItemProps) {
             className={helpers.classNames('grid grid-cols-3 gap-x-4 gap-y-2')}
           >
             {[
-              { label: 'Total', value: 'Ghs 50.00' },
-              { label: 'Insurance', value: 'Ghs 20.00' },
-              { label: 'Balance', value: 'Ghs 30.00' },
+              {
+                label: 'Total',
+                value: `${store.facility.currency_symbol} ${invoice.subtotal}`,
+              },
+              {
+                label: 'Insurance',
+                value: `${store.facility.currency_symbol} ${invoice.discount}`,
+              },
+              {
+                label: 'Balance',
+                value: `${store.facility.currency_symbol} ${invoice.total}`,
+              },
             ].map((i, key) => (
               <div key={key}>
                 <p className="text-xs text-gray-600">{i.label}</p>
@@ -109,7 +119,16 @@ function Item({ invoice }: ItemProps) {
 
         {['unpaid', 'draft'].includes(invoice.status) && (
           <div className="flex gap-4 justify-end">
-            <Button className="btn-sm btn-outline !h-10">Update Invoice</Button>
+            <EditForm invoice={invoice}>
+              {({ proceed }) => (
+                <Button
+                  onClick={() => proceed()}
+                  className="btn-sm btn-outline !h-10"
+                >
+                  Update Invoice
+                </Button>
+              )}
+            </EditForm>
             {invoice.status === 'unpaid' && (
               <Button className="btn-sm btn-primary !h-10">Take payment</Button>
             )}

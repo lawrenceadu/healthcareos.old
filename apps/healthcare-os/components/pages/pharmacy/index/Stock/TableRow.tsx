@@ -153,6 +153,7 @@ function TableRow({ stock, mutate }: TableRowProps) {
                     <th>Item</th>
                     <th>Batch no</th>
                     <th>Expiry date</th>
+                    <th>Unit price</th>
                     <th className="text-right">Quantity</th>
                     <th>Subtotal</th>
                     <th>Discount</th>
@@ -167,6 +168,7 @@ function TableRow({ stock, mutate }: TableRowProps) {
                       <td>
                         {dayjs(detail.expiry_date).format('ddd DD, MMM YYYY')}
                       </td>
+                      <td>{`${store.facility.currency_symbol} ${detail.unit_price}`}</td>
                       <td className="text-right">{detail.quantity}</td>
                       <td>{`${store.facility.currency_symbol} ${detail.subtotal}`}</td>
                       <td>{`${store.facility.currency_symbol} ${detail.discount}`}</td>

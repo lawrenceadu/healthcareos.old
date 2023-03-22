@@ -73,6 +73,11 @@ export function Layout({
       icon: Icon.SettingsIcon,
       link: routes.dashboard.settings.index.replace('[tab]', ''),
     },
+    {
+      name: 'Resources',
+      icon: Icon.LayersIcon,
+      link: routes.dashboard.resources.index.replace('[tab]', ''),
+    },
   ];
 
   /**

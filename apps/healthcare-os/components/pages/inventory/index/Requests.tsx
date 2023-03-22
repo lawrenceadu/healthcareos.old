@@ -70,19 +70,20 @@ function Requests() {
           <thead>
             <tr>
               <th>Requested by</th>
+              <th>From</th>
               <th>Recipient</th>
               <th>Status</th>
               <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {!data && !error && <Skeleton.Table count={4} />}
+            {!data && !error && <Skeleton.Table count={5} />}
 
             {data && (
               <>
                 {!issues.length && (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={5}>
                       <p className="text-center">No request yet</p>
                     </td>
                   </tr>

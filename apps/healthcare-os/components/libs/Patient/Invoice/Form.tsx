@@ -141,7 +141,7 @@ function Form({
                           disabled
                           label="Price"
                           wrapperClassName="!mb-0"
-                          name={`items.${key}.price`}
+                          name={`charges.${key}.price`}
                         >
                           <span className="pl-4">
                             {store.facility.currency_symbol}
@@ -170,7 +170,7 @@ function Form({
                                 return 0;
                               }
                             })()}
-                            name={`items.${key}.price`}
+                            name={`charges.${key}.price`}
                           />
                         </Field.Group>
                       </div>

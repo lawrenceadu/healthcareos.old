@@ -83,6 +83,7 @@ function TableRow({ issue, mutate }: TableRowProps) {
             <span>{issue.created_by.name || '--'}</span>
           </div>
         </td>
+        <td>{issue?.location?.name || '--'}</td>
         <td>
           <div>
             <p>{issue.recipient.name}</p>

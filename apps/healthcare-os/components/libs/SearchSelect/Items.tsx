@@ -21,7 +21,9 @@ function Items({ value, options, onChange }: ItemsProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/item?${queryString.stringify({ search })}`)
+        .get<never, any>(
+          `/item?${queryString.stringify({ search, page: 1, per_page: 30 })}`
+        )
         .then(({ items }: { items: ItemModel[] }) => {
           callback(items.map((i) => ({ label: i.name, value: i.id, item: i })));
         });
@@ -32,12 +34,20 @@ function Items({ value, options, onChange }: ItemsProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
+      onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for an item"
       components={{ ...Field.Select.Components }}
-      onChange={onChange}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No item matches your search query';
+        } else {
+          return 'Start typing to search for an item';
+        }
+      }}
     />
   );
 }

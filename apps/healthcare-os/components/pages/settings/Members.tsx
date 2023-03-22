@@ -57,7 +57,7 @@ export default function Members() {
           }
         />
 
-        <CreateForm {...{ mutate }}>
+        {/* <CreateForm {...{ mutate }}>
           {({ proceed }) => (
             <Button
               onClick={() => proceed()}
@@ -66,7 +66,7 @@ export default function Members() {
               Invite member
             </Button>
           )}
-        </CreateForm>
+        </CreateForm> */}
       </div>
 
       <div className="overflow-x-auto mb-8">

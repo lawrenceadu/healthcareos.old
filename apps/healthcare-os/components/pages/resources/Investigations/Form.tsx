@@ -1,0 +1,114 @@
+import { ReactElement, useState } from 'react';
+import { Form as BaseForm, Formik } from 'formik';
+import { Button, Field, Modal } from '@healthcareos/react';
+import { schema } from '@healthcare/utils';
+import { object } from 'yup';
+import { toast } from 'react-toastify';
+
+import { InvestigationModel } from '../../../../models';
+import * as api from '../../../../services/resource';
+
+export interface FormProps {
+  mutate: () => void;
+  params?: InvestigationModel;
+  children: (props: { proceed: () => void }) => ReactElement;
+}
+
+function Form({ mutate, children, params }: FormProps) {
+  /**
+   * state
+   */
+  const [show, setShow] = useState(false);
+
+  return (
+    <>
+      {children({ proceed: () => setShow(true) })}
+
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        header={params ? 'Update investigation' : 'Add investigation'}
+      >
+        <Formik
+          validateOnMount
+          validationSchema={object({
+            name: schema.requireString('Name'),
+            code: schema.requireString('Type'),
+            description: schema.requireString('Description'),
+          })}
+          initialValues={{
+            name: params?.name || '',
+            code: params?.code || '',
+            description: params?.description || '',
+          }}
+          onSubmit={(data, { setSubmitting, setErrors }) => {
+            if (params) {
+              api
+                .updateInvestigationService(data, params.id)
+                .then(() => {
+                  toast.success('Investigation updated');
+                  setShow(false);
+                  mutate();
+                })
+                .catch((error) => setErrors(error?.fields || {}))
+                .finally(() => setSubmitting(false));
+            }
+
+            if (!params) {
+              api
+                .addInvestigationService(data)
+                .then(() => {
+                  toast.success('Investigation added');
+                  setShow(false);
+                  mutate();
+                })
+                .catch((error) => setErrors(error?.fields || {}))
+                .finally(() => setSubmitting(false));
+            }
+          }}
+        >
+          {({ values, isValid, isSubmitting, setFieldValue }) => (
+            <BaseForm>
+              <div className="p-6">
+                <Field.Group name="name" label="Name">
+                  <Field.Input name="name" />
+                </Field.Group>
+
+                <Field.Group name="code" label="Code">
+                  <Field.Input name="code" />
+                </Field.Group>
+
+                <Field.Group name="description" label="Description">
+                  <Field.Input
+                    as="textarea"
+                    name="description"
+                    className="py-4"
+                  />
+                </Field.Group>
+              </div>
+              <div className="modal-footer">
+                <Button
+                  type="button"
+                  className="btn-light"
+                  onClick={() => setShow(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!isValid}
+                  className="btn btn-primary"
+                  {...{ isSubmitting }}
+                >
+                  {params ? 'Update' : 'Add'} investigation
+                </Button>
+              </div>
+            </BaseForm>
+          )}
+        </Formik>
+      </Modal>
+    </>
+  );
+}
+
+export default Form;

@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { boolean, object } from 'yup';
 import { Modal, Button } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
 import { Formik } from 'formik';
-import { schema } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 
-import Form from './Form';
+import Form, { validationSchema } from './Form';
+import { InvoiceModel } from '../../../../models';
 
 export interface EditProps {
+  invoice: InvoiceModel;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Edit({ children }: EditProps) {
+function Edit({ invoice, children }: EditProps) {
   /**
    * state
    */
@@ -25,48 +25,40 @@ function Edit({ children }: EditProps) {
         size="xl"
         show={show}
         onHide={() => setShow(false)}
-        header="Create invoice"
+        header="Update invoice"
       >
         <Formik
           validateOnMount
-          validationSchema={object({
-            items: schema.requireArray('Items').of(
-              object().shape({
-                item: schema.requireString('Item'),
-                department: schema.requireString('Department'),
-                quantity: schema.requireNumber('Quantity'),
-                price: schema.requireNumber('Price'),
-              })
-            ),
-            apply_insurance: boolean(),
-            insurance: object().shape({
-              amount: schema
-                .requireNumber('Amount', false)
-                .when('apply_insurance', (applied, sch) => {
-                  if (applied) {
-                    return sch.required('Amount is required');
-                  } else {
-                    return sch;
-                  }
-                }),
-            }),
-          })}
+          validationSchema={validationSchema}
           initialValues={{
-            patient_type: 'outpatient',
-            items: [
+            insurance: false,
+            notes: invoice?.notes || '',
+            status: invoice?.status || 'unpaid',
+            charges: invoice?.details?.map(
+              ({ charge, department, quantity, description, unit_price }) => ({
+                quantity,
+                description,
+                price: unit_price,
+                charge: {
+                  value: charge.id,
+                  label: charge.name,
+                  charge: {
+                    ...charge,
+                    nhis_price: unit_price,
+                    regular_price: unit_price,
+                    private_price: unit_price,
+                  },
+                },
+                department: { label: department.name, value: department.id },
+              })
+            ) || [
               {
-                item: 'registration',
-                department: 'pharmacy',
+                charge: { label: '', value: '' },
+                department: { label: '', value: '' },
                 quantity: 1,
-                price: 13,
+                description: '',
               },
             ],
-            insurance: {
-              name: 'Nationwide medical insurance',
-              number: '12345678',
-              amount: 13,
-            },
-            apply_insurance: true,
           }}
           onSubmit={(params) => {
             toast.error('Invoice has been finalized');
@@ -82,7 +74,7 @@ function Edit({ children }: EditProps) {
             setFieldTouched,
           }) => (
             <div>
-              {/* <Form {...{ values, setFieldValue }}>
+              <Form {...{ values, setFieldValue }}>
                 <Button
                   type="submit"
                   disabled={!isValid}
@@ -96,7 +88,7 @@ function Edit({ children }: EditProps) {
                   <DeleteIcon />
                   <span>Delete</span>
                 </Button>
-              </Form> */}
+              </Form>
             </div>
           )}
         </Formik>

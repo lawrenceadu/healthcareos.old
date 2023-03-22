@@ -8,11 +8,10 @@ import { MedicineModel } from '../../../models';
 
 export interface MedicinesProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
 }
 
-function Medicines({ value, options, onChange }: MedicinesProps) {
+function Medicines({ value, onChange }: MedicinesProps) {
   /**
    *
    * @param search
@@ -21,7 +20,13 @@ function Medicines({ value, options, onChange }: MedicinesProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/medicine?${queryString.stringify({ search })}`)
+        .get<never, any>(
+          `/medicine?${queryString.stringify({
+            search,
+            page: 1,
+            per_page: 30,
+          })}`
+        )
         .then(({ medicines }: { medicines: MedicineModel[] }) => {
           callback(
             medicines.map((i) => ({ label: i.name, value: i.id, medicine: i }))
@@ -34,12 +39,20 @@ function Medicines({ value, options, onChange }: MedicinesProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
       onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for a medicine"
       components={{ ...Field.Select.Components }}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No medicine matches your search query';
+        } else {
+          return 'Start typing to search for a medicine';
+        }
+      }}
     />
   );
 }

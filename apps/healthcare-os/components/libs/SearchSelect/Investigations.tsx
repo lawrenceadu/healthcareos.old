@@ -21,7 +21,13 @@ function Investigations({ value, options, onChange }: InvestigationsProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/investigation?${queryString.stringify({ search })}`)
+        .get<never, any>(
+          `/investigation?${queryString.stringify({
+            search,
+            page: 1,
+            per_page: 30,
+          })}`
+        )
         .then(
           ({ investigations }: { investigations: InvestigationModel[] }) => {
             callback(
@@ -36,12 +42,20 @@ function Investigations({ value, options, onChange }: InvestigationsProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
       onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for an investigation"
       components={{ ...Field.Select.Components }}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No investigation matches your search query';
+        } else {
+          return 'Start typing to search for an investigation';
+        }
+      }}
     />
   );
 }

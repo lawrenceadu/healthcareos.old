@@ -48,6 +48,10 @@ export interface ItemIssueModel {
     id: string;
     name: string;
   };
+  location: {
+    id: string;
+    name: string;
+  };
   date: string;
   details: {
     id: string;

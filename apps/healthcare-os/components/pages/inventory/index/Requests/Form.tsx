@@ -56,6 +56,9 @@ export default function Form({ mutate, params, children }: FormProps) {
           })}
           initialValues={{
             issue_to: params?.issue_to || '',
+            location: params?.location
+              ? { label: params.location.name, value: params.location.id }
+              : { label: '', value: '' },
             recipient: params?.recipient
               ? { label: params.recipient.name, value: params.recipient.id }
               : { label: '', value: '' },
@@ -107,11 +110,9 @@ export default function Form({ mutate, params, children }: FormProps) {
           }}
         >
           {({
-            errors,
             values,
             isValid,
             isSubmitting,
-            handleSubmit,
             setFieldValue,
             setFieldTouched,
           }) => (
@@ -180,6 +181,15 @@ export default function Form({ mutate, params, children }: FormProps) {
                     </div>
                   )}
                 </FieldArray>
+
+                <div className="grid gap-4 md:grid-cols-2 mb-6">
+                  <Field.Group name="location" label="Issue From">
+                    <SearchSelect.Locations
+                      value={values.location}
+                      onChange={(value) => setFieldValue('location', value)}
+                    />
+                  </Field.Group>
+                </div>
 
                 <div className="grid gap-4 md:grid-cols-2 mb-6">
                   <Field.Group

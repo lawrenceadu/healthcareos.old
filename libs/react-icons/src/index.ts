@@ -17,6 +17,7 @@ export { default as XMarkIcon } from './icons/XMark';
 export { default as DeleteIcon } from './icons/Delete';
 export { default as FilterIcon } from './icons/Filter';
 export { default as EyeOffIcon } from './icons/EyeOff';
+export { default as LayersIcon } from './icons/Layers';
 export { default as LogoutIcon } from './icons/Logout';
 export { default as QrCodeIcon } from './icons/QrCode';
 export { default as SearchIcon } from './icons/Search';
@@ -46,4 +47,3 @@ export { default as ChevronLeftIcon } from './icons/ChevronLeft';
 export { default as StethoscopeIcon } from './icons/Stethoscope';
 export { default as ChevronRightIcon } from './icons/ChevronRight';
 export { default as ConsultationIcon } from './icons/Consultation';
-

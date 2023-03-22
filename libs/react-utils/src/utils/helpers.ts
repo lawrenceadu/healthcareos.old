@@ -8,21 +8,18 @@ export const generateTimeRange = (
   startTime = '00:00',
   endTime = '23:59'
 ): { label: string; value: string }[] => {
-  const start = new Date(`2023-01-01T${startTime}`);
-  const end = new Date(`2023-01-01T${endTime}`);
+  const start = dayjs(`2023-01-01T${startTime}`);
+  const end = dayjs(`2023-01-01T${endTime}`);
   const timeRange = [];
 
-  for (let time = start; time <= end; time.setMinutes(time.getMinutes() + 5)) {
-    const formattedTime = time.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const times = formattedTime.split(':');
+  for (let time = start; time <= end; time = time.add(5, 'minute')) {
+    const formattedTime = time.format('HH:mm');
+    const [hour, minute] = formattedTime.split(':');
 
     timeRange.push({
       label: dayjs()
-        .set('hour', Number(times[0]))
-        .set('minutes', Number(times[1]))
+        .set('hour', Number(hour))
+        .set('minute', Number(minute))
         .format('h:mm a'),
       value: formattedTime,
     });

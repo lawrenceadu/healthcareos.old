@@ -40,6 +40,10 @@ const routes = {
     settings: {
       index: '/settings/[tab]',
     },
+
+    resources: {
+      index: '/resources/[tab]',
+    },
   },
 };
 

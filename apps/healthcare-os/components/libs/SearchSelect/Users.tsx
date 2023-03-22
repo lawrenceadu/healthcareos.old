@@ -21,9 +21,11 @@ function Suppliers({ value, options, onChange }: SuppliersProps) {
   const loadOptions = debounce(
     (search: string, callback: (options: any) => void) => {
       http
-        .get<never, any>(`/user?${queryString.stringify({ search })}`)
+        .get<never, any>(
+          `/user?${queryString.stringify({ search, page: 1, per_page: 30 })}`
+        )
         .then(({ users }: { users: UserModel[] }) => {
-          callback(users.map((i) => ({ label: i.name, value: i.id })));
+          callback(users.map((i) => ({ label: i.name || '--', value: i.id })));
         });
     },
     500
@@ -32,12 +34,20 @@ function Suppliers({ value, options, onChange }: SuppliersProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
       onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for a user"
       components={{ ...Field.Select.Components }}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No user matches your search query';
+        } else {
+          return 'Start typing to search for a user';
+        }
+      }}
     />
   );
 }

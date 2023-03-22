@@ -31,6 +31,7 @@ export function Invoice() {
     `/invoice?${queryString.stringify({
       ...filters,
       page: filters?.page + 1,
+      patient: patient.id,
     })}`
   );
 
@@ -60,6 +61,7 @@ export function Invoice() {
 
       {data && (
         <>
+          {!invoices.length && <p>No invoices yet</p>}
           {!!invoices.length && (
             <Accordion className="flex flex-col gap-4 mb-8">
               {invoices.map((invoice, key) => (

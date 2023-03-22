@@ -32,12 +32,20 @@ function Departments({ value, options, onChange }: DepartmentsProps) {
   return (
     <AsyncSelect
       cacheOptions
+      defaultOptions
+      placeholder=""
       onChange={onChange}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
-      placeholder="Start typing to search for a department"
       components={{ ...Field.Select.Components }}
+      noOptionsMessage={({ inputValue }) => {
+        if (inputValue) {
+          return 'No department matches your search query';
+        } else {
+          return 'Start typing to search for a department';
+        }
+      }}
     />
   );
 }

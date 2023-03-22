@@ -3,7 +3,7 @@ import { DepartmentModel } from './department';
 export interface InvoiceModel {
   id: string;
   discount: number;
-  notes: number;
+  notes: string;
   paid_by: { id: string; name: string };
   status: string;
   subtotal: number;
@@ -30,4 +30,9 @@ export interface ChargeModel {
   nhis_price: number;
   regular_price: number;
   private_price: number;
+  created_at: string;
+  created_by: {
+    id: string;
+    name: string;
+  };
 }

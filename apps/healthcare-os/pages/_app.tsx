@@ -31,7 +31,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <SWRConfig
           value={{
             fetcher: (url) => http.get(url).then((response) => response),
-            // dedupingInterval: 1000 * 60 * 1,
+            dedupingInterval: 1000 * 60 * 15,
             shouldRetryOnError: false,
             revalidateOnFocus: true,
           }}

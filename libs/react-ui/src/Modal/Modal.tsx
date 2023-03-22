@@ -98,7 +98,7 @@ export function Modal({
         <div
           className={helpers.classNames(
             'w-full rounded-lg mx-4 my-auto',
-            'shadow-3xl bg-white relative overflow-hidden'
+            'shadow-3xl bg-white relative'
           )}
         >
           {header && (
