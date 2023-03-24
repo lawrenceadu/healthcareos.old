@@ -103,7 +103,8 @@ function ForgottenPassword() {
                 className="w-full btn btn-primary mb-4"
                 {...{ isSubmitting }}
               >
-                Reset password
+                {page === 'reset' && 'Reset password'}
+                {page === 'signup' && 'Continue'}
               </Button>
               <Button
                 type="button"

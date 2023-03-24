@@ -7,7 +7,7 @@ export const updatePasswordService = (payload: {
 }) => http.post<never, any>('/auth/password', payload);
 
 export const updateProfileService = (payload: FormData) =>
-  http.post<never, any>(`/profile`, payload, {
+  http.patch<never, any>(`/profile`, payload, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
