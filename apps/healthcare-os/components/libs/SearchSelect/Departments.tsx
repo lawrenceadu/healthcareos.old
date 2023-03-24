@@ -8,11 +8,11 @@ import { DepartmentModel } from '../../../models';
 
 export interface DepartmentsProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Departments({ value, options, onChange }: DepartmentsProps) {
+function Departments({ value, disabled, onChange }: DepartmentsProps) {
   /**
    *
    * @param search
@@ -35,6 +35,7 @@ function Departments({ value, options, onChange }: DepartmentsProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

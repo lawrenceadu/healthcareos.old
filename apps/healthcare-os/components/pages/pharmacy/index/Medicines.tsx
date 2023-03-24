@@ -4,12 +4,12 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
-import { MedicineStockModel } from '../../../../models';
+import { MedicineModel } from '../../../../models';
 import Skeleton from '../../../libs/Skeleton';
-import TableRow from './Stock/TableRow';
-import Form from './Stock/Form';
+import TableRow from './Medicines/TableRow';
+import Form from './Medicines/Form';
 
-function Stock() {
+function Items() {
   /**
    * state
    */
@@ -19,13 +19,14 @@ function Stock() {
    * api
    */
   const { data, error, mutate } = useSWR<{
-    stocks: MedicineStockModel[];
+    medicines: MedicineModel[];
     total: number;
   }>(
-    `/medicine/stock?${queryString.stringify(
+    `/medicine?${queryString.stringify(
       {
         ...filters,
-        page: filters?.page + 1,
+        page: filters.page + 1,
+        per_page: 10,
       },
       { skipEmptyString: true, skipNull: true }
     )}`,
@@ -36,7 +37,7 @@ function Stock() {
   /**
    * variables
    */
-  const stocks = data?.stocks || [];
+  const medicines = data?.medicines || [];
 
   return (
     <>
@@ -48,9 +49,9 @@ function Stock() {
         />
 
         <div className="ml-auto">
-          <Form {...{ mutate }}>
+          <Form mutate={mutate}>
             {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
+              <Button className="btn-primary !px-4" onClick={() => proceed()}>
                 <PlusIcon />
                 <span>Add</span>
               </Button>
@@ -63,31 +64,31 @@ function Stock() {
         <table>
           <thead>
             <tr>
-              <th>Supplier</th>
-              <th>Location</th>
-              <th className="text-right">Items</th>
-              <th>Date</th>
-              <th>Subtotal</th>
-              <th>Discount</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th className="text-center">Action</th>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Category</th>
+              <th>Group</th>
+              <th>Unit</th>
+              <th className="text-right">Minimum Level</th>
+              <th className="text-right">Reorder Level</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {!data && !error && <Skeleton.Table count={9} />}
+            {!data && !error && <Skeleton.Table count={8} />}
+
             {data && (
               <>
-                {!stocks.length && (
+                {!medicines.length && (
                   <tr>
-                    <td colSpan={9}>
-                      <p className="text-center">No stocks available</p>
+                    <td colSpan={8}>
+                      <p className="text-center">No medicines yet</p>
                     </td>
                   </tr>
                 )}
 
-                {stocks.map((stock, key) => (
-                  <TableRow key={key} {...{ stock, mutate }} />
+                {medicines.map((medicine, key) => (
+                  <TableRow key={key} {...{ medicine, mutate }} />
                 ))}
               </>
             )}
@@ -108,4 +109,4 @@ function Stock() {
   );
 }
 
-export default Stock;
+export default Items;

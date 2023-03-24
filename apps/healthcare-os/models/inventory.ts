@@ -1,3 +1,7 @@
+import { SupplierModel } from './supplier';
+import { LocationModel } from './location';
+import { UserModel } from './user';
+
 export interface ItemCategoryModel {
   id: string;
   name: string;
@@ -18,13 +22,13 @@ export interface ItemModel {
   reorder_level: number;
 }
 
-export interface ItemStockModel {
+export interface ItemPurchaseModel {
   id: string;
-  supplier: { id: string; name: string };
+  supplier: SupplierModel;
   date: string;
   details: {
     id: string;
-    item: { id: string; name: string };
+    item: ItemModel;
     quantity: number;
     unit_price: number;
     subtotal: number;
@@ -36,8 +40,8 @@ export interface ItemStockModel {
   total: number;
   notes: string;
   status: 'pending' | 'ordered' | 'received';
-  created_by: { id: string; name: string };
-  location: { id: string; name: string };
+  created_by: UserModel;
+  location: LocationModel;
   created_at: string;
 }
 
@@ -48,17 +52,11 @@ export interface ItemIssueModel {
     id: string;
     name: string;
   };
-  location: {
-    id: string;
-    name: string;
-  };
+  location: LocationModel;
   date: string;
   details: {
     id: string;
-    item: {
-      id: string;
-      name: string;
-    };
+    item: ItemModel;
     quantity: number;
   }[];
   notes: string;
@@ -66,9 +64,45 @@ export interface ItemIssueModel {
   attachment: string;
   returned_by: string;
   returned_at: string;
-  created_by: {
+  created_by: UserModel;
+  created_at: string;
+}
+
+export interface ItemAdjustmentModel {
+  id: string;
+  reference: string;
+  reason: string;
+  location: LocationModel;
+  date: string;
+  details: { id: string; item: ItemModel; quantity: number }[];
+  notes: string;
+  status: 'pending' | 'approved' | 'rejected';
+  attachment: string;
+  created_by: UserModel;
+  created_at: string;
+}
+
+export interface ItemTransferModel {
+  id: string;
+  from_location: LocationModel;
+  to_location: LocationModel;
+  date: string;
+  details: { id: string; item: ItemModel; quantity: number }[];
+  notes: string;
+  status: 'pending' | 'approved' | 'rejected';
+  attachment: string;
+  created_by: UserModel;
+  created_at: string;
+}
+
+export interface ItemInventoryModel {
+  id: string;
+  category: ItemCategoryModel;
+  name: string;
+  quantity: number;
+  locations: {
     id: string;
     name: string;
-  };
-  created_at: string;
+    quantity: number;
+  }[];
 }

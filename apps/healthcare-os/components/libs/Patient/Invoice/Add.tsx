@@ -82,29 +82,12 @@ function Add({ mutate, children }: AddProps) {
           }) => (
             <Form {...{ values, setFieldValue }}>
               <Button
-                type="button"
+                type="submit"
+                disabled={!isValid}
                 className="btn btn-primary"
-                disabled={!isValid || isSubmitting}
-                isSubmitting={values.status === 'unpaid' && isSubmitting}
-                onClick={() => {
-                  setFieldValue('status', 'unpaid');
-                  setTimeout(() => handleSubmit());
-                }}
+                isSubmitting={isSubmitting}
               >
-                Finalize invoice
-              </Button>
-              <Button
-                type="button"
-                className="btn-outline"
-                disabled={!isValid || isSubmitting}
-                onClick={() => {
-                  setFieldValue('status', 'draft');
-                  setTimeout(() => handleSubmit());
-                }}
-                isSubmitting={values.status === 'draft' && isSubmitting}
-              >
-                <SaveIcon strokeWidth={1.5} />
-                <span>Save as draft</span>
+                Create invoice
               </Button>
             </Form>
           )}

@@ -9,9 +9,10 @@ import { MedicineModel } from '../../../models';
 export interface MedicinesProps {
   value?: { label: string; value: string };
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Medicines({ value, onChange }: MedicinesProps) {
+function Medicines({ value, disabled, onChange }: MedicinesProps) {
   /**
    *
    * @param search
@@ -42,6 +43,7 @@ function Medicines({ value, onChange }: MedicinesProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

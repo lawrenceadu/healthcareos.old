@@ -5,16 +5,17 @@ import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
-
-import { createItemStockService, updateItemStockService } from '../../../../../services/inventory'; // prettier-ignore
-import { useLocations, useStore } from '../../../../../hooks';
-import { ItemStockModel } from '../../../../../models';
-import SearchSelect from '../../../../libs/SearchSelect';
 import dayjs from 'dayjs';
+
+import { createItemAdjustmentService, updateItemAdjustmentService } from '../../../../../services/inventory'; // prettier-ignore
+import { ItemAdjustmentModel } from '../../../../../models';
+import { useLocations } from '../../../../../hooks';
+import SearchSelect from '../../../../libs/SearchSelect';
+import { startCase } from 'lodash';
 
 export interface FormInterface {
   mutate?: () => void;
-  params?: ItemStockModel;
+  params?: ItemAdjustmentModel;
   children: (props: { proceed: () => void }) => ReactElement;
 }
 
@@ -23,11 +24,6 @@ function Form({ params, mutate, children }: FormInterface) {
    * state
    */
   const [show, setShow] = useState(false);
-
-  /**
-   * store
-   */
-  const { store } = useStore();
 
   /**
    * hook
@@ -40,23 +36,6 @@ function Form({ params, mutate, children }: FormInterface) {
   const initialItemValues = {
     item: { label: '', value: '' },
     quantity: 1,
-    unit_price: 0,
-    discount: 0,
-  };
-
-  /**
-   * function
-   */
-  const handleSubtotal = (
-    items: { unit_price: number; quantity: number; discount: number }[]
-  ): number => {
-    return items
-      .map((i) => ({
-        quantity: i.quantity,
-        unit_price: i.unit_price,
-        discount: i.discount,
-      }))
-      .reduce((a, b) => a + (b.quantity * b.unit_price - b.discount), 0);
   };
 
   return (
@@ -67,15 +46,11 @@ function Form({ params, mutate, children }: FormInterface) {
         size="lg"
         show={show}
         onHide={() => setShow(false)}
-        header={params ? 'Update Stock' : 'Add Stock'}
+        header={params ? 'Update adjustment' : 'Add adjustment'}
       >
         <Formik
           validateOnMount
           validationSchema={object({
-            supplier: object().shape({
-              label: schema.requireString('Label'),
-              value: schema.requireString('Value'),
-            }),
             items: schema.requireArray('Item').of(
               object().shape({
                 item: object().shape({
@@ -83,24 +58,11 @@ function Form({ params, mutate, children }: FormInterface) {
                   value: schema.requireString('Value'),
                 }),
                 quantity: schema.requireNumber('Quantity'),
-                unit_price: schema.requireNumber('Unit price'),
-                discount: schema
-                  .requireNumber('Discount')
-                  .test(
-                    'is-more',
-                    'Discount cannout be more than subtotal price',
-                    (value, { parent }) => {
-                      const subtotal = parent.quantity * parent.unit_price;
-                      return !(value > subtotal);
-                    }
-                  ),
               })
             ),
-            discount: schema
-              .requireNumber('Discount')
-              .min(0, 'Discount cannot be less than 0'),
             notes: schema.requireString('Notes', false),
             location: schema.requireString('Location'),
+            reason: schema.requireString('Reason'),
             date: schema.requireString('Date'),
             attachment: schema.requireFile({
               size: 10,
@@ -110,43 +72,32 @@ function Form({ params, mutate, children }: FormInterface) {
             }),
           })}
           initialValues={{
-            supplier: params?.supplier
-              ? { label: params?.supplier?.name, value: params?.supplier?.id }
-              : { label: '', value: '' },
             items: params?.details
               ? params.details.map((i) => ({
                   item: { label: i.item.name, value: i.item.id },
                   quantity: i.quantity,
-                  unit_price: i.unit_price,
-                  discount: i.discount,
                 }))
               : [
                   {
                     item: { label: '', value: '' },
                     quantity: '',
-                    unit_price: '',
-                    discount: 0,
                   },
                 ],
-            discount: params?.discount || 0,
             notes: params?.notes || '',
+            reason: params?.reason || '',
             location: params?.location?.id || '',
             date: params?.date || '',
           }}
-          onSubmit={(
-            { items, supplier, ...data },
-            { setSubmitting, setErrors }
-          ) => {
+          onSubmit={({ items, ...data }, { setSubmitting, setErrors }) => {
             const _data = {
               ...data,
-              supplier: supplier.value,
               items: items.map(({ item, ...i }) => ({ ...i, id: item.value })),
             };
 
             if (params) {
-              updateItemStockService(_data, params.id)
+              updateItemAdjustmentService(_data, params.id)
                 .then(() => {
-                  toast.success('Updated stock');
+                  toast.success('Updated adjustment');
                   setShow(false);
                   mutate?.();
                 })
@@ -155,9 +106,9 @@ function Form({ params, mutate, children }: FormInterface) {
             }
 
             if (!params) {
-              createItemStockService(_data)
+              createItemAdjustmentService(_data)
                 .then(() => {
-                  toast.success('Added stock');
+                  toast.success('Added adjustment');
                   setShow(false);
                   mutate?.();
                 })
@@ -175,13 +126,6 @@ function Form({ params, mutate, children }: FormInterface) {
           }) => (
             <BaseForm>
               <div className="p-6 max-h-[600px] overflow-y-auto">
-                <Field.Group name="supplier" label="Supplier">
-                  <SearchSelect.Suppliers
-                    value={values.supplier}
-                    onChange={(value) => setFieldValue('supplier', value)}
-                  />
-                </Field.Group>
-
                 <div className="mb-6">
                   <p className="mb-4 font-medium">Items</p>
 
@@ -191,7 +135,7 @@ function Form({ params, mutate, children }: FormInterface) {
                         <div className="grid gap-4 mb-4">
                           {values.items.map((item, key) => (
                             <div key={key}>
-                              <div className="grid md:grid-cols-[280px_repeat(3,minmax(0,1fr))_3rem] gap-4 mb-2">
+                              <div className="grid md:grid-cols-[repeat(2,minmax(0,1fr))_3rem] gap-4">
                                 <Field.Group
                                   label="Item"
                                   wrapperClassName="!mb-0"
@@ -216,36 +160,6 @@ function Form({ params, mutate, children }: FormInterface) {
                                     value={item.quantity}
                                   />
                                 </Field.Group>
-                                <Field.Group
-                                  name={`items.${key}.unit_price`}
-                                  wrapperClassName="!mb-0"
-                                  label="Unit price"
-                                >
-                                  <span className="pl-4">
-                                    {store.facility.currency_symbol}
-                                  </span>
-                                  <Field.Input
-                                    type="number"
-                                    className="!px-0"
-                                    value={item.unit_price}
-                                    name={`items.${key}.unit_price`}
-                                  />
-                                </Field.Group>
-                                <Field.Group
-                                  name={`items.${key}.discount`}
-                                  wrapperClassName="!mb-0"
-                                  label="Discount"
-                                >
-                                  <span className="pl-4">
-                                    {store.facility.currency_symbol}
-                                  </span>
-                                  <Field.Input
-                                    type="number"
-                                    className="!px-0"
-                                    value={item.discount}
-                                    name={`items.${key}.discount`}
-                                  />
-                                </Field.Group>
                                 {!!key && (
                                   <Button
                                     type="button"
@@ -256,22 +170,6 @@ function Form({ params, mutate, children }: FormInterface) {
                                     <DeleteIcon />
                                   </Button>
                                 )}
-                              </div>
-                              <div className="flex gap-4">
-                                <small>
-                                  <b>Subtotal</b>:{' '}
-                                  {`${store.facility.currency_symbol} ${
-                                    item.unit_price * item.quantity
-                                  }`}
-                                </small>
-
-                                <small>
-                                  <b>Total</b>:{' '}
-                                  {`${store.facility.currency_symbol} ${
-                                    item.unit_price * item.quantity -
-                                    item.discount
-                                  }`}
-                                </small>
                               </div>
                             </div>
                           ))}
@@ -290,16 +188,6 @@ function Form({ params, mutate, children }: FormInterface) {
                   </FieldArray>
                 </div>
 
-                <Field.Group name="discount" label="Discount">
-                  <span className="pl-4">{store.facility.currency_symbol}</span>
-                  <Field.Input
-                    type="number"
-                    name="discount"
-                    className="!px-0"
-                    value={values.discount}
-                  />
-                </Field.Group>
-
                 <Field.Group name="location" label="Location">
                   <Field.Select
                     name="location"
@@ -311,6 +199,17 @@ function Form({ params, mutate, children }: FormInterface) {
                     onChange={({ value }: { value: string }) =>
                       setFieldValue('location', value)
                     }
+                  />
+                </Field.Group>
+
+                <Field.Group name="reason" label="Reason">
+                  <Field.Select
+                    name="reason"
+                    value={values.reason}
+                    onChange={({ value }) => setFieldValue('reason', value)}
+                    options={['damage', 'counting', 'expiry', 'other'].map(
+                      (i) => ({ label: startCase(i), value: i })
+                    )}
                   />
                 </Field.Group>
 
@@ -334,29 +233,6 @@ function Form({ params, mutate, children }: FormInterface) {
               </div>
 
               <div className="modal-footer">
-                <div className="mr-auto flex gap-4">
-                  <p>
-                    <b>Subtotal:</b> {store.facility.currency_symbol}{' '}
-                    {handleSubtotal(
-                      values.items.map((i) => ({
-                        discount: i.discount,
-                        unit_price: i.unit_price,
-                        quantity: i.quantity,
-                      }))
-                    )}
-                  </p>
-
-                  <p>
-                    <b>Total:</b> {store.facility.currency_symbol}{' '}
-                    {handleSubtotal(
-                      values.items.map((i) => ({
-                        discount: i.discount,
-                        unit_price: i.unit_price,
-                        quantity: i.quantity,
-                      }))
-                    ) - values.discount}
-                  </p>
-                </div>
                 <Button
                   type="button"
                   className="btn-light"
@@ -370,7 +246,7 @@ function Form({ params, mutate, children }: FormInterface) {
                   className="btn btn-primary"
                   {...{ isSubmitting }}
                 >
-                  {params ? 'Update stock' : 'Add stock'}
+                  {params ? 'Update adjustment' : 'Add adjustment'}
                 </Button>
               </div>
             </BaseForm>

@@ -1,4 +1,7 @@
+import { SupplierModel } from './supplier';
+import { LocationModel } from './location';
 import { PatientModel } from './patient';
+import { UserModel } from './user';
 
 export interface MedicineCategoryModel {
   id: string;
@@ -22,16 +25,16 @@ export interface MedicineModel {
   quantity: number;
   minimum_level: number;
   reorder_level: number;
-  stocks: { batch_no: string; expiry_date: string }[];
+  stocks: { batch_no: string; expiry_date: string; quantity: number }[];
 }
 
-export interface MedicineStockModel {
+export interface MedicinePurchaseModel {
   id: string;
-  supplier: { id: string; name: string };
+  supplier: SupplierModel;
   date: string;
   details: {
     id: string;
-    medicine: { id: string; name: string };
+    medicine: MedicineModel;
     batch_no: string;
     expiry_date: string;
     quantity: number;
@@ -45,9 +48,60 @@ export interface MedicineStockModel {
   total: number;
   notes: string;
   status: 'pending' | 'ordered' | 'received';
-  created_by: { id: string; name: string };
-  location: { id: string; name: string };
+  created_by: UserModel;
+  location: LocationModel;
   created_at: string;
+}
+
+export interface MedicineAdjustmentModel {
+  id: string;
+  reference: string;
+  reason: string;
+  location: LocationModel;
+  date: string;
+  details: {
+    id: string;
+    medicine: MedicineModel;
+    quantity: number;
+    batch_no: string;
+    expiry_date: string;
+  }[];
+  notes: string;
+  status: 'pending' | 'approved' | 'rejected';
+  attachment: string;
+  created_by: UserModel;
+  created_at: string;
+}
+
+export interface MedicineTransferModel {
+  id: string;
+  from_location: LocationModel;
+  to_location: LocationModel;
+  date: string;
+  details: {
+    id: string;
+    medicine: MedicineModel;
+    quantity: number;
+    batch_no: string;
+    expiry_date: string;
+  }[];
+  notes: string;
+  status: 'pending' | 'approved' | 'rejected';
+  attachment: string;
+  created_by: UserModel;
+  created_at: string;
+}
+
+export interface MedicineInventoryModel {
+  id: string;
+  category: MedicineCategoryModel;
+  name: string;
+  quantity: number;
+  locations: {
+    id: string;
+    name: string;
+    quantity: number;
+  }[];
 }
 
 export interface PrescriptionModel {
@@ -65,6 +119,6 @@ export interface PrescriptionModel {
     medicine: MedicineModel;
   }[];
   status: string;
-  created_by: { id: string; name: string };
+  created_by: UserModel;
   created_at: string;
 }

@@ -3,12 +3,12 @@ import { Accordion, Button, Confirm } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
 import { startCase } from 'lodash';
 import { helpers } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { deletePrescribedMedicationService } from '../../../../services/pharmacy';
 import { PrescriptionModel } from '../../../../models';
 import Update from './Update';
-import { toast } from 'react-toastify';
 
 export interface PrescriptionProps
   extends InputHTMLAttributes<HTMLInputElement> {

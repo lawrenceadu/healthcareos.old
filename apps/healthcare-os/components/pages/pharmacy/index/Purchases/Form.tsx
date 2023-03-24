@@ -6,14 +6,15 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
-import { createMedicineStockService, updateMedicineStockService } from '../../../../../services/pharmacy'; // prettier-ignore
+import { createMedicinePurchaseService, updateMedicinePurchaseService } from '../../../../../services/pharmacy'; // prettier-ignore
 import { useLocations, useStore } from '../../../../../hooks';
-import { MedicineStockModel } from '../../../../../models';
+import { MedicinePurchaseModel } from '../../../../../models';
 import SearchSelect from '../../../../libs/SearchSelect';
+import dayjs from 'dayjs';
 
 export interface FormInterface {
   mutate?: () => void;
-  params?: MedicineStockModel;
+  params?: MedicinePurchaseModel;
   children: (props: { proceed: () => void }) => ReactElement;
 }
 
@@ -66,7 +67,7 @@ function Form({ params, mutate, children }: FormInterface) {
         size="lg"
         show={show}
         onHide={() => setShow(false)}
-        header={params ? 'Update Stock' : 'Add Stock'}
+        header={params ? 'Update purchase' : 'Add purchase'}
       >
         <Formik
           validateOnMount
@@ -150,9 +151,9 @@ function Form({ params, mutate, children }: FormInterface) {
             };
 
             if (params) {
-              updateMedicineStockService(_data, params.id)
+              updateMedicinePurchaseService(_data, params.id)
                 .then(() => {
-                  toast.success('Updated stock');
+                  toast.success('Updated purchase');
                   setShow(false);
                   mutate?.();
                 })
@@ -161,9 +162,9 @@ function Form({ params, mutate, children }: FormInterface) {
             }
 
             if (!params) {
-              createMedicineStockService(_data)
+              createMedicinePurchaseService(_data)
                 .then(() => {
-                  toast.success('Added stock');
+                  toast.success('Added purchase');
                   setShow(false);
                   mutate?.();
                 })
@@ -356,6 +357,7 @@ function Form({ params, mutate, children }: FormInterface) {
                   <Field.Date
                     name="date"
                     value={values.date}
+                    options={{ maxDate: dayjs().toDate() }}
                     {...{ setFieldValue, setFieldTouched }}
                   />
                 </Field.Group>
@@ -407,7 +409,7 @@ function Form({ params, mutate, children }: FormInterface) {
                   className="btn btn-primary"
                   {...{ isSubmitting }}
                 >
-                  {params ? 'Update stock' : 'Add stock'}
+                  {params ? 'Update purchase' : 'Add purchase'}
                 </Button>
               </div>
             </BaseForm>

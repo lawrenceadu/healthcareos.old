@@ -90,7 +90,7 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
               batch_no: '',
             })),
           }}
-          onSubmit={(params, { setSubmitting }) => {
+          onSubmit={(params, { setSubmitting, setErrors }) => {
             const data = handleDataClearUp(params);
 
             api
@@ -140,13 +140,24 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
               })
               .catch((error) => {
                 setSubmitting(false);
+
+                if (error?.fields) {
+                  setErrors(error?.fields);
+                }
+
                 toast.error(
                   error?.message || 'Unable to calculate total price'
                 );
               });
           }}
         >
-          {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
+          {({
+            values,
+            isValid,
+            isSubmitting,
+            setFieldValue,
+            setFieldTouched,
+          }) => (
             <Form>
               <div className="p-6 max-h-[600px] overflow-y-auto">
                 <FieldArray name="medicines">
@@ -197,42 +208,19 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
                                     wrapperClassName="!mb-0"
                                     name={`medicines.${key}.batch_no`}
                                   >
-                                    <Field.Select
-                                      value={medicine.batch_no}
-                                      onChange={({ value, expiry_date }) => {
-                                        setFieldValue(
-                                          `medicines.${key}.batch_no`,
-                                          value
-                                        );
-                                        setFieldValue(
-                                          `medicines.${key}.expiry_date`,
-                                          expiry_date
-                                        );
-                                      }}
-                                      options={
-                                        medicineDetails?.stocks?.map((i) => ({
-                                          label: i.batch_no,
-                                          value: i.batch_no,
-                                          expiry_date: i.expiry_date,
-                                        })) || []
-                                      }
+                                    <Field.Input
+                                      name={`medicines.${key}.batch_no`}
                                     />
                                   </Field.Group>
                                   <Field.Group
-                                    disabled
                                     label="Expiry"
                                     wrapperClassName="!mb-0"
                                     name={`medicines.${key}.expiry_date`}
                                   >
-                                    <Field.Input
+                                    <Field.Date
+                                      value={medicine.expiry_date}
                                       name={`medicines.${key}.expiry_date`}
-                                      value={
-                                        medicine.expiry_date
-                                          ? dayjs(medicine.expiry_date).format(
-                                              'ddd DD, MMM YYYY'
-                                            )
-                                          : ''
-                                      }
+                                      {...{ setFieldValue, setFieldTouched }}
                                     />
                                   </Field.Group>
 
@@ -245,15 +233,6 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
                                       type="number"
                                       name={`medicines.${key}.quantity`}
                                     />
-                                    <span className="text-sm px-4 py-[13px] bg-neutral-100 whitespace-nowrap">
-                                      {medicineDetails?.quantity
-                                        ? helpers.formatNumber(
-                                            medicineDetails.quantity,
-                                            false
-                                          )
-                                        : ''}{' '}
-                                      available
-                                    </span>
                                   </Field.Group>
                                 </div>
                                 <Button

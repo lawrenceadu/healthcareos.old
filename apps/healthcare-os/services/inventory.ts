@@ -22,19 +22,35 @@ export const deleteItemService = (id: string) =>
   http.delete<never, any>(`/item/${id}`);
 // end of item
 
-// stock
-export const createItemStockService = (payload: object) =>
+// purchase
+export const createItemPurchaseService = (payload: object) =>
+  http.post<never, any>('/item/purchase', payload);
+
+export const updateItemPurchaseService = (payload: object, id: string) =>
+  http.patch<never, any>(`/item/purchase/${id}`, payload);
+
+export const updateItemPurchaseStatusService = (payload: object, id: string) =>
+  http.post<never, any>(`/item/purchase/${id}`, payload);
+
+export const deleteItemPurchaseService = (id: string) =>
+  http.delete<never, any>(`/item/purchase/${id}`);
+// end of purchase
+
+// adjustment
+export const createItemAdjustmentService = (payload: object) =>
   http.post<never, any>('/item/stock', payload);
 
-export const updateItemStockService = (payload: object, id: string) =>
+export const updateItemAdjustmentService = (payload: object, id: string) =>
   http.patch<never, any>(`/item/stock/${id}`, payload);
 
-export const updateItemStockStatusService = (payload: object, id: string) =>
-  http.post<never, any>(`/item/stock/${id}`, payload);
+export const updateItemAdjustmentStatusService = (
+  payload: object,
+  id: string
+) => http.post<never, any>(`/item/stock/${id}`, payload);
 
-export const deleteItemStockService = (id: string) =>
+export const deleteItemAdjustmentService = (id: string) =>
   http.delete<never, any>(`/item/stock/${id}`);
-// end of stock
+// end of adjustment
 
 // request
 export const createItemRequestService = (payload: object) =>
@@ -48,3 +64,18 @@ export const updateItemRequestStatusService = (payload: object, id: string) =>
 
 export const deleteItemRequestService = (id: string) =>
   http.delete<never, any>(`/item/issue/${id}`);
+// end of request
+
+// transfer
+export const createItemTransferService = (payload: object) =>
+  http.post<never, any>('/item/transfer', payload);
+
+export const updateItemTransferService = (payload: object, id: string) =>
+  http.patch<never, any>(`/item/transfer/${id}`, payload);
+
+export const updateItemTransferStatusService = (payload: object, id: string) =>
+  http.post<never, any>(`/item/transfer/${id}`, payload);
+
+export const deleteItemTransferService = (id: string) =>
+  http.delete<never, any>(`/item/transfer/${id}`);
+// end of transfer

@@ -5,20 +5,20 @@ import { helpers } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { ItemStockModel } from '../../../../../models';
+import { MedicinePurchaseModel } from '../../../../../models';
 import { useStore } from '../../../../../hooks';
-import * as api from '../../../../../services/inventory';
+import * as api from '../../../../../services/pharmacy';
 import Form from './Form';
 
 // import ChangeForm from './Change';
 // import MoveForm from './Move';
 
 export interface TableRowProps {
-  stock: ItemStockModel;
+  purchase: MedicinePurchaseModel;
   mutate: () => void;
 }
 
-function TableRow({ stock, mutate }: TableRowProps) {
+function TableRow({ purchase, mutate }: TableRowProps) {
   /**
    * state
    */
@@ -34,31 +34,31 @@ function TableRow({ stock, mutate }: TableRowProps) {
    */
   const handleDelete = () =>
     Confirm({
-      header: 'Delete stock',
+      header: 'Delete purchase',
       message: (
         <>
-          You are about to delete this stock? Once you delete it you will lose
-          it forever.
+          You are about to delete this purchase? Once you delete it you will
+          lose it forever.
         </>
       ),
       buttons: {
         proceed: {
-          value: 'Delete stock',
+          value: 'Delete purchase',
         },
       },
     }).then((proceed) => {
       if (proceed) {
         api
-          .deleteItemStockService(stock.id)
+          .deleteMedicinePurchaseService(purchase.id)
           .then(() => {
             mutate?.();
-            toast.success('Stock deleted');
+            toast.success('Purchase deleted');
           })
           .catch(() => toast.error('Unabe'));
       }
     });
 
-  const handleStatusUpdate = (status: ItemStockModel['status']) =>
+  const handleStatusUpdate = (status: MedicinePurchaseModel['status']) =>
     Confirm({
       header: 'Update status',
       message: (
@@ -72,13 +72,13 @@ function TableRow({ stock, mutate }: TableRowProps) {
     }).then((proceed) => {
       if (proceed) {
         api
-          .updateItemStockStatusService({ status }, stock.id)
+          .updateMedicinePurchaseStatusService({ status }, purchase.id)
           .then(() => {
-            toast.success('Stock status updated');
+            toast.success('Purchase status updated');
             mutate?.();
           })
           .catch(() =>
-            toast.error('Unable to update stock status. Please try again')
+            toast.error('Unable to update purchase status. Please try again')
           );
       }
     });
@@ -91,31 +91,31 @@ function TableRow({ stock, mutate }: TableRowProps) {
       >
         <td className="flex gap-2 items-center">
           {toggle ? <ChevronUpIcon size={20} /> : <ChevronDownIcon size={20} />}
-          <span>{stock.supplier.name}</span>
+          <span>{purchase.supplier.name}</span>
         </td>
-        <td>{stock.location.name}</td>
-        <td className="text-right">{stock.details.length}</td>
-        <td>{dayjs(stock.date).format('ddd DD, MMM YYYY')}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.subtotal}`}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.discount}`}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.total}`}</td>
+        <td>{purchase.location.name}</td>
+        <td className="text-right">{purchase.details.length}</td>
+        <td>{dayjs(purchase.date).format('ddd DD, MMM YYYY')}</td>
+        <td>{`${store.facility.currency_symbol} ${purchase.subtotal}`}</td>
+        <td>{`${store.facility.currency_symbol} ${purchase.discount}`}</td>
+        <td>{`${store.facility.currency_symbol} ${purchase.total}`}</td>
         <td>
-          <Badge variant={stock.status}>{stock.status}</Badge>
+          <Badge variant={purchase.status}>{purchase.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          {['pending', 'ordered'].includes(stock.status) && (
+          {['pending', 'ordered'].includes(purchase.status) && (
             <Dropdown>
               <Dropdown.Toggle className="mx-auto">
                 <DotsHorizIcon />
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {stock.status === 'pending' && (
+                {purchase.status === 'pending' && (
                   <Dropdown.Item onClick={() => handleStatusUpdate('ordered')}>
                     Mark as ordered
                   </Dropdown.Item>
                 )}
 
-                {stock.status === 'ordered' && (
+                {purchase.status === 'ordered' && (
                   <Dropdown.Item onClick={() => handleStatusUpdate('received')}>
                     Mark as received
                   </Dropdown.Item>
@@ -123,7 +123,7 @@ function TableRow({ stock, mutate }: TableRowProps) {
 
                 <hr />
 
-                <Form params={stock} {...{ mutate }}>
+                <Form params={purchase} {...{ mutate }}>
                   {({ proceed }) => (
                     <Dropdown.Item onClick={() => proceed()}>
                       Update
@@ -151,6 +151,9 @@ function TableRow({ stock, mutate }: TableRowProps) {
                 <thead>
                   <tr>
                     <th>Item</th>
+                    <th>Batch no</th>
+                    <th>Expiry date</th>
+                    <th>Unit price</th>
                     <th className="text-right">Quantity</th>
                     <th>Subtotal</th>
                     <th>Discount</th>
@@ -158,9 +161,14 @@ function TableRow({ stock, mutate }: TableRowProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {stock.details.map((detail, key) => (
+                  {purchase.details.map((detail, key) => (
                     <tr key={key}>
-                      <td>{detail.item.name}</td>
+                      <td>{detail.medicine.name}</td>
+                      <td>{detail.batch_no}</td>
+                      <td>
+                        {dayjs(detail.expiry_date).format('ddd DD, MMM YYYY')}
+                      </td>
+                      <td>{`${store.facility.currency_symbol} ${detail.unit_price}`}</td>
                       <td className="text-right">{detail.quantity}</td>
                       <td>{`${store.facility.currency_symbol} ${detail.subtotal}`}</td>
                       <td>{`${store.facility.currency_symbol} ${detail.discount}`}</td>
@@ -171,11 +179,11 @@ function TableRow({ stock, mutate }: TableRowProps) {
               </table>
             </td>
           </tr>
-          {stock.notes && (
+          {purchase.notes && (
             <tr>
               <td colSpan={8} className="!whitespace-normal">
                 <p className="font-medium">Notes:</p>
-                <p>{stock.notes}</p>
+                <p>{purchase.notes}</p>
               </td>
             </tr>
           )}

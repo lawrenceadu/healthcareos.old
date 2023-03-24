@@ -29,6 +29,7 @@ export const validationSchema = object({
 function Form({
   values,
   children,
+  readonly,
   setFieldValue,
 }: Partial<
   FormikProps<{
@@ -42,7 +43,7 @@ function Form({
     notes: string;
     status: string;
   }>
-> & { children: any }) {
+> & { children: any; readonly?: boolean }) {
   /**
    * hook
    */
@@ -59,7 +60,7 @@ function Form({
       patient.insurances[0].type;
 
     const amounts = params.charges.map((i) => {
-      if (i.charge.charge && i.quantity) {
+      if (i?.charge?.charge && i?.quantity) {
         if (insurance_type) {
           return (
             (insurance_type === 'private'
@@ -81,7 +82,7 @@ function Form({
     <BaseForm>
       <div className="mx-6 py-6 mb-6 border-b border-gray-200">
         <p className="text-xl mb-4 font-bold">Items</p>
-        <FieldArray name="items">
+        <FieldArray name="charges">
           {(helper) => (
             <>
               <div className="grid gap-4">
@@ -100,6 +101,7 @@ function Form({
                       <div className="grid gap-4 grid-cols-2">
                         <Field.Group
                           label="Item"
+                          disabled={readonly}
                           name={`charges.${key}.charge.label`}
                           wrapperClassName="!mb-0"
                         >
@@ -113,6 +115,7 @@ function Form({
 
                         <Field.Group
                           label="Revenue dept"
+                          disabled={readonly}
                           name={`charges.${key}.department`}
                           wrapperClassName="!mb-0"
                         >
@@ -127,6 +130,7 @@ function Form({
                       <div className="grid gap-4 md:grid-cols-2">
                         <Field.Group
                           label="Quantity"
+                          disabled={readonly}
                           wrapperClassName="!mb-0"
                           name={`items.${key}.quantity`}
                         >
@@ -175,7 +179,7 @@ function Form({
                         </Field.Group>
                       </div>
                     </div>
-                    {key !== 0 && (
+                    {key !== 0 && !readonly && (
                       <Button
                         type="button"
                         className="mt-6 !px-0 w-full"
@@ -188,21 +192,16 @@ function Form({
                 ))}
               </div>
 
-              <Button
-                type="button"
-                className="btn-light mt-2"
-                onClick={() =>
-                  helper.push({
-                    item: '',
-                    department: '',
-                    quantity: 1,
-                    price: 0,
-                  })
-                }
-              >
-                <PlusIcon className="stroke-[2.5px]" />
-                <span>Add item</span>
-              </Button>
+              {!readonly && (
+                <Button
+                  type="button"
+                  className="btn-light mt-2"
+                  onClick={() => helper.push({})}
+                >
+                  <PlusIcon className="stroke-[2.5px]" />
+                  <span>Add item</span>
+                </Button>
+              )}
             </>
           )}
         </FieldArray>
@@ -212,6 +211,7 @@ function Form({
         <div className="mb-8 px-6">
           <Field.Toggle
             name="insurance"
+            disabled={readonly}
             checked={values.insurance}
             onChange={(checked) => setFieldValue('insurance', checked)}
           >

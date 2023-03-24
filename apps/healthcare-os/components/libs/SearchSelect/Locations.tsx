@@ -8,11 +8,11 @@ import { ItemModel } from '../../../models';
 
 export interface LocationsProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Locations({ value, options, onChange }: LocationsProps) {
+function Locations({ value, disabled, onChange }: LocationsProps) {
   /**
    *
    * @param search
@@ -43,6 +43,7 @@ function Locations({ value, options, onChange }: LocationsProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

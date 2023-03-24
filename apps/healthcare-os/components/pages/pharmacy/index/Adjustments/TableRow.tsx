@@ -5,16 +5,16 @@ import { helpers } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { MedicineStockModel } from '../../../../../models';
+import { MedicineAdjustmentModel } from '../../../../../models';
 import { useStore } from '../../../../../hooks';
-import * as api from '../../../../../services/pharmacy';
+import * as api from '../../../../../services/inventory';
 import Form from './Form';
 
 // import ChangeForm from './Change';
 // import MoveForm from './Move';
 
 export interface TableRowProps {
-  stock: MedicineStockModel;
+  stock: MedicineAdjustmentModel;
   mutate: () => void;
 }
 
@@ -34,36 +34,36 @@ function TableRow({ stock, mutate }: TableRowProps) {
    */
   const handleDelete = () =>
     Confirm({
-      header: 'Delete stock',
+      header: 'Delete adjustment',
       message: (
         <>
-          You are about to delete this stock? Once you delete it you will lose
-          it forever.
+          You are about to delete this adjustment? Once you delete it you will
+          lose it forever.
         </>
       ),
       buttons: {
         proceed: {
-          value: 'Delete stock',
+          value: 'Delete adjustment',
         },
       },
     }).then((proceed) => {
       if (proceed) {
         api
-          .deleteMedicineStockService(stock.id)
+          .deleteItemAdjustmentService(stock.id)
           .then(() => {
             mutate?.();
-            toast.success('Stock deleted');
+            toast.success('Adjustment deleted');
           })
           .catch(() => toast.error('Unabe'));
       }
     });
 
-  const handleStatusUpdate = (status: MedicineStockModel['status']) =>
+  const handleStatusUpdate = (status: MedicineAdjustmentModel['status']) =>
     Confirm({
       header: 'Update status',
       message: (
         <>
-          Are you sure you want to mark this stock as <b>{status}</b>?
+          Are you sure you want to mark this adjustment as <b>{status}</b>?
         </>
       ),
       buttons: {
@@ -72,13 +72,13 @@ function TableRow({ stock, mutate }: TableRowProps) {
     }).then((proceed) => {
       if (proceed) {
         api
-          .updateMedicineStockStatusService({ status }, stock.id)
+          .updateItemAdjustmentStatusService({ status }, stock.id)
           .then(() => {
-            toast.success('Stock status updated');
+            toast.success('Adjustment status updated');
             mutate?.();
           })
           .catch(() =>
-            toast.error('Unable to update stock status. Please try again')
+            toast.error('Unable to update adjustment status. Please try again')
           );
       }
     });
@@ -91,35 +91,33 @@ function TableRow({ stock, mutate }: TableRowProps) {
       >
         <td className="flex gap-2 items-center">
           {toggle ? <ChevronUpIcon size={20} /> : <ChevronDownIcon size={20} />}
-          <span>{stock.supplier.name}</span>
+          <span>{stock.reference}</span>
         </td>
         <td>{stock.location.name}</td>
         <td className="text-right">{stock.details.length}</td>
         <td>{dayjs(stock.date).format('ddd DD, MMM YYYY')}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.subtotal}`}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.discount}`}</td>
-        <td>{`${store.facility.currency_symbol} ${stock.total}`}</td>
         <td>
           <Badge variant={stock.status}>{stock.status}</Badge>
         </td>
+        <td>{stock.reason}</td>
+        <td>{stock.created_by.name}</td>
         <td onClick={(e) => e.stopPropagation()}>
-          {['pending', 'ordered'].includes(stock.status) && (
+          {['pending'].includes(stock.status) && (
             <Dropdown>
               <Dropdown.Toggle className="mx-auto">
                 <DotsHorizIcon />
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {stock.status === 'pending' && (
-                  <Dropdown.Item onClick={() => handleStatusUpdate('ordered')}>
-                    Mark as ordered
-                  </Dropdown.Item>
-                )}
+                <Dropdown.Item onClick={() => handleStatusUpdate('approved')}>
+                  Approve
+                </Dropdown.Item>
 
-                {stock.status === 'ordered' && (
-                  <Dropdown.Item onClick={() => handleStatusUpdate('received')}>
-                    Mark as received
-                  </Dropdown.Item>
-                )}
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleStatusUpdate('rejected')}
+                >
+                  Reject
+                </Dropdown.Item>
 
                 <hr />
 
@@ -150,29 +148,15 @@ function TableRow({ stock, mutate }: TableRowProps) {
               <table>
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Batch no</th>
-                    <th>Expiry date</th>
-                    <th>Unit price</th>
+                    <th>Medicine</th>
                     <th className="text-right">Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Discount</th>
-                    <th>Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stock.details.map((detail, key) => (
                     <tr key={key}>
                       <td>{detail.medicine.name}</td>
-                      <td>{detail.batch_no}</td>
-                      <td>
-                        {dayjs(detail.expiry_date).format('ddd DD, MMM YYYY')}
-                      </td>
-                      <td>{`${store.facility.currency_symbol} ${detail.unit_price}`}</td>
                       <td className="text-right">{detail.quantity}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.subtotal}`}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.discount}`}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.total}`}</td>
                     </tr>
                   ))}
                 </tbody>

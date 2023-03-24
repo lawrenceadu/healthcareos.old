@@ -7,9 +7,11 @@ import routes from '../../routes';
 import FiltersProvider from '../../contexts/Filters';
 import Prescriptions from '../../components/pages/pharmacy/index/Prescriptions';
 import Inventory from '../../components/pages/pharmacy/index/Inventory';
+import Adjustments from '../../components/pages/pharmacy/index/Adjustments';
+import Purchases from '../../components/pages/pharmacy/index/Purchases';
+import Transfers from '../../components/pages/pharmacy/index/Transfers';
 import Category from '../../components/pages/pharmacy/index/Category';
-import Items from '../../components/pages/pharmacy/index/Items';
-import Stock from '../../components/pages/pharmacy/index/Stock';
+import Medicines from '../../components/pages/pharmacy/index/Medicines';
 
 function Index() {
   /**
@@ -24,8 +26,10 @@ function Index() {
   const tabs = [
     { name: 'Prescriptions', slug: 'prescriptions', component: Prescriptions },
     { name: 'Inventory', slug: 'inventory', component: Inventory },
-    { name: 'Stock', slug: 'stock', component: Stock },
-    { name: 'Items', slug: 'items', component: Items },
+    { name: 'Adjustments', slug: 'adjustments', component: Adjustments },
+    { name: 'Transfers', slug: 'transfer', component: Transfers },
+    { name: 'Purchases', slug: 'purchases', component: Purchases },
+    { name: 'Medicines', slug: 'medicines', component: Medicines },
     { name: 'Category', slug: 'category', component: Category },
   ];
 

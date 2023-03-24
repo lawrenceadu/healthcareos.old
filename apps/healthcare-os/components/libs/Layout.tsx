@@ -69,14 +69,19 @@ export function Layout({
     },
     { name: 'Wards', icon: Icon.BedIcon, link: routes.dashboard.wards.index },
     {
-      name: 'Settings',
-      icon: Icon.SettingsIcon,
-      link: routes.dashboard.settings.index.replace('[tab]', ''),
-    },
-    {
       name: 'Resources',
       icon: Icon.LayersIcon,
       link: routes.dashboard.resources.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Members',
+      icon: Icon.UsersIcon,
+      link: routes.dashboard.members.index.replace('[tab]', ''),
+    },
+    {
+      name: 'Settings',
+      icon: Icon.SettingsIcon,
+      link: routes.dashboard.settings.index.replace('[tab]', ''),
     },
   ];
 

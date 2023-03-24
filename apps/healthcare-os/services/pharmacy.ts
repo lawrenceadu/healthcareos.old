@@ -22,19 +22,21 @@ export const deleteMedicineService = (id: string) =>
   http.delete<never, any>(`/medicine/${id}`);
 // end of medicine
 
-// stock
-export const createMedicineStockService = (payload: object) =>
-  http.post<never, any>(`/medicine/stock`, payload);
+// purchase
+export const createMedicinePurchaseService = (payload: object) =>
+  http.post<never, any>(`/medicine/purchase`, payload);
 
-export const updateMedicineStockService = (payload: object, id: string) =>
-  http.patch<never, any>(`/medicine/stock/${id}`, payload);
+export const updateMedicinePurchaseService = (payload: object, id: string) =>
+  http.patch<never, any>(`/medicine/purchase/${id}`, payload);
 
-export const updateMedicineStockStatusService = (payload: object, id: string) =>
-  http.post<never, any>(`/medicine/stock/${id}`, payload);
+export const updateMedicinePurchaseStatusService = (
+  payload: object,
+  id: string
+) => http.post<never, any>(`/medicine/purchase/${id}`, payload);
 
-export const deleteMedicineStockService = (id: string) =>
-  http.delete<never, any>(`/medicine/stock/${id}`);
-// end of stock
+export const deleteMedicinePurchaseService = (id: string) =>
+  http.delete<never, any>(`/medicine/purchase/${id}`);
+// end of purchase
 
 // prescriptions
 export const prescribeMedicationService = (payload: object) =>
@@ -56,3 +58,35 @@ export const dispensePrescriptionService = (payload: object) =>
 export const getDispenseTotalService = (payload: object) =>
   http.post<never, any>(`/dispense/total`, payload);
 // end of dispense
+
+// transfer
+export const createMedicineTransferService = (payload: object) =>
+  http.post<never, any>('/medicine/transfer', payload);
+
+export const updateMedicineTransferService = (payload: object, id: string) =>
+  http.patch<never, any>(`/medicine/transfer/${id}`, payload);
+
+export const updateMedicineTransferStatusService = (
+  payload: object,
+  id: string
+) => http.post<never, any>(`/medicine/transfer/${id}`, payload);
+
+export const deleteMedicineTransferService = (id: string) =>
+  http.delete<never, any>(`/medicine/transfer/${id}`);
+// end of transfer
+
+// adjustment
+export const createMedicineAdjustmentService = (payload: object) =>
+  http.post<never, any>('/medicine/stock', payload);
+
+export const updateMedicineAdjustmentService = (payload: object, id: string) =>
+  http.patch<never, any>(`/medicine/stock/${id}`, payload);
+
+export const updateMedicineAdjustmentStatusService = (
+  payload: object,
+  id: string
+) => http.post<never, any>(`/medicine/stock/${id}`, payload);
+
+export const deleteMedicineAdjustmentService = (id: string) =>
+  http.delete<never, any>(`/medicine/stock/${id}`);
+// end of adjustment

@@ -5,6 +5,7 @@ export interface ToggleProps {
   checked: boolean;
   children?: any;
   className?: string;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
 }
 
@@ -13,6 +14,7 @@ export function Toggle({
   children,
   checked,
   onChange,
+  disabled,
   className,
   ...props
 }: ToggleProps) {
@@ -24,13 +26,14 @@ export function Toggle({
       )}
       htmlFor={name}
       onClick={() => {
-        onChange(!checked);
+        if (!disabled) onChange(!checked);
       }}
     >
       <input
         name={name}
         type="checkbox"
         checked={checked}
+        disabled={disabled}
         className="sr-only peer"
         onChange={() => null}
       />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Field } from '@healthcareos/react';
+import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
@@ -59,7 +60,8 @@ function Requests() {
               onClick={() => proceed()}
               className="lg:ml-auto btn-primary"
             >
-              Request
+              <PlusIcon />
+              <span>Add</span>
             </Button>
           )}
         </Form>

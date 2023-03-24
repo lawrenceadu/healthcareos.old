@@ -4,9 +4,10 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { AddIcon, DeleteIcon } from '@healthcare/icons';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
-import { toast } from 'react-toastify';
 
+import { dischargePatientService } from '../../../services/admission';
 import { usePatient } from '../../../hooks';
+import SearchSelect from '../SearchSelect';
 
 export interface DischargeProps {
   children: (props: { proceed: () => void }) => void;
@@ -21,7 +22,7 @@ function Discharge({ children }: DischargeProps) {
   /**
    * hook
    */
-  const { patient } = usePatient();
+  const { patient, mutate, updateHistory } = usePatient();
 
   return (
     <>
@@ -34,21 +35,43 @@ function Discharge({ children }: DischargeProps) {
       >
         <Formik
           validateOnMount
+          enableReinitialize
           validationSchema={object({
-            diagnosis: schema
-              .requireArray('Diagnosis')
-              .of(schema.requireString('Diagnosis')),
+            diagnosis: schema.requireArray('Diagnosis').of(
+              object().shape({
+                label: schema.requireString('Diagnosis'),
+                value: schema.requireString('Diagnosis'),
+              })
+            ),
             outcome: schema.requireString('Outcome'),
+            status: schema.requireString('Status'),
             notes: schema.requireString('Notes'),
           })}
           initialValues={{
-            diagnosis: [''] as string[],
+            diagnosis: [{ label: '', value: '' }],
+            status: 'discharge',
             outcome: '',
             notes: '',
           }}
-          onSubmit={() => {
-            toast.success('Patient discharged');
-            setShow(false);
+          onSubmit={(
+            { diagnosis, ...params },
+            { setSubmitting, setErrors }
+          ) => {
+            const data = {
+              ...params,
+              diagnosis: diagnosis.map(({ value }) => value),
+              patient: patient.id,
+            };
+
+            dischargePatientService(data)
+              .then(() => {
+                updateHistory();
+                mutate();
+
+                setShow(false);
+              })
+              .catch((error) => setErrors(error?.fields || {}))
+              .finally(() => setSubmitting(false));
           }}
         >
           {({
@@ -70,12 +93,14 @@ function Discharge({ children }: DischargeProps) {
                         {values.diagnosis.map((diagnosis, key) => (
                           <Field.Group
                             key={key}
-                            name={`diagnosis.${key}`}
+                            name={`diagnosis.${key}.label`}
                             wrapperClassName="!mb-0"
                           >
-                            <Field.Input
+                            <SearchSelect.Diagnosis
                               value={diagnosis}
-                              name={`diagnosis.${key}`}
+                              onChange={(value) =>
+                                setFieldValue(`diagnosis.${key}`, value)
+                              }
                             />
                             {key !== 0 && (
                               <Button
@@ -107,11 +132,11 @@ function Discharge({ children }: DischargeProps) {
                 <small className="mb-4 block">Outcome</small>
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   {[
-                    { label: 'Abscorned', value: 'abscorned' },
+                    { label: 'Absconded', value: 'absconded' },
                     { label: 'Death', value: 'death' },
-                    { label: 'Discharge home', value: 'discharge' },
+                    { label: 'Discharge home', value: 'discharge-home' },
                     { label: 'Referral', value: 'referral' },
-                    { label: 'Self discharge', value: 'self_discharge' },
+                    { label: 'Self discharge', value: 'self-discharge' },
                   ].map((i, key) => (
                     <Field.Radio key={key} name="outcome" value={i.value}>
                       {i.label}
@@ -133,7 +158,6 @@ function Discharge({ children }: DischargeProps) {
               <Button
                 type="submit"
                 disabled={!isValid}
-                onClick={() => handleSubmit()}
                 className="btn btn-primary w-full"
                 {...{ isSubmitting }}
               >

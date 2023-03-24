@@ -4,10 +4,10 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
-import { ItemStockModel } from '../../../../models';
+import { MedicinePurchaseModel } from '../../../../models';
 import Skeleton from '../../../libs/Skeleton';
-import TableRow from './Stock/TableRow';
-import Form from './Stock/Form';
+import TableRow from './Purchases/TableRow';
+import Form from './Purchases/Form';
 
 function Stock() {
   /**
@@ -19,10 +19,10 @@ function Stock() {
    * api
    */
   const { data, error, mutate } = useSWR<{
-    stocks: ItemStockModel[];
+    purchases: MedicinePurchaseModel[];
     total: number;
   }>(
-    `/item/stock?${queryString.stringify(
+    `/medicine/purchase?${queryString.stringify(
       {
         ...filters,
         page: filters?.page + 1,
@@ -36,7 +36,7 @@ function Stock() {
   /**
    * variables
    */
-  const stocks = data?.stocks || [];
+  const purchases = data?.purchases || [];
 
   return (
     <>
@@ -78,16 +78,16 @@ function Stock() {
             {!data && !error && <Skeleton.Table count={9} />}
             {data && (
               <>
-                {!stocks.length && (
+                {!purchases.length && (
                   <tr>
                     <td colSpan={9}>
-                      <p className="text-center">No stocks available</p>
+                      <p className="text-center">No purchases available</p>
                     </td>
                   </tr>
                 )}
 
-                {stocks.map((stock, key) => (
-                  <TableRow key={key} {...{ stock, mutate }} />
+                {purchases.map((purchase, key) => (
+                  <TableRow key={key} {...{ purchase, mutate }} />
                 ))}
               </>
             )}

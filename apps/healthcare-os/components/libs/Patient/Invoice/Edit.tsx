@@ -1,22 +1,29 @@
 import { useState } from 'react';
 import { Modal, Button } from '@healthcareos/react';
-import { DeleteIcon } from '@healthcare/icons';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 
 import Form, { validationSchema } from './Form';
 import { InvoiceModel } from '../../../../models';
+import { usePatient } from '../../../../hooks';
+import * as api from '../../../../services/patient';
 
 export interface EditProps {
+  mutate: () => void;
   invoice: InvoiceModel;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Edit({ invoice, children }: EditProps) {
+function Edit({ mutate, invoice, children }: EditProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * hooks
+   */
+  const { patient } = usePatient();
 
   return (
     <>
@@ -60,33 +67,38 @@ function Edit({ invoice, children }: EditProps) {
               },
             ],
           }}
-          onSubmit={(params) => {
-            toast.error('Invoice has been finalized');
-            setShow(false);
+          onSubmit={({ charges, ...params }, { setErrors, setSubmitting }) => {
+            const data = {
+              ...params,
+              patient: patient.id,
+              charges: charges.map(({ charge, department, ...i }) => ({
+                ...i,
+                id: charge.value,
+                department: department.value,
+              })),
+            };
+
+            api
+              .updatePatientInvoiceService(data, invoice.id)
+              .then(() => {
+                toast.error('Invoice has been finalized');
+                setShow(false);
+                mutate();
+              })
+              .catch((error) => setErrors(error?.fields || {}))
+              .finally(() => setSubmitting(false));
           }}
         >
-          {({
-            values,
-            isValid,
-            isSubmitting,
-            handleSubmit,
-            setFieldValue,
-            setFieldTouched,
-          }) => (
+          {({ values, isValid, isSubmitting, setFieldValue }) => (
             <div>
-              <Form {...{ values, setFieldValue }}>
+              <Form readonly={invoice.readonly} {...{ values, setFieldValue }}>
                 <Button
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
-                  Finalize invoice
-                </Button>
-                <Button type="button" className="btn-error-outline">
-                  <DeleteIcon />
-                  <span>Delete</span>
+                  Update invoice
                 </Button>
               </Form>
             </div>

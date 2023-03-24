@@ -22,12 +22,14 @@ export function Badge({ variant, children }: BadgeProps) {
           'submitted',
           'received',
           'dispensed',
+          'approved',
+          'paid',
         ].includes(variant) && 'text-green-500 bg-green-50',
         ['rejected', 'failed', 'suspended'].includes(variant) &&
           'text-red-600 bg-red-50',
         ['warning', 'pending', 'unpaid'].includes(variant) &&
           'text-amber-500 bg-amber-50',
-        ['light', 'ordered'].includes(variant) && 'bg-gray-50 text-black'
+        ['light', 'ordered'].includes(variant) && 'bg-gray-200 text-black'
       )}
     >
       {children}

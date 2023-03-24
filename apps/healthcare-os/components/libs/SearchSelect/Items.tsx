@@ -8,11 +8,11 @@ import { ItemModel } from '../../../models';
 
 export interface ItemsProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Items({ value, options, onChange }: ItemsProps) {
+function Items({ value, disabled, onChange }: ItemsProps) {
   /**
    *
    * @param search
@@ -37,6 +37,7 @@ function Items({ value, options, onChange }: ItemsProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

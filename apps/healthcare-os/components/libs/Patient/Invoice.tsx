@@ -65,7 +65,7 @@ export function Invoice() {
           {!!invoices.length && (
             <Accordion className="flex flex-col gap-4 mb-8">
               {invoices.map((invoice, key) => (
-                <Item invoice={invoice} key={key} />
+                <Item key={key} {...{ invoice, mutate }} />
               ))}
             </Accordion>
           )}

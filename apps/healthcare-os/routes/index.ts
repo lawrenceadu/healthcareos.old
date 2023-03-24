@@ -44,6 +44,10 @@ const routes = {
     resources: {
       index: '/resources/[tab]',
     },
+
+    members: {
+      index: '/members/[tab]',
+    },
   },
 };
 

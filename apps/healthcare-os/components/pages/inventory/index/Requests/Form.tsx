@@ -72,12 +72,13 @@ export default function Form({ mutate, params, children }: FormProps) {
             notes: params?.notes || '',
           }}
           onSubmit={(
-            { recipient, items, ...data },
+            { recipient, items, location, ...data },
             { setSubmitting, setErrors }
           ) => {
             const _data = {
               ...data,
               recipient: recipient.value,
+              location: location.value,
               items: items.map((i) => ({
                 id: i.item.value,
                 quantity: i.quantity,

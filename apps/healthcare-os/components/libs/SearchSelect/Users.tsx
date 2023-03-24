@@ -8,11 +8,11 @@ import { UserModel } from '../../../models';
 
 export interface SuppliersProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Suppliers({ value, options, onChange }: SuppliersProps) {
+function Suppliers({ value, disabled, onChange }: SuppliersProps) {
   /**
    *
    * @param search
@@ -37,6 +37,7 @@ function Suppliers({ value, options, onChange }: SuppliersProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

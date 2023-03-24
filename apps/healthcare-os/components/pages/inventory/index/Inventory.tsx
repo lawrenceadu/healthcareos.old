@@ -1,28 +1,42 @@
-import { useContext } from 'react';
+import { useState } from 'react';
 import { Button, Dropdown, Field } from '@healthcareos/react';
 import { ChevronDownIcon } from '@healthcare/icons';
+import queryString from 'query-string';
+import useSWR from 'swr';
 
-import { FiltersContext } from '../../../../contexts/Filters';
+import { ItemInventoryModel } from '../../../../models';
+import { useLocations } from '../../../../hooks';
 import DropdownFilter from '../../../libs/DropdownFilter';
-
-import ReceiveForm from './Inventory/Receive';
-import RequestForm from './Inventory/Request';
 import TableRow from './Inventory/TableRow';
 
 function Inventory() {
   /**
    * context
    */
-  const { filters, setFilters } = useContext(FiltersContext);
+  const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
-   * functions
+   * hooks
    */
-  const handleFilter = (name: string, value: unknown) =>
-    setFilters({
+  const locations = useLocations();
+
+  /**
+   * api
+   */
+  const { data, error, mutate } = useSWR<{
+    items: ItemInventoryModel[];
+    total: number;
+  }>(
+    `/item/inventory?${queryString.stringify({
       ...filters,
-      inventory: { ...(filters?.inventory || {}), [name]: value },
-    });
+      page: filters?.page + 1,
+    })}`
+  );
+
+  /**
+   * variables
+   */
+  const items = data?.items || [];
 
   return (
     <>
@@ -31,51 +45,12 @@ function Inventory() {
 
         <DropdownFilter
           name="All locations"
-          value={filters?.inventory?.location}
-          options={[
-            { label: 'Consulting room', value: '1' },
-            { label: 'Maternity ward', value: '2' },
-            { label: 'Pharmacy', value: '3' },
-          ]}
-          setValue={(value) => handleFilter('location', value)}
+          value={filters?.location}
+          options={locations.map((i) => ({ label: i.name, value: i.id }))}
+          setValue={(value) =>
+            setFilters((filters) => ({ ...filters, location: value }))
+          }
         />
-
-        <DropdownFilter
-          name="Last updated"
-          value={filters?.inventory?.last_updated}
-          options={[
-            { label: 'Today', value: 'today' },
-            { label: 'Yesterday', value: 'yesterday' },
-            { label: 'This week', value: 'week' },
-          ]}
-          setValue={(value) => handleFilter('last_updated', value)}
-        />
-
-        <Dropdown className="md:ml-auto">
-          <Dropdown.Toggle
-            as={Button}
-            type="button"
-            contentClassName="!justify-between w-full"
-            className="btn btn-primary !w-full md:w-auto"
-          >
-            <span>Actions</span>
-            <ChevronDownIcon />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <ReceiveForm>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Receive</Dropdown.Item>
-              )}
-            </ReceiveForm>
-            <RequestForm>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>
-                  Make request
-                </Dropdown.Item>
-              )}
-            </RequestForm>
-          </Dropdown.Menu>
-        </Dropdown>
       </div>
 
       <div className="overflow-x-auto">
@@ -83,14 +58,12 @@ function Inventory() {
           <thead>
             <tr>
               <th>Medication</th>
-              <th>Units Available</th>
-              <th>Expiry Date</th>
-              <th className="text-center">Action</th>
+              <th className="text-right">Units Available</th>
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 3 }, (_, i) => (
-              <TableRow key={i} />
+            {items.map((item, key) => (
+              <TableRow key={key} {...{ item }} />
             ))}
           </tbody>
         </table>

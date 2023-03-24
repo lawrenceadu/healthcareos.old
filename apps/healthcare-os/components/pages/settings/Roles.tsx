@@ -8,12 +8,12 @@ import { UserModel } from '../../../models';
 import { useRoles } from '../../../hooks';
 import DropdownFilter from '../../libs/DropdownFilter';
 
-import ReactivateConfirm from './Members/Reactivate';
-import SuspendConfirm from './Members/Suspend';
-import RemoveConfirm from './Members/Remove';
-import RevokeConfirm from './Members/Revoke';
-import CreateForm from './Members/Create';
-import EditForm from './Members/Edit';
+import ReactivateConfirm from '../members/index/Members/Reactivate';
+import SuspendConfirm from '../members/index/Members/Suspend';
+import RemoveConfirm from '../members/index/Members/Remove';
+import RevokeConfirm from '../members/index/Members/Revoke';
+import CreateForm from '../members/index/Members/Create';
+import EditForm from '../members/index/Members/Edit';
 
 export default function Members() {
   /**

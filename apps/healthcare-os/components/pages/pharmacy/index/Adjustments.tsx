@@ -4,12 +4,13 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
-import { MedicineModel } from '../../../../models';
+import { MedicineAdjustmentModel } from '../../../../models';
+import DropdownFilter from '../../../libs/DropdownFilter';
 import Skeleton from '../../../libs/Skeleton';
-import TableRow from './Items/TableRow';
-import Form from './Items/Form';
+import TableRow from './Adjustments/TableRow';
+import Form from './Adjustments/Form';
 
-function Items() {
+function Adjustments() {
   /**
    * state
    */
@@ -19,14 +20,13 @@ function Items() {
    * api
    */
   const { data, error, mutate } = useSWR<{
-    medicines: MedicineModel[];
+    stocks: MedicineAdjustmentModel[];
     total: number;
   }>(
-    `/medicine?${queryString.stringify(
+    `/medicine/stock?${queryString.stringify(
       {
         ...filters,
-        page: filters.page + 1,
-        per_page: 10,
+        page: filters?.page + 1,
       },
       { skipEmptyString: true, skipNull: true }
     )}`,
@@ -37,7 +37,7 @@ function Items() {
   /**
    * variables
    */
-  const medicines = data?.medicines || [];
+  const stocks = data?.stocks || [];
 
   return (
     <>
@@ -48,10 +48,23 @@ function Items() {
           }
         />
 
+        <DropdownFilter
+          name="All statuses"
+          value={filters?.status}
+          options={[
+            { label: 'Approved', value: 'approved' },
+            { label: 'Pending', value: 'pending' },
+            { label: 'Rejected', value: 'rejected' },
+          ]}
+          setValue={(status) =>
+            setFilters((filters) => ({ ...filters, status }))
+          }
+        />
+
         <div className="ml-auto">
-          <Form mutate={mutate}>
+          <Form {...{ mutate }}>
             {({ proceed }) => (
-              <Button className="btn-primary !px-4" onClick={() => proceed()}>
+              <Button onClick={() => proceed()} className="btn-primary">
                 <PlusIcon />
                 <span>Add</span>
               </Button>
@@ -64,31 +77,30 @@ function Items() {
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Code</th>
-              <th>Category</th>
-              <th>Group</th>
-              <th>Unit</th>
-              <th className="text-right">Minimum Level</th>
-              <th className="text-right">Reorder Level</th>
-              <th>Action</th>
+              <th>Reference</th>
+              <th>Location</th>
+              <th className="text-right">Medicines</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Adjusted by</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             {!data && !error && <Skeleton.Table count={8} />}
-
             {data && (
               <>
-                {!medicines.length && (
+                {!stocks.length && (
                   <tr>
                     <td colSpan={8}>
-                      <p className="text-center">No medicines yet</p>
+                      <p className="text-center">No adjustments yet</p>
                     </td>
                   </tr>
                 )}
 
-                {medicines.map((medicine, key) => (
-                  <TableRow key={key} {...{ medicine, mutate }} />
+                {stocks.map((stock, key) => (
+                  <TableRow key={key} {...{ stock, mutate }} />
                 ))}
               </>
             )}
@@ -109,4 +121,4 @@ function Items() {
   );
 }
 
-export default Items;
+export default Adjustments;

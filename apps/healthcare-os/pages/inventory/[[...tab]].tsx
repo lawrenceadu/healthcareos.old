@@ -5,11 +5,13 @@ import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
 import FiltersProvider from '../../contexts/Filters';
+import Adjustments from '../../components/pages/inventory/index/Adjustments';
 import Inventory from '../../components/pages/inventory/index/Inventory';
+import Purchases from '../../components/pages/inventory/index/Purchases';
+import Transfers from '../../components/pages/inventory/index/Transfers';
 import Requests from '../../components/pages/inventory/index/Requests';
 import Category from '../../components/pages/inventory/index/Category';
 import Items from '../../components/pages/inventory/index/Items';
-import Stock from '../../components/pages/inventory/index/Stock';
 
 function Index() {
   /**
@@ -24,7 +26,9 @@ function Index() {
   const tabs = [
     { name: 'Inventory', slug: 'inventory', component: Inventory },
     { name: 'Requests', slug: 'requests', component: Requests },
-    { name: 'Stock', slug: 'stock', component: Stock },
+    { name: 'Adjustments', slug: 'adjustments', component: Adjustments },
+    { name: 'Transfers', slug: 'transfer', component: Transfers },
+    { name: 'Purchases', slug: 'purchases', component: Purchases },
     { name: 'Items', slug: 'items', component: Items },
     { name: 'Category', slug: 'category', component: Category },
   ];

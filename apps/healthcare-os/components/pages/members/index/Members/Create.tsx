@@ -15,7 +15,7 @@ function Create({ mutate, children }: CreateProps) {
    */
   const tabs = [
     { name: 'Email', slug: 'email', component: Add },
-    { name: 'Using csv file', slug: 'upload', component: Upload },
+    // { name: 'Using csv file', slug: 'upload', component: Upload },
   ];
 
   /**

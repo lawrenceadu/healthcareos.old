@@ -1,30 +1,69 @@
-import { Accordion, Badge, Button } from '@healthcareos/react';
+import { Accordion, Badge, Button, Confirm } from '@healthcareos/react';
+import { DeleteIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
+import { deletePatientInvoiceService } from '../../../../services/patient';
 import { InvoiceModel } from '../../../../models';
 import { useStore } from '../../../../hooks';
+import TakePayment from './TakePayment';
 import EditForm from './Edit';
 
 export interface ItemProps {
+  mutate: () => void;
   invoice: InvoiceModel;
 }
 
-function Item({ invoice }: ItemProps) {
+function Item({ mutate, invoice }: ItemProps) {
   /**
    * store
    */
   const { store } = useStore();
 
+  /**
+   * function
+   */
+  const handleDelete = () =>
+    Confirm({
+      header: 'Delete invoice',
+      message:
+        'You are about to delete this voice. Once you delete it you will lose it forever.',
+      buttons: {
+        proceed: {
+          value: 'Delete invoice',
+        },
+      },
+    }).then((proceed) => {
+      if (proceed) {
+        deletePatientInvoiceService(invoice.id)
+          .then(() => {
+            toast.success('Invoice deleted');
+            mutate();
+          })
+          .catch((error) =>
+            toast.error(error?.message || 'Unable to delete invoice')
+          );
+      }
+    });
+
   return (
     <Accordion.Item
-      actions={<Badge variant={invoice.status}>{invoice.status}</Badge>}
+      actions={
+        <>
+          <Badge variant={invoice.status}>{invoice.status}</Badge>
+          {!invoice.readonly && invoice.status === 'unpaid' && (
+            <Button className="!h-auto px-0" onClick={() => handleDelete()}>
+              <DeleteIcon size={20} />
+            </Button>
+          )}
+        </>
+      }
       className="rounded-lg p-4 border border-gray-200 font-medium"
-      header={<p className="text-lg font-bold">Invoice {invoice.reference}</p>}
+      header={<p className="text-lg font-bold">{invoice.reference}</p>}
     >
       <div className="grid gap-4">
         <div>
-          {/* <p className="text-xs text-green-600">Outpatient</p> */}
           <p className="text-sm">
             Invoiced on {dayjs(invoice.created_at).format('DD MMM. YYYY')} by{' '}
             {invoice.created_by.name}
@@ -35,7 +74,7 @@ function Item({ invoice }: ItemProps) {
             <div
               key={key}
               className={helpers.classNames(
-                'grid grid-cols-2 gap-x-4 gap-y-2 py-1',
+                'grid grid-cols-2 gap-x-4 gap-y-2 py-4',
                 key !== 0 && 'border-t border-gray-200'
               )}
             >
@@ -67,28 +106,6 @@ function Item({ invoice }: ItemProps) {
           ))}
         </div>
 
-        {/* <div>
-          <p className="text-sm mb-1 font-bold">Insurance</p>
-
-          <div
-            key={i}
-            className={helpers.classNames('grid grid-cols-2 gap-x-4 gap-y-2')}
-          >
-            {[
-              {
-                label: 'Item',
-                value: 'Nationwide Medical Insurance',
-              },
-              { label: 'Amount', value: 'Ghs 20.00' },
-            ].map((i, key) => (
-              <div key={key}>
-                <p className="text-xs text-gray-600">{i.label}</p>
-                <p className="text-sm">{i.value}</p>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
         <div>
           <p className="text-sm mb-1 font-bold">Invoice summary</p>
 
@@ -101,7 +118,7 @@ function Item({ invoice }: ItemProps) {
                 value: `${store.facility.currency_symbol} ${invoice.subtotal}`,
               },
               {
-                label: 'Insurance',
+                label: 'Discount',
                 value: `${store.facility.currency_symbol} ${invoice.discount}`,
               },
               {
@@ -119,18 +136,30 @@ function Item({ invoice }: ItemProps) {
 
         {['unpaid', 'draft'].includes(invoice.status) && (
           <div className="flex gap-4 justify-end">
-            <EditForm invoice={invoice}>
-              {({ proceed }) => (
-                <Button
-                  onClick={() => proceed()}
-                  className="btn-sm btn-outline !h-10"
-                >
-                  Update Invoice
-                </Button>
-              )}
-            </EditForm>
+            {!invoice.readonly && (
+              <EditForm {...{ invoice, mutate }}>
+                {({ proceed }) => (
+                  <Button
+                    onClick={() => proceed()}
+                    className="btn-sm btn-outline !h-10"
+                  >
+                    Update Invoice
+                  </Button>
+                )}
+              </EditForm>
+            )}
             {invoice.status === 'unpaid' && (
-              <Button className="btn-sm btn-primary !h-10">Take payment</Button>
+              <TakePayment {...{ invoice, mutate }}>
+                {({ proceed }) => (
+                  <Button
+                    type="button"
+                    onClick={() => proceed()}
+                    className="btn-sm btn-primary !h-10"
+                  >
+                    Take payment
+                  </Button>
+                )}
+              </TakePayment>
             )}
           </div>
         )}

@@ -51,4 +51,13 @@ export const setPatientTriageService = (payload: object) =>
 // invoice
 export const createPatientInvoiceService = (payload: object) =>
   http.post<never, any>(`/invoice`, payload);
+
+export const updatePatientInvoiceService = (payload: object, id: string) =>
+  http.patch<never, any>(`/invoice/${id}`, payload);
+
+export const finalizePatientInvoiceService = (payload: object, id: string) =>
+  http.post(`/invoice/${id}`, payload);
+
+export const deletePatientInvoiceService = (id: string) =>
+  http.delete(`/invoice/${id}`);
 // end of invoice

@@ -8,11 +8,11 @@ import { ChargeModel } from '../../../models';
 
 export interface ChargesProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Charges({ value, options, onChange }: ChargesProps) {
+function Charges({ value, disabled, onChange }: ChargesProps) {
   /**
    *
    * @param search
@@ -39,6 +39,7 @@ function Charges({ value, options, onChange }: ChargesProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

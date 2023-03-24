@@ -8,11 +8,11 @@ import { WardModel } from '../../../models';
 
 export interface WardsProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Wards({ value, options, onChange }: WardsProps) {
+function Wards({ value, disabled, onChange }: WardsProps) {
   /**
    *
    * @param search
@@ -37,6 +37,7 @@ function Wards({ value, options, onChange }: WardsProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}

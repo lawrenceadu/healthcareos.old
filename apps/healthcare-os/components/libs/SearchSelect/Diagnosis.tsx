@@ -8,11 +8,11 @@ import { DiagnosisModel } from '../../../models';
 
 export interface DiagnosisProps {
   value?: { label: string; value: string };
-  options?: [{ label: string; value: string }];
   onChange: (props: any) => void;
+  disabled?: boolean;
 }
 
-function Diagnosis({ value, options, onChange }: DiagnosisProps) {
+function Diagnosis({ value, disabled, onChange }: DiagnosisProps) {
   /**
    *
    * @param search
@@ -41,6 +41,7 @@ function Diagnosis({ value, options, onChange }: DiagnosisProps) {
       defaultOptions
       placeholder=""
       onChange={onChange}
+      isDisabled={disabled}
       loadOptions={loadOptions}
       value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
