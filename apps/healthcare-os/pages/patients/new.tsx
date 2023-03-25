@@ -35,8 +35,8 @@ export default function New() {
   /**
    * functions
    */
-  const handleSubmit = (stopLoading: () => void) => {
-    addPatientService(session)
+  const handleSubmit = (params, { setSubmitting }) => {
+    addPatientService(params)
       .then(({ patient }: { patient: PatientModel }) => {
         setSession(undefined);
         router.push(
@@ -45,17 +45,18 @@ export default function New() {
             .replace('[tab]', 'history')
         );
       })
-      .catch((error) =>
+      .catch((error) => {
         toast.error(
           error?.fields
             ? Object.keys(error?.fields)
                 .map((i) => error?.fields[i])
                 .join(', ')
-            : error?.message || 'Unable to add patient.',
-          { delay: 1000 * 25 }
-        )
-      )
-      .finally(() => stopLoading());
+            : error?.message || 'Unable to add patient.'
+        );
+
+        setSession(params);
+      })
+      .finally(() => setSubmitting());
   };
 
   /**
@@ -138,14 +139,8 @@ export default function New() {
         <Onboarding.Kin
           button="Submit"
           params={session || {}}
-          onSubmit={(params, { setSubmitting }) => {
-            setSession({ ...(session || {}), ...params });
-
-            setTimeout(() => {
-              setSubmitting(true);
-              toast.info('Creating patient....');
-              handleSubmit(() => setSubmitting(false));
-            });
+          onSubmit={(params, actions) => {
+            handleSubmit({ ...session, ...params }, actions);
           }}
         />
       ),

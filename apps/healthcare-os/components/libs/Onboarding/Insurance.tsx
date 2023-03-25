@@ -17,6 +17,7 @@ export interface InsuranceProps {
   button?: string;
   header?: boolean;
   params?: Partial<ValueProps>;
+  withInsuranceSelect?: boolean;
   onSubmit: (values: ValueProps, actions: FormikHelpers<ValueProps>) => void;
 }
 
@@ -25,6 +26,7 @@ export function Insurance({
   button,
   params = {},
   onSubmit,
+  withInsuranceSelect = true,
 }: InsuranceProps) {
   /**
    * function
@@ -103,7 +105,7 @@ export function Insurance({
             {header && <h4 className="mb-4">Insurance details</h4>}
 
             <div className="mb-10">
-              {!params?.has_insurance && (
+              {withInsuranceSelect && (
                 <div className="mb-6">
                   <p className="mb-4">Does patient have insurance</p>
                   <div className="flex gap-6">
