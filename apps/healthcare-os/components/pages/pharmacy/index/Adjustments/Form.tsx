@@ -135,7 +135,6 @@ function Form({ params, mutate, children }: FormInterface) {
             setFieldTouched,
           }) => (
             <BaseForm>
-              {JSON.stringify(errors)}
               <div className="p-6 max-h-[600px] overflow-y-auto">
                 <div className="mb-6">
                   <p className="mb-4 font-medium">Medicines</p>
