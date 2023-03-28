@@ -1,7 +1,8 @@
 import { HtmlHTMLAttributes, ReactElement, useState, useEffect } from 'react';
+import { helpers, useWidth } from '@healthcare/utils';
 import { useRouter } from 'next/router';
-import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
+import { motion } from 'framer-motion';
 import * as Icon from '@healthcare/icons';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -34,9 +35,15 @@ export function Layout({
   const { store } = useStore();
 
   /**
+   * hooks
+   */
+  const width = useWidth();
+
+  /**
    * state
    */
   const [toggle, setToggle] = useState(false);
+  const [show, setShow] = useState(false);
 
   /**
    * variables
@@ -132,9 +139,10 @@ export function Layout({
                 'fixed left-0 top-0 lg:relative',
                 'border-r border-gray-300 bg-white',
                 'flex flex-col gap-10',
-                'lg:ml-0 px-6 py-4',
                 'transition-[margin]',
-                toggle ? 'ml-0 z-[100]' : '-ml-[280px]'
+                'lg:ml-0 px-6 py-4',
+                'z-[1000]',
+                toggle ? 'ml-0' : '-ml-[280px]'
               )}
             >
               <div className="flex items-center gap-2 text-primary">
@@ -239,7 +247,12 @@ export function Layout({
                     <Button
                       aria-label="Toggle menu"
                       className="lg:!hidden !px-0 w-12 mr-2"
-                      onClick={() => setToggle(true)}
+                      onClick={() => {
+                        setToggle(() => {
+                          setShow(true);
+                          return true;
+                        });
+                      }}
                     >
                       <Icon.MenuIcon />
                     </Button>
@@ -265,15 +278,21 @@ export function Layout({
             {/* end of content */}
           </div>
 
-          <div
-            onClick={() => setToggle(!toggle)}
-            className={helpers.classNames(
-              'transition',
-              toggle
-                ? 'cursor-pointer fixed w-full h-full top-0 left-0 bg-black z-[99] opacity-60'
-                : 'hidden'
-            )}
-          />
+          {show && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              onClick={() => {
+                setToggle(!toggle);
+                setTimeout(() => setShow(false), 300);
+              }}
+              animate={{
+                opacity: toggle ? 0.6 : 0,
+              }}
+              className={helpers.classNames(
+                'cursor-pointer fixed h-full w-full top-0 left-0 bg-black z-[999] opacity-60 select-none'
+              )}
+            />
+          )}
         </>
       )}
     </>

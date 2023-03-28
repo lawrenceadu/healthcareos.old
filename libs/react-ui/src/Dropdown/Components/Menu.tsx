@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { UseDropdownMenuOptions, useDropdownMenu } from '@restart/ui';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export interface MenuProps extends UseDropdownMenuOptions {
@@ -26,9 +27,15 @@ export const Menu = ({ role, className, children, ...rest }: MenuProps) => {
     <StyledMenu
       {...props}
       role={role}
+      transition={{ duration: 0.15 }}
+      initial={{ opacity: 0, height: 0 }}
+      animate={{
+        opacity: show ? 1 : 0,
+        height: show ? 'auto' : 0,
+      }}
       className={helpers.classNames(
         'shadow-3xl !bg-white !z-[5]',
-        show ? '!flex' : '!hidden',
+        'flex',
         className
       )}
     >
@@ -40,7 +47,7 @@ export const Menu = ({ role, className, children, ...rest }: MenuProps) => {
 /**
  * styles
  */
-const StyledMenu = styled.div`
+const StyledMenu = styled(motion.div)`
   display: flex;
   overflow: auto;
   min-width: 240px;

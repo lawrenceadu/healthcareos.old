@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Tabs } from '@healthcareos/react';
 
+import { updatePatientService } from '../../../services/patient';
 import { usePatient } from '../../../hooks';
 import Onboarding from '../../../components/libs/Onboarding';
 import Layout from '../../../components/libs/Layout';
@@ -9,7 +11,7 @@ export function Edit() {
   /**
    * hook
    */
-  const { patient } = usePatient();
+  const { patient, mutate } = usePatient();
 
   /**
    * variables
@@ -96,8 +98,22 @@ export function Edit() {
         childProps={{
           params: patient,
           button: 'Save changes',
-          onSubmit: (params, { setSubmitting }) => {
-            return;
+          onSubmit: (params, { setSubmitting, setErrors }) => {
+            updatePatientService(params, patient.id)
+              .then((response) => {
+                toast.success('Patient information updated');
+                mutate();
+              })
+              .catch((error) => {
+                if (error?.fields) {
+                  setErrors(error.fields);
+                }
+
+                if (error?.message) {
+                  toast.error(error.message);
+                }
+              })
+              .finally(() => setSubmitting(false));
           },
         }}
       />

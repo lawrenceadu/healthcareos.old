@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Button, Dropdown, Field } from '@healthcareos/react';
-import { ChevronDownIcon } from '@healthcare/icons';
+import { Field } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
@@ -8,6 +7,7 @@ import { MedicineInventoryModel } from '../../../../models';
 import { useLocations } from '../../../../hooks';
 import DropdownFilter from '../../../libs/DropdownFilter';
 import TableRow from './Inventory/TableRow';
+import Skeleton from '../../../libs/Skeleton';
 
 function Inventory() {
   /**
@@ -62,9 +62,23 @@ function Inventory() {
             </tr>
           </thead>
           <tbody>
-            {medicines.map((medicine, key) => (
-              <TableRow key={key} {...{ medicine }} />
-            ))}
+            {!data && !error && <Skeleton.Table count={2} />}
+
+            {data && (
+              <>
+                {!medicines.length && (
+                  <tr>
+                    <td colSpan={2}>
+                      <p className="text-center">No inventory yet</p>
+                    </td>
+                  </tr>
+                )}
+
+                {medicines.map((medicine, key) => (
+                  <TableRow key={key} {...{ medicine }} />
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
-import { Badge, Confirm, Dropdown } from '@healthcareos/react';
+import { Badge, Confirm, Dropdown, Fade } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -103,11 +104,11 @@ function TableRow({ purchase, mutate }: TableRowProps) {
           <Badge variant={purchase.status}>{purchase.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          {['pending', 'ordered'].includes(purchase.status) && (
-            <Dropdown>
-              <Dropdown.Toggle className="mx-auto">
-                <DotsHorizIcon />
-              </Dropdown.Toggle>
+          <Dropdown>
+            <Dropdown.Toggle className="mx-auto">
+              <DotsHorizIcon />
+            </Dropdown.Toggle>
+            {['pending', 'ordered'].includes(purchase.status) && (
               <Dropdown.Menu>
                 {purchase.status === 'pending' && (
                   <Dropdown.Item onClick={() => handleStatusUpdate('ordered')}>
@@ -138,57 +139,54 @@ function TableRow({ purchase, mutate }: TableRowProps) {
                   Delete
                 </Dropdown.Item>
               </Dropdown.Menu>
-            </Dropdown>
-          )}
+            )}
+          </Dropdown>
         </td>
       </tr>
 
-      {toggle && (
-        <>
-          <tr>
-            <td colSpan={9} className="!p-0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Batch no</th>
-                    <th>Expiry date</th>
-                    <th>Unit price</th>
-                    <th className="text-right">Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Discount</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {purchase.details.map((detail, key) => (
-                    <tr key={key}>
-                      <td>{detail.medicine.name}</td>
-                      <td>{detail.batch_no}</td>
-                      <td>
-                        {dayjs(detail.expiry_date).format('ddd DD, MMM YYYY')}
-                      </td>
-                      <td>{`${store.facility.currency_symbol} ${detail.unit_price}`}</td>
-                      <td className="text-right">{detail.quantity}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.subtotal}`}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.discount}`}</td>
-                      <td>{`${store.facility.currency_symbol} ${detail.total}`}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-          {purchase.notes && (
-            <tr>
-              <td colSpan={8} className="!whitespace-normal">
-                <p className="font-medium">Notes:</p>
-                <p>{purchase.notes}</p>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
+      <Fade as={motion.tr} show={toggle}>
+        <td colSpan={9} className="!p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Batch no</th>
+                <th>Expiry date</th>
+                <th>Unit price</th>
+                <th className="text-right">Quantity</th>
+                <th>Subtotal</th>
+                <th>Discount</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {purchase.details.map((detail, key) => (
+                <tr key={key}>
+                  <td>{detail.medicine.name}</td>
+                  <td>{detail.batch_no}</td>
+                  <td>
+                    {dayjs(detail.expiry_date).format('ddd DD, MMM YYYY')}
+                  </td>
+                  <td>{`${store.facility.currency_symbol} ${detail.unit_price}`}</td>
+                  <td className="text-right">{detail.quantity}</td>
+                  <td>{`${store.facility.currency_symbol} ${detail.subtotal}`}</td>
+                  <td>{`${store.facility.currency_symbol} ${detail.discount}`}</td>
+                  <td>{`${store.facility.currency_symbol} ${detail.total}`}</td>
+                </tr>
+              ))}
+
+              {purchase.notes && (
+                <tr>
+                  <td colSpan={8} className="!whitespace-normal">
+                    <p className="font-medium">Notes:</p>
+                    <p>{purchase.notes}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

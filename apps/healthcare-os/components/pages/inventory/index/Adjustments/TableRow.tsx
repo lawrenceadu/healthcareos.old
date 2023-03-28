@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
-import { Badge, Confirm, Dropdown } from '@healthcareos/react';
+import { Badge, Confirm, Dropdown, Fade } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -102,11 +103,11 @@ function TableRow({ stock, mutate }: TableRowProps) {
         <td>{stock.reason}</td>
         <td>{stock.created_by.name}</td>
         <td onClick={(e) => e.stopPropagation()}>
-          {['pending'].includes(stock.status) && (
-            <Dropdown>
-              <Dropdown.Toggle className="mx-auto">
-                <DotsHorizIcon />
-              </Dropdown.Toggle>
+          <Dropdown>
+            <Dropdown.Toggle className="mx-auto">
+              <DotsHorizIcon />
+            </Dropdown.Toggle>
+            {['pending'].includes(stock.status) && (
               <Dropdown.Menu>
                 <Dropdown.Item onClick={() => handleStatusUpdate('approved')}>
                   Approve
@@ -136,43 +137,40 @@ function TableRow({ stock, mutate }: TableRowProps) {
                   Delete
                 </Dropdown.Item>
               </Dropdown.Menu>
-            </Dropdown>
-          )}
+            )}
+          </Dropdown>
         </td>
       </tr>
 
-      {toggle && (
-        <>
-          <tr>
-            <td colSpan={9} className="!p-0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th className="text-right">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stock.details.map((detail, key) => (
-                    <tr key={key}>
-                      <td>{detail.item.name}</td>
-                      <td className="text-right">{detail.quantity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-          {stock.notes && (
-            <tr>
-              <td colSpan={8} className="!whitespace-normal">
-                <p className="font-medium">Notes:</p>
-                <p>{stock.notes}</p>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
+      <Fade show={toggle} as={motion.tr}>
+        <td colSpan={9} className="!p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th className="text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stock.details.map((detail, key) => (
+                <tr key={key}>
+                  <td>{detail.item.name}</td>
+                  <td className="text-right">{detail.quantity}</td>
+                </tr>
+              ))}
+
+              {stock.notes && (
+                <tr>
+                  <td colSpan={2} className="!whitespace-normal">
+                    <p className="font-medium">Notes:</p>
+                    <p>{stock.notes}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

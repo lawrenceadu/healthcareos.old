@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
-import { Badge, Confirm, Dropdown } from '@healthcareos/react';
+import { Badge, Confirm, Dropdown, Fade } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -102,11 +103,11 @@ function TableRow({ transfer, mutate }: TableRowProps) {
           <Badge variant={transfer.status}>{transfer.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          {transfer.status === 'pending' && (
-            <Dropdown>
-              <Dropdown.Toggle className="mx-auto">
-                <DotsHorizIcon />
-              </Dropdown.Toggle>
+          <Dropdown>
+            <Dropdown.Toggle className="mx-auto">
+              <DotsHorizIcon />
+            </Dropdown.Toggle>
+            {transfer.status === 'pending' && (
               <Dropdown.Menu>
                 <Dropdown.Item onClick={() => handleStatusUpdate('approved')}>
                   Approve
@@ -136,44 +137,40 @@ function TableRow({ transfer, mutate }: TableRowProps) {
                   Delete
                 </Dropdown.Item>
               </Dropdown.Menu>
-            </Dropdown>
-          )}
+            )}
+          </Dropdown>
         </td>
       </tr>
 
-      {toggle && (
-        <>
-          <tr>
-            <td colSpan={9} className="!p-0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th className="text-right">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transfer.details.map((detail, key) => (
-                    <tr key={key}>
-                      <td>{detail.item.name}</td>
-                      <td className="text-right">{detail.quantity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-          </tr>
+      <Fade show={toggle} as={motion.tr}>
+        <td colSpan={9} className="!p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th className="text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transfer.details.map((detail, key) => (
+                <tr key={key}>
+                  <td>{detail.item.name}</td>
+                  <td className="text-right">{detail.quantity}</td>
+                </tr>
+              ))}
 
-          {transfer.notes && (
-            <tr>
-              <td colSpan={8} className="!whitespace-normal">
-                <p className="font-medium">Notes:</p>
-                <p>{transfer.notes}</p>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
+              {transfer.notes && (
+                <tr>
+                  <td colSpan={2} className="!whitespace-normal">
+                    <p className="font-medium">Notes:</p>
+                    <p>{transfer.notes}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

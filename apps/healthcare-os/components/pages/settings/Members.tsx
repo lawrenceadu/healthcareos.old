@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Dropdown, Field, Paginate } from '@healthcareos/react';
+import { Badge, Dropdown, Field, Paginate } from '@healthcareos/react';
 import { DotsHorizIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
@@ -7,13 +7,6 @@ import useSWR from 'swr';
 import { UserModel } from '../../../models';
 import { useRoles } from '../../../hooks';
 import DropdownFilter from '../../libs/DropdownFilter';
-
-import ReactivateConfirm from '../members/index/Members/Reactivate';
-import SuspendConfirm from '../members/index/Members/Suspend';
-import RemoveConfirm from '../members/index/Members/Remove';
-import RevokeConfirm from '../members/index/Members/Revoke';
-import CreateForm from '../members/index/Members/Create';
-import EditForm from '../members/index/Members/Edit';
 import Skeleton from '../../libs/Skeleton';
 
 export default function Members() {

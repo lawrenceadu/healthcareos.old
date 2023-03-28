@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
-import { Badge, Dropdown } from '@healthcareos/react';
+import { Badge, Dropdown, Fade } from '@healthcareos/react';
+import { useRouter } from 'next/router';
 import { startCase } from 'lodash';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 
 import { PrescriptionModel } from '../../../../../models';
 import Dispense from './Dispense';
+import routes from '../../../../../routes';
 
 export interface TableRowProps {
   mutate: () => void;
@@ -18,6 +21,11 @@ function TableRow({ mutate, prescription }: TableRowProps) {
    * state
    */
   const [toggle, setToggle] = useState(false);
+
+  /**
+   * routes
+   */
+  const router = useRouter();
 
   return (
     <>
@@ -41,12 +49,12 @@ function TableRow({ mutate, prescription }: TableRowProps) {
           <Badge variant={prescription.status}>{prescription.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          {prescription.status === 'pending' && (
-            <Dropdown>
-              <Dropdown.Toggle className="mx-auto">
-                <DotsHorizIcon />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
+          <Dropdown>
+            <Dropdown.Toggle className="mx-auto">
+              <DotsHorizIcon />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {prescription.status === 'pending' && (
                 <Dispense {...{ prescription, mutate }}>
                   {({ proceed }) => (
                     <Dropdown.Item onClick={() => proceed()}>
@@ -54,76 +62,87 @@ function TableRow({ mutate, prescription }: TableRowProps) {
                     </Dropdown.Item>
                   )}
                 </Dispense>
-              </Dropdown.Menu>
-            </Dropdown>
-          )}
+              )}
+              <Dropdown.Item
+                onClick={() =>
+                  router.push(
+                    routes.dashboard.patients.details.index
+                      .replace('[id]', prescription.patient.id)
+                      .replace('[tab]', 'history')
+                  )
+                }
+              >
+                View patient
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </td>
       </tr>
 
-      {toggle && (
-        <>
-          <tr>
-            <td colSpan={9} className="!p-0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Medicine</th>
-                    <th>Dose</th>
-                    <th>Route</th>
-                    <th>Schedule</th>
-                    <th>Start date</th>
-                    <th>Stop date</th>
-                    <th>Administration time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {prescription.medicines.map((medicine, key) => (
-                    <tr key={key}>
-                      <td>{medicine.medicine.name}</td>
-                      <td>{`${medicine.dose} ${medicine.unit}`}</td>
-                      <td>{startCase(medicine.route)}</td>
-                      <td>{startCase(medicine.schedule)}</td>
-                      <td>
-                        {medicine.start_date
-                          ? dayjs(medicine.start_date).format(
-                              'ddd DD, MMM YYYY'
-                            )
-                          : '--'}
-                      </td>
-                      <td>
-                        {medicine.stop_date
-                          ? dayjs(medicine.stop_date).format('ddd DD, MMM YYYY')
-                          : '--'}
-                      </td>
-                      <td>
-                        {medicine.administration_time.length
-                          ? medicine.administration_time
-                              .map((i) => {
-                                const times = i.split(':');
-                                return dayjs()
-                                  .set('hour', Number(times[0]))
-                                  .set('minute', Number(times[1]))
-                                  .format('h:mm a');
-                              })
-                              .join(', ')
-                          : '--'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-          {prescription.notes && (
-            <tr>
-              <td colSpan={8} className="!whitespace-normal">
-                <p className="font-medium">Notes:</p>
-                <p>{prescription.notes}</p>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
+      <Fade as={motion.tr} show={toggle} className="bg-white z-[10]">
+        <td colSpan={9} className="!p-0">
+          <table className="mb-8">
+            <thead>
+              <tr>
+                <th>Medicine</th>
+                <th>Dose</th>
+                <th>Route</th>
+                <th>Schedule</th>
+                <th>Start date</th>
+                <th>Stop date</th>
+                <th>Administration time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {prescription.medicines.map((medicine, key) => (
+                <tr key={key}>
+                  <td>{medicine.medicine.name}</td>
+                  <td>{`${medicine.dose} ${medicine.unit}`}</td>
+                  <td>{startCase(medicine.route)}</td>
+                  <td>{startCase(medicine.schedule)}</td>
+                  <td>
+                    {medicine.start_date
+                      ? dayjs(medicine.start_date).format('ddd DD, MMM YYYY')
+                      : '--'}
+                  </td>
+                  <td>
+                    {medicine.stop_date
+                      ? dayjs(medicine.stop_date).format('ddd DD, MMM YYYY')
+                      : '--'}
+                  </td>
+                  <td>
+                    <div className="flex flex-wrap gap-2">
+                      {medicine.administration_time.length
+                        ? medicine.administration_time.map((i, key) => {
+                            const times = i.split(':');
+                            const date = dayjs()
+                              .set('hour', Number(times[0]))
+                              .set('minute', Number(times[1]))
+                              .format('h:mm a');
+
+                            return (
+                              <Badge variant="light" key={key}>
+                                {date}
+                              </Badge>
+                            );
+                          })
+                        : '--'}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {prescription.notes && (
+                <tr>
+                  <td colSpan={7} className="!whitespace-normal">
+                    <p className="font-medium">Notes:</p>
+                    <p>{prescription.notes}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

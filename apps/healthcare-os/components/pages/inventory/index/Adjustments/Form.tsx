@@ -1,7 +1,8 @@
 import { ReactElement, useState } from 'react';
 import { Form as BaseForm, FieldArray, Formik } from 'formik';
-import { Button, Field, Modal } from '@healthcareos/react';
-import { DeleteIcon, PlusIcon } from '@healthcare/icons';
+import { Button, Dropdown, Field, Modal } from '@healthcareos/react';
+import { ChevronDownIcon, DeleteIcon, PlusIcon } from '@healthcare/icons';
+import { startCase } from 'lodash';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
@@ -11,7 +12,6 @@ import { createItemAdjustmentService, updateItemAdjustmentService } from '../../
 import { ItemAdjustmentModel } from '../../../../../models';
 import { useLocations } from '../../../../../hooks';
 import SearchSelect from '../../../../libs/SearchSelect';
-import { startCase } from 'lodash';
 
 export interface FormInterface {
   mutate?: () => void;
@@ -58,6 +58,7 @@ function Form({ params, mutate, children }: FormInterface) {
                   value: schema.requireString('Value'),
                 }),
                 quantity: schema.requireNumber('Quantity'),
+                type: schema.requireString('Type'),
               })
             ),
             notes: schema.requireString('Notes', false),
@@ -75,12 +76,14 @@ function Form({ params, mutate, children }: FormInterface) {
             items: params?.details
               ? params.details.map((i) => ({
                   item: { label: i.item.name, value: i.item.id },
-                  quantity: i.quantity,
+                  quantity: Math.abs(i.quantity),
+                  type: i.quantity < 0 ? 'reduction' : 'addition',
                 }))
               : [
                   {
                     item: { label: '', value: '' },
                     quantity: '',
+                    type: 'addition',
                   },
                 ],
             notes: params?.notes || '',
@@ -91,30 +94,41 @@ function Form({ params, mutate, children }: FormInterface) {
           onSubmit={({ items, ...data }, { setSubmitting, setErrors }) => {
             const _data = {
               ...data,
-              items: items.map(({ item, ...i }) => ({ ...i, id: item.value })),
+              items: items.map(({ item, type, quantity }) => ({
+                id: item.value,
+                quantity: (type === 'reduction' ? -1 : 1) * Math.abs(quantity),
+              })),
             };
 
-            if (params) {
-              updateItemAdjustmentService(_data, params.id)
-                .then(() => {
-                  toast.success('Updated adjustment');
-                  setShow(false);
-                  mutate?.();
-                })
-                .catch((error) => setErrors(error?.fields || {}))
-                .finally(() => setSubmitting(false));
-            }
+            (() => {
+              if (params) {
+                return updateItemAdjustmentService(_data, params.id).then(
+                  () => {
+                    toast.success('Updated adjustment');
+                    setShow(false);
+                    mutate?.();
+                  }
+                );
+              }
 
-            if (!params) {
-              createItemAdjustmentService(_data)
-                .then(() => {
+              if (!params) {
+                return createItemAdjustmentService(_data).then(() => {
                   toast.success('Added adjustment');
                   setShow(false);
                   mutate?.();
-                })
-                .catch((error) => setErrors(error?.fields || {}))
-                .finally(() => setSubmitting(false));
-            }
+                });
+              }
+            })()
+              .catch((error) => {
+                if (error?.fields) {
+                  setErrors(error?.fields || {});
+                }
+
+                if (error?.message) {
+                  toast.error(error.message);
+                }
+              })
+              .finally(() => setSubmitting(false));
           }}
         >
           {({
@@ -153,12 +167,40 @@ function Form({ params, mutate, children }: FormInterface) {
                                   name={`items.${key}.quantity`}
                                   wrapperClassName="!mb-0"
                                   label="Quantity"
+                                  containerClassName="overflow"
                                 >
                                   <Field.Input
                                     type="number"
                                     name={`items.${key}.quantity`}
                                     value={item.quantity}
                                   />
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      type="button"
+                                      className="px-2 border-l border-gray-200"
+                                    >
+                                      <small>{startCase(item.type)}</small>
+                                      <ChevronDownIcon size={16} />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      {['addition', 'reduction'].map(
+                                        (i, index) => (
+                                          <Dropdown.Item
+                                            key={index}
+                                            active={i === item.type}
+                                            onClick={() =>
+                                              setFieldValue(
+                                                `items.${key}.type`,
+                                                i
+                                              )
+                                            }
+                                          >
+                                            {startCase(i)}
+                                          </Dropdown.Item>
+                                        )
+                                      )}
+                                    </Dropdown.Menu>
+                                  </Dropdown>
                                 </Field.Group>
                                 {!!key && (
                                   <Button

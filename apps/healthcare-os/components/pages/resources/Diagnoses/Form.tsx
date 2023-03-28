@@ -74,7 +74,7 @@ function Form({ mutate, children, params }: FormProps) {
                   <Field.Input name="name" />
                 </Field.Group>
 
-                <Field.Group name="code" label="Code">
+                <Field.Group name="code" label="Code (ICD-10)">
                   <Field.Input name="code" />
                 </Field.Group>
 

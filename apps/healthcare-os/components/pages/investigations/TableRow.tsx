@@ -40,36 +40,39 @@ function TableRow({ investigation, mutate }: TableRowProps) {
           <Badge variant={investigation.status}>{investigation.status}</Badge>
         </td>
         <td onClick={(e) => e.stopPropagation()}>
-          {investigation.status === 'pending' && (
-            <Dropdown>
-              <Dropdown.Toggle className="mx-auto">
-                <DotsHorizIcon />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={() =>
-                    router.push(
-                      routes.dashboard.patients.details.index
-                        .replace('[id]', investigation.patient.id)
-                        .replace('[tab]', 'history')
-                    )
-                  }
-                >
-                  View patient
-                </Dropdown.Item>
-                <Patient.Investigations.Submit
-                  investigation={investigation}
-                  mutate={mutate}
-                >
-                  {({ proceed }) => (
-                    <Dropdown.Item onClick={() => proceed()}>
-                      Submit results
-                    </Dropdown.Item>
-                  )}
-                </Patient.Investigations.Submit>
-              </Dropdown.Menu>
-            </Dropdown>
-          )}
+          <Dropdown>
+            <Dropdown.Toggle className="mx-auto">
+              <DotsHorizIcon />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setShow(true)}>View</Dropdown.Item>
+              {investigation.status === 'pending' && (
+                <>
+                  <Dropdown.Item
+                    onClick={() =>
+                      router.push(
+                        routes.dashboard.patients.details.index
+                          .replace('[id]', investigation.patient.id)
+                          .replace('[tab]', 'history')
+                      )
+                    }
+                  >
+                    View patient
+                  </Dropdown.Item>
+                  <Patient.Investigations.Submit
+                    investigation={investigation}
+                    mutate={mutate}
+                  >
+                    {({ proceed }) => (
+                      <Dropdown.Item onClick={() => proceed()}>
+                        Submit results
+                      </Dropdown.Item>
+                    )}
+                  </Patient.Investigations.Submit>
+                </>
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
         </td>
       </tr>
 

@@ -31,16 +31,6 @@ const useSession = <T>(key: string): [T | undefined, (value: T) => void] => {
     return setSession(value);
   };
 
-  const getItem = useCallback(() => {
-    const storage: Storage = window.sessionStorage;
-
-    try {
-      return JSON.parse(storage.getItem(key) || '');
-    } catch {
-      return null;
-    }
-  }, [key]);
-
   return [session, setItem];
 };
 

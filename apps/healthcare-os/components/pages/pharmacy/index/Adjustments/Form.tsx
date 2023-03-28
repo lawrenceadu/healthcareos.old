@@ -1,17 +1,17 @@
 import { ReactElement, useState } from 'react';
 import { Form as BaseForm, FieldArray, Formik } from 'formik';
 import { Button, Field, Modal } from '@healthcareos/react';
-import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 import { startCase } from 'lodash';
+import { PlusIcon } from '@healthcare/icons';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { createMedicineAdjustmentService, updateMedicineAdjustmentService } from '../../../../../services/pharmacy'; // prettier-ignore
+import BatchSelect, { medicinesSchema } from '../../Components/BatchSelect';
 import { MedicineAdjustmentModel } from '../../../../../models';
 import { useLocations } from '../../../../../hooks';
-import SearchSelect from '../../../../libs/SearchSelect';
 
 export interface FormInterface {
   mutate?: () => void;
@@ -51,17 +51,7 @@ function Form({ params, mutate, children }: FormInterface) {
         <Formik
           validateOnMount
           validationSchema={object({
-            medicines: schema.requireArray('Item').of(
-              object().shape({
-                medicine: object().shape({
-                  label: schema.requireString('Label'),
-                  value: schema.requireString('Value'),
-                }),
-                quantity: schema.requireNumber('Quantity'),
-                batch_no: schema.requireString('Batch number'),
-                expiry_date: schema.requireString('Expiry date'),
-              })
-            ),
+            medicines: medicinesSchema,
             notes: schema.requireString('Notes', false),
             location: schema.requireString('Location'),
             reason: schema.requireString('Reason'),
@@ -127,7 +117,6 @@ function Form({ params, mutate, children }: FormInterface) {
           }}
         >
           {({
-            errors,
             values,
             isValid,
             isSubmitting,
@@ -144,69 +133,15 @@ function Form({ params, mutate, children }: FormInterface) {
                       <>
                         <div className="grid gap-4 mb-4">
                           {values.medicines.map((medicine, key) => (
-                            <div key={key}>
-                              <div className="grid gap-4 md:grid-cols-[repeat(4,minmax(0,1fr)),3rem]">
-                                <Field.Group
-                                  label="Medicine"
-                                  wrapperClassName="!mb-0"
-                                  name={`medicines.${key}.medicine.label`}
-                                >
-                                  <SearchSelect.Medicines
-                                    value={medicine.medicine}
-                                    onChange={(value) =>
-                                      setFieldValue(
-                                        `medicines.${key}.medicine`,
-                                        value
-                                      )
-                                    }
-                                  />
-                                </Field.Group>
-
-                                <Field.Group
-                                  name={`medicines.${key}.quantity`}
-                                  wrapperClassName="!mb-0"
-                                  label="Quantity"
-                                >
-                                  <Field.Input
-                                    type="number"
-                                    name={`medicines.${key}.quantity`}
-                                    value={medicine.quantity}
-                                  />
-                                </Field.Group>
-                                <Field.Group
-                                  label="Batch no"
-                                  name={`medicines.${key}.batch_no`}
-                                  wrapperClassName="!mb-0"
-                                >
-                                  <Field.Input
-                                    name={`medicines.${key}.batch_no`}
-                                  />
-                                </Field.Group>
-
-                                <Field.Group
-                                  label="Expiry date"
-                                  name={`medicines.${key}.expiry_date`}
-                                  wrapperClassName="!mb-0"
-                                >
-                                  <Field.Date
-                                    value={medicine.expiry_date}
-                                    name={`medicines.${key}.expiry_date`}
-                                    {...{ setFieldValue, setFieldTouched }}
-                                  />
-                                </Field.Group>
-
-                                {!!key && (
-                                  <Button
-                                    type="button"
-                                    aria-label="Delete"
-                                    className="mt-6 !px-0 w-full"
-                                    onClick={() => helper.remove(key)}
-                                  >
-                                    <DeleteIcon />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
+                            <BatchSelect
+                              key={key}
+                              index={key}
+                              medicine={medicine}
+                              medicines={values.medicines}
+                              id={medicine?.medicine?.value}
+                              remove={() => helper.remove(key)}
+                              {...{ setFieldValue, setFieldTouched }}
+                            />
                           ))}
                         </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, KeyboardEvent, ClipboardEvent, useCallback } from 'react'; // prettier-ignore
 import { ChevronDownIcon } from '@healthcare/icons';
-import countryList from 'react-select-country-list';
+import { getCountries } from 'react-phone-number-input';
 import styled from 'styled-components';
 import alpha from 'i18n-iso-countries';
 import Input from 'react-input-autosize';
@@ -37,13 +37,13 @@ function ID({
    * variables
    */
   const handleCountries = useCallback(() => {
-    const countries = countryList().getData();
+    const countries = getCountries();
 
-    setCountries(
+    setCountries(() =>
       countries.map((i) => ({
-        iso2: i.value,
-        label: i.label,
-        value: alpha.alpha2ToAlpha3(i.value),
+        iso2: i,
+        label: i,
+        value: alpha.alpha2ToAlpha3(i),
       }))
     );
   }, []);
@@ -191,6 +191,7 @@ const Wrapper = styled.div<{ disabled?: boolean }>`
   gap: 0.5rem;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   transition: all 0.15s ease-in-out;
 
   input {

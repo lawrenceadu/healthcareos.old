@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@healthcare/icons'; // prettier-ignore
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
+import { Fade } from '@healthcareos/react';
 
 import { MedicineInventoryModel } from '../../../../../models';
 
@@ -27,28 +29,26 @@ function TableRow({ medicine }: TableRowProps) {
         <td className="text-right">{medicine.quantity}</td>
       </tr>
 
-      {toggle && (
-        <tr>
-          <td colSpan={2} className="!p-0">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th className="text-right">Quantity</th>
+      <Fade as={motion.tr} show={toggle}>
+        <td colSpan={2} className="!p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th className="text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {medicine.locations.map((location, key) => (
+                <tr key={key}>
+                  <td>{location.name}</td>
+                  <td className="text-right">{location.quantity}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {medicine.locations.map((location, key) => (
-                  <tr key={key}>
-                    <td>{location.name}</td>
-                    <td className="text-right">{location.quantity}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      )}
+              ))}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

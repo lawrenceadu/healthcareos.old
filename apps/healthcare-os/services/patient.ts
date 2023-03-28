@@ -1,7 +1,12 @@
 import { http } from '@healthcare/utils';
 
+// patient
 export const addPatientService = (payload: object) =>
   http.post<never, any>('/patient', payload);
+
+export const updatePatientService = (payload: object, id: string) =>
+  http.patch<never, any>(`/patient/${id}`, payload);
+// end of patient
 
 export const startVisitationService = (payload: object) =>
   http.post<never, any>('/visit', payload);

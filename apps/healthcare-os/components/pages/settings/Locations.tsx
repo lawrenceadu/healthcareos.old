@@ -1,12 +1,7 @@
 import { useState } from 'react';
-import {
-  Button,
-  Confirm,
-  Dropdown,
-  Field,
-  Paginate,
-} from '@healthcareos/react';
+import { Button, Confirm, Dropdown, Field, Paginate } from '@healthcareos/react'; // prettier-ignore
 import { DotsHorizIcon } from '@healthcare/icons';
+import { toast } from 'react-toastify';
 import queryString from 'query-string';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
@@ -16,7 +11,6 @@ import { LocationModel } from '../../../models';
 import CreateForm from './Locations/Create';
 import EditForm from './Locations/Edit';
 import Skeleton from '../../libs/Skeleton';
-import { toast } from 'react-toastify';
 
 export default function Locations() {
   /**

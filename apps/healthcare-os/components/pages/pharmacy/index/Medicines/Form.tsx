@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import useSWR from 'swr/immutable';
 
 import { MedicineCategoryModel, MedicineModel } from '../../../../../models';
+import { useStore } from '../../../../../hooks';
 import * as api from '../../../../../services/pharmacy';
 
 export interface FormProps {
@@ -20,6 +21,11 @@ function Form({ params, mutate, children }: FormProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * store
+   */
+  const { store } = useStore();
 
   /**
    * api
@@ -39,7 +45,7 @@ function Form({ params, mutate, children }: FormProps) {
       <Modal
         show={show}
         onHide={() => setShow(false)}
-        header={params ? 'Update Item' : 'Add Item'}
+        header={params ? 'Update Medicine' : 'Add Medicine'}
       >
         <div className="max-h-[600px] overflow-y-auto">
           <Formik
@@ -78,7 +84,7 @@ function Form({ params, mutate, children }: FormProps) {
                 api
                   .updateMedicineService(data, params.id)
                   .then(() => {
-                    toast.success('Item updated');
+                    toast.success('Medicine updated');
                     setShow(false);
                     mutate?.();
                   })
@@ -90,7 +96,7 @@ function Form({ params, mutate, children }: FormProps) {
                 api
                   .createMedicineService(data)
                   .then(() => {
-                    toast.success('Item created');
+                    toast.success('Medicine created');
                     setShow(false);
                     mutate?.();
                   })
@@ -136,7 +142,7 @@ function Form({ params, mutate, children }: FormProps) {
                     <Field.Input
                       type="number"
                       name="minimum_level"
-                      placeholder="Minimum quantity of items that should always be available"
+                      placeholder="Minimum quantity of medicines that should always be available"
                       value={values.minimum_level}
                     />
                   </Field.Group>
@@ -145,7 +151,7 @@ function Form({ params, mutate, children }: FormProps) {
                     <Field.Input
                       type="number"
                       name="reorder_level"
-                      placeholder="Maximum quantity of items that can be reordered"
+                      placeholder="Maximum quantity of medicines that can be reordered"
                       value={values.reorder_level}
                     />
                   </Field.Group>
@@ -176,17 +182,29 @@ function Form({ params, mutate, children }: FormProps) {
                   <div>
                     <p className="text-lg mb-4 font-medium">Pricing</p>
 
-                    <Field.Group name="cost_price" label="Cost price">
+                    <Field.Group
+                      name="cost_price"
+                      label="Cost price"
+                      containerClassName="!px-4"
+                    >
+                      <span>{store.facility.currency_symbol}</span>
                       <Field.Input
                         name="cost_price"
+                        className="!px-0"
                         value={values.cost_price}
-                        placeholder="How much it cost you to purchase this item"
+                        placeholder="How much it cost you to purchase this medicine"
                       />
                     </Field.Group>
 
-                    <Field.Group name="nhis_price" label="NHIS price">
+                    <Field.Group
+                      name="nhis_price"
+                      label="NHIS price"
+                      containerClassName="!px-4"
+                    >
+                      <span>{store.facility.currency_symbol}</span>
                       <Field.Input
                         name="nhis_price"
+                        className="!px-0"
                         value={values.nhis_price}
                         placeholder="How much you charge under NHIS insurance"
                       />
@@ -195,16 +213,25 @@ function Form({ params, mutate, children }: FormProps) {
                     <Field.Group
                       name="private_price"
                       label="Private insurance price"
+                      containerClassName="!px-4"
                     >
+                      <span>{store.facility.currency_symbol}</span>
                       <Field.Input
                         name="private_price"
+                        className="!px-0"
                         value={values.private_price}
                         placeholder="How much you charge under private insurance"
                       />
                     </Field.Group>
 
-                    <Field.Group name="regular_price" label="Regular price">
+                    <Field.Group
+                      name="regular_price"
+                      label="Regular price"
+                      containerClassName="!px-4"
+                    >
+                      <span>{store.facility.currency_symbol}</span>
                       <Field.Input
+                        className="!px-0"
                         name="regular_price"
                         value={values.regular_price}
                         placeholder="How much you charge under no insurance"
@@ -228,7 +255,7 @@ function Form({ params, mutate, children }: FormProps) {
                     onClick={() => handleSubmit()}
                     {...{ isSubmitting }}
                   >
-                    {params ? 'Update item' : 'Add item'}
+                    {params ? 'Update medicine' : 'Add medicine'}
                   </Button>
                 </div>
               </BaseForm>

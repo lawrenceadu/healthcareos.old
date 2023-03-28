@@ -1,16 +1,14 @@
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { Button, Confirm, Field, Modal } from '@healthcareos/react';
 import { FieldArray, Form, Formik } from 'formik';
-import { DeleteIcon, PlusIcon } from '@healthcare/icons';
 import { helpers, schema } from '@healthcare/utils';
 import { boolean, object } from 'yup';
+import { PlusIcon } from '@healthcare/icons';
 import { toast } from 'react-toastify';
-import useSWR from 'swr/immutable';
-import dayjs from 'dayjs';
 
 import { MedicineModel, PrescriptionModel } from '../../../../../models'; // prettier-ignore
+import BatchSelect, { medicinesSchema } from '../../Components/BatchSelect';
 import { useLocations, useStore } from '../../../../../hooks';
-import SearchSelect from '../../../../libs/SearchSelect';
 import * as api from '../../../../../services/pharmacy';
 
 export interface DispenseProps {
@@ -63,17 +61,7 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
             prescription: schema.requireString('Prescription'),
             insurance: boolean(),
             location: schema.requireString('Location'),
-            medicines: schema.requireArray('Medicines').of(
-              object().shape({
-                expiry_date: schema.requireString('Expiry date'),
-                quantity: schema.requireNumber('Quantity'),
-                batch_no: schema.requireString('Batch no'),
-                medicine: object().shape({
-                  label: schema.requireString('Medicine'),
-                  value: schema.requireString('Medicine'),
-                }),
-              })
-            ),
+            medicines: medicinesSchema,
           })}
           initialValues={{
             prescription: prescription.id,
@@ -167,85 +155,13 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
                         {values.medicines.map((medicine, key) => (
                           <BatchSelect
                             key={key}
-                            medicine={medicine?.medicine?.value}
-                          >
-                            {({ medicine: medicineDetails }) => (
-                              <div className="grid gap-4 grid-cols-[minmax(0,1fr)_3rem]">
-                                <div
-                                  className={helpers.classNames(
-                                    'pb-6 border-b border-gray-200',
-                                    'grid gap-4 md:grid-cols-2 xl:grid-cols-[400px_repeat(3,minmax(0,1fr))]'
-                                  )}
-                                >
-                                  <Field.Group
-                                    label="Medicine"
-                                    wrapperClassName="!mb-0"
-                                    name={`medicines.${key}.medicine.label`}
-                                  >
-                                    <SearchSelect.Medicines
-                                      value={medicine?.medicine}
-                                      onChange={(value) => {
-                                        if (
-                                          values.medicines.find(
-                                            (i) =>
-                                              i.medicine?.value === value.value
-                                          )
-                                        ) {
-                                          toast.error(
-                                            'Medicine already exist in list'
-                                          );
-                                        } else {
-                                          setFieldValue(
-                                            `medicines.${key}.medicine`,
-                                            value
-                                          );
-                                        }
-                                      }}
-                                    />
-                                  </Field.Group>
-                                  <Field.Group
-                                    label="Batch no."
-                                    wrapperClassName="!mb-0"
-                                    name={`medicines.${key}.batch_no`}
-                                  >
-                                    <Field.Input
-                                      name={`medicines.${key}.batch_no`}
-                                    />
-                                  </Field.Group>
-                                  <Field.Group
-                                    label="Expiry"
-                                    wrapperClassName="!mb-0"
-                                    name={`medicines.${key}.expiry_date`}
-                                  >
-                                    <Field.Date
-                                      value={medicine.expiry_date}
-                                      name={`medicines.${key}.expiry_date`}
-                                      {...{ setFieldValue, setFieldTouched }}
-                                    />
-                                  </Field.Group>
-
-                                  <Field.Group
-                                    label="Quantity"
-                                    name={`medicines.${key}.quantity`}
-                                    containerClassName="overflow-hidden"
-                                  >
-                                    <Field.Input
-                                      type="number"
-                                      name={`medicines.${key}.quantity`}
-                                    />
-                                  </Field.Group>
-                                </div>
-                                <Button
-                                  type="button"
-                                  aria-label="Delete"
-                                  className="!px-0 mt-6 w-full"
-                                  onClick={() => helper.remove(key)}
-                                >
-                                  <DeleteIcon />
-                                </Button>
-                              </div>
-                            )}
-                          </BatchSelect>
+                            index={key}
+                            medicine={medicine}
+                            medicines={values.medicines}
+                            id={medicine?.medicine?.value}
+                            remove={() => helper.remove(key)}
+                            {...{ setFieldValue, setFieldTouched }}
+                          />
                         ))}
                       </div>
                       <Button
@@ -308,25 +224,5 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
     </>
   );
 }
-
-/**
- * components
- */
-const BatchSelect = ({
-  medicine,
-  children,
-}: {
-  medicine: string;
-  children: (props: { medicine: MedicineModel }) => ReactElement;
-}) => {
-  /**
-   * api
-   */
-  const { data } = useSWR<{ medicine: MedicineModel }>(
-    medicine && `/medicine/${medicine}`
-  );
-
-  return children({ medicine: data?.medicine });
-};
 
 export default Dispense;

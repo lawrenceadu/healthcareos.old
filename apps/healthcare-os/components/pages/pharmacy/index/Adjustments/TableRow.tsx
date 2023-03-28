@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
-import { Badge, Confirm, Dropdown } from '@healthcareos/react';
+import { Badge, Confirm, Dropdown, Fade } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -141,38 +142,34 @@ function TableRow({ stock, mutate }: TableRowProps) {
         </td>
       </tr>
 
-      {toggle && (
-        <>
-          <tr>
-            <td colSpan={9} className="!p-0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Medicine</th>
-                    <th className="text-right">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stock.details.map((detail, key) => (
-                    <tr key={key}>
-                      <td>{detail.medicine.name}</td>
-                      <td className="text-right">{detail.quantity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-          {stock.notes && (
-            <tr>
-              <td colSpan={8} className="!whitespace-normal">
-                <p className="font-medium">Notes:</p>
-                <p>{stock.notes}</p>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
+      <Fade as={motion.tr} show={toggle}>
+        <td colSpan={9} className="!p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Medicine</th>
+                <th className="text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stock.details.map((detail, key) => (
+                <tr key={key}>
+                  <td>{detail.medicine.name}</td>
+                  <td className="text-right">{detail.quantity}</td>
+                </tr>
+              ))}
+              {stock.notes && (
+                <tr>
+                  <td colSpan={2} className="!whitespace-normal">
+                    <p className="font-medium">Notes:</p>
+                    <p>{stock.notes}</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </td>
+      </Fade>
     </>
   );
 }

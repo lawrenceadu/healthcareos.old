@@ -9,7 +9,6 @@ import Adjustments from '../../components/pages/inventory/index/Adjustments';
 import Inventory from '../../components/pages/inventory/index/Inventory';
 import Purchases from '../../components/pages/inventory/index/Purchases';
 import Transfers from '../../components/pages/inventory/index/Transfers';
-import Requests from '../../components/pages/inventory/index/Requests';
 import Category from '../../components/pages/inventory/index/Category';
 import Items from '../../components/pages/inventory/index/Items';
 
@@ -25,7 +24,6 @@ function Index() {
    */
   const tabs = [
     { name: 'Inventory', slug: 'inventory', component: Inventory },
-    { name: 'Requests', slug: 'requests', component: Requests },
     { name: 'Adjustments', slug: 'adjustments', component: Adjustments },
     { name: 'Transfers', slug: 'transfer', component: Transfers },
     { name: 'Purchases', slug: 'purchases', component: Purchases },
