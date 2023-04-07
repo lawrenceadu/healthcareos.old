@@ -1,4 +1,5 @@
 import { DepartmentModel } from './department';
+import { PatientModel } from './patient';
 
 export interface InvoiceModel {
   id: string;
@@ -12,6 +13,7 @@ export interface InvoiceModel {
   created_by: { id: string; name: string };
   reference: string;
   readonly: boolean;
+  patient: PatientModel;
   details: {
     charge: ChargeModel;
     department: DepartmentModel;

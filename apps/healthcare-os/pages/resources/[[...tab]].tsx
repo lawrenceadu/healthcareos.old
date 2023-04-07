@@ -5,6 +5,7 @@ import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
 import Investigations from '../../components/pages/resources/Investigations';
+import Institutions from '../../components/pages/resources/Institutions';
 import Departments from '../../components/pages/resources/Departments';
 import Diagnoses from '../../components/pages/resources/Diagnoses';
 import Locations from '../../components/pages/resources/Locations';
@@ -31,6 +32,7 @@ function Index() {
     { name: 'Investigations', slug: 'investigations', component: Investigations }, // prettier-ignore
     { name: 'Diagnoses', slug: 'diagnoses', component: Diagnoses },
     { name: 'Suppliers', slug: 'suppliers', component: Suppliers },
+    { name: 'Institutions', slug: 'institutions', component: Institutions },
     { name: 'Triage', slug: 'triage', component: Triage },
   ];
 

@@ -16,8 +16,6 @@ export default function Index() {
    */
   const router = useRouter();
 
-  console.log(store);
-
   /**
    * effect
    */

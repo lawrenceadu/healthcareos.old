@@ -77,6 +77,17 @@ export const deleteSupplierService = (id: string) =>
   http.delete<never, any>(`/supplier/${id}`);
 // end of supplier
 
+// institutions
+export const addInstitutionService = (payload: object) =>
+  http.post<never, any>(`/institution`, payload);
+
+export const updateInstitutionService = (payload: object, id: string) =>
+  http.patch<never, any>(`/institution/${id}`, payload);
+
+export const deleteInstitutionService = (id: string) =>
+  http.delete<never, any>(`/institution/${id}`);
+// end of institution
+
 // triage
 export const addTriageService = (payload: object) =>
   http.post<never, any>(`/triage`, payload);

@@ -75,7 +75,10 @@ export function AdditionalInfo({
                   name="language"
                   value={values.language}
                   placeholder="Select language"
-                  options={[{ label: 'English', value: 'english' }]}
+                  options={[
+                    { label: 'English', value: 'english' },
+                    { label: 'Local', value: 'local' },
+                  ]}
                   onChange={({ value }: { value: string }) =>
                     setFieldValue('language', value)
                   }

@@ -1,10 +1,10 @@
-import { DotsHorizIcon } from '@healthcare/icons';
 import { Confirm, Dropdown } from '@healthcareos/react';
+import { DotsHorizIcon } from '@healthcare/icons';
+import { toast } from 'react-toastify';
 
 import { deleteRoleService } from '../../../../../services/members';
 import { RoleModel } from '../../../../../models';
 import UpdateForm from './Form';
-import { toast } from 'react-toastify';
 
 export interface TableRowProps {
   role: RoleModel;

@@ -1,6 +1,6 @@
 import { HtmlHTMLAttributes, ReactElement, useState, useEffect } from 'react';
-import { helpers, useWidth } from '@healthcare/utils';
 import { useRouter } from 'next/router';
+import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
 import { motion } from 'framer-motion';
 import * as Icon from '@healthcare/icons';
@@ -33,11 +33,6 @@ export function Layout({
    * store
    */
   const { store } = useStore();
-
-  /**
-   * hooks
-   */
-  const width = useWidth();
 
   /**
    * state
@@ -75,6 +70,11 @@ export function Layout({
       link: routes.dashboard.queuing.index,
     },
     { name: 'Wards', icon: Icon.BedIcon, link: routes.dashboard.wards.index },
+    {
+      name: 'Invoices',
+      icon: Icon.WalletIcon,
+      link: routes.dashboard.invoices.index,
+    },
     {
       name: 'Resources',
       icon: Icon.LayersIcon,
@@ -205,7 +205,9 @@ export function Layout({
                 <Button
                   aria-label="Logout"
                   className="ml-auto text-red-500"
-                  onClick={() => store.logout()}
+                  onClick={() => {
+                    store.logout();
+                  }}
                 >
                   <Icon.LogoutIcon />
                 </Button>

@@ -121,9 +121,23 @@ export default function New() {
     },
     {
       name: 'Insurance details',
-      next: 'Next of kin / guardian',
+      next: 'Institution',
       component: () => (
         <Onboarding.Insurance
+          button="Continue"
+          params={session || {}}
+          onSubmit={(params, { setSubmitting }) => {
+            setSession({ ...(session || {}), ...params });
+            setIndex(index + 1);
+          }}
+        />
+      ),
+    },
+    {
+      name: 'Institution',
+      next: 'Next of kin / guardian',
+      component: () => (
+        <Onboarding.Institution
           button="Continue"
           params={session || {}}
           onSubmit={(params, { setSubmitting }) => {

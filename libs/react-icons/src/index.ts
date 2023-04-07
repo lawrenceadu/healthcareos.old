@@ -21,6 +21,7 @@ export { default as LayersIcon } from './icons/Layers';
 export { default as LogoutIcon } from './icons/Logout';
 export { default as QrCodeIcon } from './icons/QrCode';
 export { default as SearchIcon } from './icons/Search';
+export { default as WalletIcon } from './icons/Wallet';
 export { default as ArrowUpIcon } from './icons/ArrowUp';
 export { default as SortAscIcon } from './icons/SortAsc';
 export { default as SpinnerIcon } from './icons/Spinner';

@@ -40,7 +40,9 @@ const routes = {
     settings: {
       index: '/settings/[tab]',
     },
-
+    invoices: {
+      index: '/invoices',
+    },
     resources: {
       index: '/resources/[tab]',
     },

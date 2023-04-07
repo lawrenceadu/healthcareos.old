@@ -16,3 +16,4 @@ export * from './department';
 export * from './geolocation';
 export * from './investigation';
 export * from './invoice';
+export * from './institution';

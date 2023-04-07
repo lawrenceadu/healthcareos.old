@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { Button, Field, Paginate } from '@healthcareos/react';
-import { PlusIcon } from '@healthcare/icons';
+import { Field, Paginate } from '@healthcareos/react';
 import queryString from 'query-string';
-import useSWR from 'swr';
+import useSWR from 'swr/immutable';
 
 import { DiagnosisModel } from '../../../models';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Diagnoses/TableRow';
-import AddForm from './Diagnoses/Form';
 
 function Diagnoses() {
   /**
@@ -43,7 +41,7 @@ function Diagnoses() {
           }
         />
 
-        <div className="ml-auto">
+        {/* <div className="ml-auto">
           <AddForm mutate={mutate}>
             {({ proceed }) => (
               <Button onClick={() => proceed()} className="btn-primary">
@@ -52,7 +50,7 @@ function Diagnoses() {
               </Button>
             )}
           </AddForm>
-        </div>
+        </div> */}
       </div>
 
       <div className="overflow-x-auto mb-8">
@@ -60,9 +58,7 @@ function Diagnoses() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Type</th>
-              <th>Created at</th>
-              <th className="text-center">Actions</th>
+              <th>Code</th>
             </tr>
           </thead>
           <tbody>

@@ -64,6 +64,16 @@ export function Edit() {
       ),
     },
     {
+      name: 'Institution',
+      slug: 'institution',
+      component: (props) => (
+        <Onboarding.Institution
+          {...props}
+          params={{ institution: patient.institution.id }}
+        />
+      ),
+    },
+    {
       name: 'Next of Kin',
       slug: 'kin',
       component: (props) => <Onboarding.Kin {...props} params={patient} />,

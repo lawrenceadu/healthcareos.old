@@ -3,18 +3,19 @@ import { Modal, Button } from '@healthcareos/react';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 
+import { InvoiceModel, PatientModel } from '../../../../models';
 import Form, { validationSchema } from './Form';
-import { InvoiceModel } from '../../../../models';
 import { usePatient } from '../../../../hooks';
 import * as api from '../../../../services/patient';
 
 export interface EditProps {
+  patient?: PatientModel;
   mutate: () => void;
   invoice: InvoiceModel;
   children: (props: { proceed: () => void }) => void;
 }
 
-function Edit({ mutate, invoice, children }: EditProps) {
+function Edit({ patient: basePatient, mutate, invoice, children }: EditProps) {
   /**
    * state
    */
@@ -23,7 +24,7 @@ function Edit({ mutate, invoice, children }: EditProps) {
   /**
    * hooks
    */
-  const { patient } = usePatient();
+  const { patient } = usePatient(basePatient?.id);
 
   return (
     <>

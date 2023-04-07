@@ -11,6 +11,7 @@ type ValueProps = {
   dob: string;
   ghanacard: string;
   gender: string;
+  folder_number: string;
 };
 
 export interface DetailsProps {
@@ -26,6 +27,7 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
         validateOnMount
         enableReinitialize
         validationSchema={object({
+          folder_number: schema.requireString('Folder number', false),
           first_name: schema.requireString('First name'),
           middle_name: schema.requireString('Middle name', false),
           last_name: schema.requireString('Last name'),
@@ -34,6 +36,7 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
           gender: schema.requireString('Sex'),
         })}
         initialValues={{
+          folder_number: params.folder_number || '',
           first_name: params.first_name || '',
           middle_name: params.middle_name || '',
           last_name: params.last_name || '',
@@ -55,7 +58,17 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
             <h4 className="mb-4">Patient details</h4>
 
             <div className="mb-10">
-              <Field.Group name="first_name" label="First name">
+              <Field.Group
+                name="folder_number"
+                label="Folder number / Patient ID"
+              >
+                <Field.Input
+                  name="folder_number"
+                  placeholder="Enter unique ID for patient"
+                />
+              </Field.Group>
+              
+              <Field.Group name="first_name" label="First name *">
                 <Field.Input
                   name="first_name"
                   value={values.first_name}
@@ -71,7 +84,7 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
                 />
               </Field.Group>
 
-              <Field.Group name="last_name" label="Last name">
+              <Field.Group name="last_name" label="Last name *">
                 <Field.Input
                   name="last_name"
                   value={values.last_name}
@@ -79,7 +92,7 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
                 />
               </Field.Group>
 
-              <Field.Group name="dob" label="Date of birth">
+              <Field.Group name="dob" label="Date of birth *">
                 <Field.Date
                   name="dob"
                   value={values.dob}
@@ -101,7 +114,7 @@ export function Details({ button, params = {}, onSubmit }: DetailsProps) {
               </Field.Group>
 
               <div>
-                <p className="mb-4">Sex</p>
+                <p className="mb-4">Sex *</p>
                 <div className="flex gap-6">
                   <Field.Radio name="gender" value="male">
                     Male

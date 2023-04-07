@@ -1,4 +1,5 @@
 import AdditionalInfo from './Onboarding/AdditionalInfo';
+import Institution from './Onboarding/Institution';
 import Insurance from './Onboarding/Insurance';
 import Address from './Onboarding/Address';
 import Contact from './Onboarding/Contact';
@@ -7,5 +8,5 @@ import Kin from './Onboarding/Kin';
 
 export default Object.assign(
   {},
-  { AdditionalInfo, Address, Contact, Details, Insurance, Kin }
+  { AdditionalInfo, Institution, Address, Contact, Details, Insurance, Kin }
 );

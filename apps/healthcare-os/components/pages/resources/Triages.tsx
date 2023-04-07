@@ -26,7 +26,9 @@ function Triages() {
       ...filters,
       page: filters?.page + 1,
       per_page: 10,
-    })}`
+    })}`,
+    null,
+    { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
 
   /**

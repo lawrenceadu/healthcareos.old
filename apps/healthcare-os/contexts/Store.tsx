@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react'; // prettier-ignore
+import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
 
 import { FacilityModel, UserModel } from '../models';
@@ -22,6 +23,11 @@ export const StoreContext = createContext<{
 });
 
 const StoreProvider = ({ children }: { children: any }) => {
+  /**
+   * api
+   */
+  const { mutate } = useSWRConfig();
+
   /**
    * state
    */
@@ -52,6 +58,10 @@ const StoreProvider = ({ children }: { children: any }) => {
    */
   const logout = () => {
     setStore({});
+   
+    mutate(() => true, undefined, { revalidate: false });
+    sessionStorage.clear();
+   
     router.push({ pathname: '/login' });
   };
 

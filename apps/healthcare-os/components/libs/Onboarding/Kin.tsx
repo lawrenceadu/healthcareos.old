@@ -20,8 +20,8 @@ export function Kin({ button, params = {}, onSubmit }: KinProps) {
       <Formik
         validateOnMount
         validationSchema={object({
-          next_of_kin_name: schema.requireFullName('Full name'),
-          next_of_kin_phone: schema.requirePhoneNumber('Phone number'),
+          next_of_kin_name: schema.requireFullName('Full name', false),
+          next_of_kin_phone: schema.requirePhoneNumber('Phone number', false),
         })}
         initialValues={{
           next_of_kin_name: params.next_of_kin_name || '',

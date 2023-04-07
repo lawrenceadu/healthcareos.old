@@ -45,27 +45,6 @@ function TableRow({ diagnosis, mutate }) {
     <tr>
       <td>{diagnosis.name}</td>
       <td>{diagnosis.code}</td>
-      <td>{dayjs(diagnosis.created_at).format('ddd DD, MMM YYYY')}</td>
-      <td>
-        <Dropdown>
-          <Dropdown.Toggle className="mx-auto">
-            <DotsHorizIcon />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={diagnosis} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
-              )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </td>
     </tr>
   );
 }

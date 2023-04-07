@@ -1,4 +1,4 @@
-import { HtmlHTMLAttributes } from 'react';
+import { Fragment, HtmlHTMLAttributes } from 'react';
 import { helpers, useWidth } from '@healthcare/utils';
 import { Accordion, Badge } from '@healthcareos/react';
 import { CheckIcon } from '@healthcare/icons';
@@ -29,8 +29,12 @@ export function Info({ className, ...props }: InfoProps) {
    */
   const items = [
     {
+      label: 'Folder number',
+      value: patient.folder_number,
+    },
+    {
       label: 'Name',
-      value: [patient.first_name, patient.middle_name].join(' ').trim(),
+      value: patient.name,
     },
     { label: 'Surname', value: patient.last_name },
     {
@@ -68,6 +72,10 @@ export function Info({ className, ...props }: InfoProps) {
         </>
       ),
     },
+    {
+      label: 'Institution',
+      value: patient?.institution?.name,
+    },
   ];
 
   const width = useWidth();
@@ -86,10 +94,12 @@ export function Info({ className, ...props }: InfoProps) {
       >
         <div className="flex flex-col gap-1">
           {items.map((item, key) => (
-            <div key={key} className="flex items-center justify-between gap-6">
-              <p className="text-muted">{item.label}</p>
-              <div className="text-right">{item.value}</div>
-            </div>
+            <Fragment key={key}>
+              <div className="flex items-center justify-between gap-6">
+                <p className="text-muted">{item.label}</p>
+                <div className="text-right">{item.value}</div>
+              </div>
+            </Fragment>
           ))}
         </div>
       </Accordion.Item>

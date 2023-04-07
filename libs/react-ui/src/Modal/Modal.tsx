@@ -1,16 +1,17 @@
+import { HTMLProps, useEffect, useState } from 'react';
 import { XMarkIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import { motion } from 'framer-motion';
 import * as Restart from '@restart/ui';
 
 import Button from '../Button/Button';
-import { useEffect, useState } from 'react';
 
 /* eslint-disable-next-line */
 export interface ModalProps extends Restart.ModalProps {
   index?: number;
   header?: string;
   size?: 'sm' | 'lg' | 'xl' | 'full';
+  dialogProps?: HTMLProps<HTMLDivElement>;
 }
 
 export function Modal({
@@ -21,6 +22,7 @@ export function Modal({
   children,
   index = 0,
   backdrop,
+  dialogProps,
   ...props
 }: ModalProps) {
   /**
@@ -131,7 +133,8 @@ export function Modal({
           'flex',
           'relative',
           'mx-auto w-full my-6',
-          'min-h-[calc(100%-3rem)]'
+          'min-h-[calc(100%-3rem)]',
+          dialogProps?.className
         )}
       >
         <div

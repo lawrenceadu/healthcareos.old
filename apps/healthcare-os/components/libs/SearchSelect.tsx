@@ -7,6 +7,7 @@ import Diagnosis from './SearchSelect/Diagnosis';
 import Medicines from './SearchSelect/Medicines';
 import Locations from './SearchSelect/Locations';
 import Departments from './SearchSelect/Departments';
+import Institutions from './SearchSelect/Institutions';
 import Investigations from './SearchSelect/Investigations';
 
 export default Object.assign(
@@ -21,6 +22,7 @@ export default Object.assign(
     Suppliers,
     Locations,
     Departments,
+    Institutions,
     Investigations,
   }
 );

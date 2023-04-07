@@ -44,6 +44,7 @@ export function PatientFilter({
           validateOnMount
           enableReinitialize
           validationSchema={object({
+            folder_number: schema.requireString('Folder number', false),
             first_name: schema.requireString('First name', false),
             last_name: schema.requireString('Last name', false),
             middle_name: schema.requireString('Middle name', false),
@@ -52,6 +53,7 @@ export function PatientFilter({
             ghanacard: schema.requireString('ID Number', false),
           })}
           initialValues={{
+            folder_number: filters?.folder_number || '',
             first_name: filters?.first_name || '',
             middle_name: filters?.middle_name || '',
             last_name: filters?.last_name || '',
@@ -64,16 +66,16 @@ export function PatientFilter({
             setShow(false);
           }}
         >
-          {({
-            values,
-            resetForm,
-            handleSubmit,
-            isSubmitting,
-            setFieldValue,
-            setFieldTouched,
-          }) => (
+          {({ values, setFieldValue, setFieldTouched }) => (
             <Form>
               <div className="p-6">
+                <Field.Group name="folder_number" label="Folder number">
+                  <Field.Input
+                    name="folder_number"
+                    placeholder="Enter the folder number of patient"
+                  />
+                </Field.Group>
+
                 <Field.Group name="first_name" label="First name">
                   <Field.Input
                     name="first_name"

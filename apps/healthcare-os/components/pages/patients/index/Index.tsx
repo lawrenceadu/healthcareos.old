@@ -25,11 +25,14 @@ function Index() {
     patients: PatientModel[];
     total: number;
   }>(
-    `/patient?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`
+    `/patient?${queryString.stringify(
+      {
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      },
+      { skipEmptyString: true, skipNull: true }
+    )}`
   );
 
   /**
@@ -76,6 +79,7 @@ function Index() {
         <table>
           <thead>
             <tr>
+              <th>Folder No.</th>
               <th>First Name</th>
               <th>Middle Name</th>
               <th>Last Name</th>
@@ -110,6 +114,7 @@ function Index() {
                       });
                     }}
                   >
+                    <td>{patient.folder_number || '--'}</td>
                     <td>{patient.first_name || '--'}</td>
                     <td>{patient.middle_name || '--'}</td>
                     <td>{patient.last_name || '--'}</td>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button, Dropdown, Field, Paginate } from '@healthcareos/react';
-import { DotsHorizIcon, PlusIcon } from '@healthcare/icons';
+import { Button, Field, Paginate } from '@healthcareos/react';
+import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
@@ -22,6 +22,8 @@ export default function Roles() {
   const { data, error, mutate } = useSWR<{ roles: RoleModel[]; total: number }>(
     `/role?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
   );
+
+  const { data: permissions } = useSWR(`/permission`);
 
   /**
    * variables

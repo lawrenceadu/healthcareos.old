@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { Modal } from '@healthcareos/react';
+import { toast } from 'react-toastify';
+
+import { updatePatientService } from '../../../../services/patient';
+import { usePatient } from '../../../../hooks';
 import Insurance from '../../Onboarding/Insurance';
 
 export interface AddProps {
@@ -10,19 +14,39 @@ export function Add({ children }: AddProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [show, setShow] = useState(false);
+
+  /**
+   * hooks
+   */
+  const { patient, mutate } = usePatient();
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
+      {children({ proceed: () => setShow(true) })}
 
-      <Modal show={state} onHide={() => setState(false)} header="Add insurance">
+      <Modal show={show} onHide={() => setShow(false)} header="Add insurance">
         <div className="p-6">
           <Insurance
             button="Add insurance"
             params={{ has_insurance: 'yes', insurance_type: 'nhis' }}
-            onSubmit={(params, { setSubmitting }) => {
-              return;
+            onSubmit={(params, { setSubmitting, setErrors }) => {
+              updatePatientService(params, patient.id)
+                .then(() => {
+                  toast.success('Insurance added');
+                  setShow(false);
+                  mutate();
+                })
+                .catch((error) => {
+                  if (error?.fields) {
+                    return setErrors(error.fields);
+                  }
+
+                  if (error?.message) {
+                    return toast.error(error.message);
+                  }
+                })
+                .finally(() => setSubmitting(false));
             }}
           />
         </div>

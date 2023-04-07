@@ -1,4 +1,5 @@
 import { CountryModel, DistrictModel, RegionModel } from './geolocation';
+import { InstitutionModel } from './institution';
 import { InsuranceModel } from './insurance';
 import { TriageModel } from './triage';
 
@@ -18,6 +19,8 @@ export interface PatientModel {
   country: CountryModel;
   region: RegionModel;
   district: DistrictModel;
+  folder_number: string;
+  institution: InstitutionModel;
   city: string;
   address: string;
   status: 'visiting' | 'detained' | 'admitted';
