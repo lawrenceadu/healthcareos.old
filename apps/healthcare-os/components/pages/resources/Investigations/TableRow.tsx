@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 import { deleteInvestigationService } from '../../../../services/resource';
 import { InvestigationModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 import EditForm from './Form';
 
 export interface TableRowProps {
@@ -13,6 +14,14 @@ export interface TableRowProps {
 }
 
 function TableRow({ investigation, mutate }) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'investigation_edit',
+    'investigation_delete'
+  );
+
   /**
    * functions
    */
@@ -51,19 +60,27 @@ function TableRow({ investigation, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={investigation} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEdit || canDelete) && (
+            <Dropdown.Menu>
+              {canEdit && (
+                <EditForm params={investigation} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

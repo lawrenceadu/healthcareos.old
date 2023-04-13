@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../../hooks';
 import { TriageModel } from '../../../models';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Triages/TableRow';
@@ -16,17 +17,23 @@ function Triages() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('triage_view', 'triage_add');
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     triages: TriageModel[];
     total: number;
   }>(
-    `/triage?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`,
+    canView &&
+      `/triage?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -46,14 +53,16 @@ function Triages() {
         />
 
         <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
+          {canAdd && (
+            <AddForm mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </AddForm>
+          )}
         </div>
       </div>
 

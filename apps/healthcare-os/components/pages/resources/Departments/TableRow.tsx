@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 import { deleteDepartmentService } from '../../../../services/resource';
 import { DepartmentModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 import EditForm from './Form';
 
 export interface TableRowProps {
@@ -13,6 +14,14 @@ export interface TableRowProps {
 }
 
 function TableRow({ department, mutate }) {
+  /**
+   * perm
+   */
+  const [canEditDepartment, canDeleteDepartment] = usePermissions(
+    'department_edit',
+    'department_delete'
+  );
+
   /**
    * functions
    */
@@ -52,19 +61,27 @@ function TableRow({ department, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={department} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEditDepartment || canDeleteDepartment) && (
+            <Dropdown.Menu>
+              {canEditDepartment && (
+                <EditForm params={department} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDeleteDepartment && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

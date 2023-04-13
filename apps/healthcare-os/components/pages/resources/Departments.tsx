@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { DepartmentModel } from '../../../models';
+import { usePermissions } from '../../../hooks';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Departments/TableRow';
 import AddForm from './Departments/Form';
@@ -16,17 +17,26 @@ function Departments() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canViewDepartment, canAddDepartment] = usePermissions(
+    'department_view',
+    'department_add'
+  );
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     departments: DepartmentModel[];
     total: number;
   }>(
-    `/department?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`,
+    canViewDepartment &&
+      `/department?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -46,14 +56,16 @@ function Departments() {
         />
 
         <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
+          {canAddDepartment && (
+            <AddForm mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </AddForm>
+          )}
         </div>
       </div>
 

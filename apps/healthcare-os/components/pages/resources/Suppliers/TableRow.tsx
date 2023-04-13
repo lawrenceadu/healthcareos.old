@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { deleteSupplierService } from '../../../../services/resource';
+import { usePermissions } from '../../../../hooks';
 import { SupplierModel } from '../../../../models';
 import EditForm from './Form';
 
@@ -13,6 +14,14 @@ export interface TableRowProps {
 }
 
 function TableRow({ supplier, mutate }) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'supplier_edit',
+    'supplier_delete'
+  );
+
   /**
    * functions
    */
@@ -53,19 +62,27 @@ function TableRow({ supplier, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={supplier} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEdit || canDelete) && (
+            <Dropdown.Menu>
+              {canEdit && (
+                <EditForm params={supplier} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

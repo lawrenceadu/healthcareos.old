@@ -5,5 +5,5 @@ export { default as useRegions } from './useRegions';
 export { default as useCountries } from './useCountries';
 export { default as useDistricts } from './useDistricts';
 export { default as useLocations } from './useLocations';
-export { default as usePermission } from './usePermission';
+export { default as usePermissions } from './usePermissions';
 export { default as useInstitutions } from './useInstitutions';

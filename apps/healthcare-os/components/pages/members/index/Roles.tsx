@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../../../hooks';
 import { RoleModel } from '../../../../models';
 import DropdownFilter from '../../../libs/DropdownFilter';
 import CreateForm from './Roles/Form';
@@ -17,13 +18,17 @@ export default function Roles() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('role_view', 'role_add');
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{ roles: RoleModel[]; total: number }>(
-    `/role?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
+    canView &&
+      `/role?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
   );
-
-  const { data: permissions } = useSWR(`/permission`);
 
   /**
    * variables
@@ -48,17 +53,19 @@ export default function Roles() {
           }
         />
 
-        <CreateForm {...{ mutate }}>
-          {({ proceed }) => (
-            <Button
-              onClick={() => proceed()}
-              className="btn btn-primary w-full md:w-auto md:ml-auto"
-            >
-              <PlusIcon />
-              <span>Add</span>
-            </Button>
-          )}
-        </CreateForm>
+        {canAdd && (
+          <CreateForm {...{ mutate }}>
+            {({ proceed }) => (
+              <Button
+                onClick={() => proceed()}
+                className="btn btn-primary w-full md:w-auto md:ml-auto"
+              >
+                <PlusIcon />
+                <span>Add</span>
+              </Button>
+            )}
+          </CreateForm>
+        )}
       </div>
 
       <div className="overflow-x-auto mb-8">
@@ -71,13 +78,13 @@ export default function Roles() {
             </tr>
           </thead>
           <tbody>
-            {!data && !error && <Skeleton.Table count={5} />}
+            {!data && !error && <Skeleton.Table count={3} />}
 
             {data && (
               <>
                 {!roles.length && (
                   <tr>
-                    <td colSpan={2}>
+                    <td colSpan={3}>
                       <p className="text-center">No members yet</p>
                     </td>
                   </tr>

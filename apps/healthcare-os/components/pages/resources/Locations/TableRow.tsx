@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { deleteLocationService } from '../../../../services/resource';
+import { usePermissions } from '../../../../hooks';
 import { LocationModel } from '../../../../models';
 import EditForm from './Form';
 
@@ -13,6 +14,14 @@ export interface TableRowProps {
 }
 
 function TableRow({ location, mutate }) {
+  /**
+   * perm
+   */
+  const [canEditLocation, canDeleteLocation] = usePermissions(
+    'location_edit',
+    'location_delete'
+  );
+
   /**
    * functions
    */
@@ -52,19 +61,27 @@ function TableRow({ location, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={location} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEditLocation || canDeleteLocation) && (
+            <Dropdown.Menu>
+              {canEditLocation && (
+                <EditForm params={location} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDeleteLocation && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

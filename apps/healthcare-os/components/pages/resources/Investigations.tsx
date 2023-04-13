@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { InvestigationModel } from '../../../models';
+import { usePermissions } from '../../../hooks';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Investigations/TableRow';
 import AddForm from './Investigations/Form';
@@ -16,17 +17,26 @@ function Investigations() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'investigation_view',
+    'investigation_add'
+  );
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     investigations: InvestigationModel[];
     total: number;
   }>(
-    `/investigation?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`,
+    canView &&
+      `/investigation?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -46,14 +56,16 @@ function Investigations() {
         />
 
         <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
+          {canAdd && (
+            <AddForm mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </AddForm>
+          )}
         </div>
       </div>
 

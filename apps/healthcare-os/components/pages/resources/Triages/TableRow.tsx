@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { deleteTriageService } from '../../../../services/resource';
+import { usePermissions } from '../../../../hooks';
 import { TriageModel } from '../../../../models';
 import EditForm from './Form';
 
@@ -13,6 +14,11 @@ export interface TableRowProps {
 }
 
 function TableRow({ triage, mutate }) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions('triage_edit', 'triage_delete');
+
   /**
    * functions
    */
@@ -60,19 +66,27 @@ function TableRow({ triage, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={triage} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEdit || canDelete) && (
+            <Dropdown.Menu>
+              {canEdit && (
+                <EditForm params={triage} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

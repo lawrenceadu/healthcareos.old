@@ -3,9 +3,9 @@ import { Confirm, Dropdown } from '@healthcareos/react';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
+import { useStore, usePermissions } from '../../../../hooks';
 import { deleteChargeService } from '../../../../services/resource';
 import { ChargeModel } from '../../../../models';
-import { useStore } from '../../../../hooks';
 import EditForm from './Form';
 
 export interface TableRowProps {
@@ -18,6 +18,14 @@ function TableRow({ charge, mutate }) {
    * store
    */
   const { store } = useStore();
+
+  /**
+   * perm
+   */
+  const [canEditCharge, canDeleteCharge] = usePermissions(
+    'charge_edit',
+    'charge_delete'
+  );
 
   /**
    * functions
@@ -61,19 +69,27 @@ function TableRow({ charge, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={charge} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEditCharge || canDeleteCharge) && (
+            <Dropdown.Menu>
+              {canEditCharge && (
+                <EditForm params={charge} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDeleteCharge && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

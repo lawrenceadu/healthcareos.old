@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../../hooks';
 import { SupplierModel } from '../../../models';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Suppliers/TableRow';
@@ -16,17 +17,23 @@ function Suppliers() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('supplier_view', 'supplier_add');
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     suppliers: SupplierModel[];
     total: number;
   }>(
-    `/supplier?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`,
+    canView &&
+      `/supplier?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -46,14 +53,16 @@ function Suppliers() {
         />
 
         <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
+          {canAdd && (
+            <AddForm mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </AddForm>
+          )}
         </div>
       </div>
 

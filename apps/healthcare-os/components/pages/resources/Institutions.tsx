@@ -6,6 +6,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { InstitutionModel } from '../../../models/institution';
+import { usePermissions } from '../../../hooks';
 import TableRow from './Institutions/TableRow';
 import Skeleton from '../../libs/Skeleton';
 import Form from './Institutions/Form';
@@ -17,17 +18,26 @@ function Institutions() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'institution_view',
+    'institution_add'
+  );
+
+  /**
    * state
    */
   const { data, mutate, isLoading } = useSWR<{
     institutions: InstitutionModel[];
     total: number;
   }>(
-    `/institution?${queryString.stringify({
-      ...filters,
-      page: (filters?.page || 0) + 1,
-      per_page: 10,
-    })}`,
+    canView &&
+      `/institution?${queryString.stringify({
+        ...filters,
+        page: (filters?.page || 0) + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -48,14 +58,16 @@ function Institutions() {
         <Field.Search onSearch={() => null} />
 
         <div>
-          <Form mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </Form>
+          {canAdd && (
+            <Form mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </Form>
+          )}
         </div>
       </div>
 

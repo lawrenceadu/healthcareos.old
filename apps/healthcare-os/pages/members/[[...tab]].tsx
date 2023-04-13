@@ -1,11 +1,17 @@
 import { useRouter } from 'next/router';
 import { Tabs } from '@healthcareos/react';
+import dynamic from 'next/dynamic';
 
+import { usePermissions } from '../../hooks';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
-import Members from '../../components/pages/members/index/Members';
-import Roles from '../../components/pages/members/index/Roles';
+const Members = dynamic(
+  () => import('../../components/pages/members/index/Members')
+);
+const Roles = dynamic(
+  () => import('../../components/pages/members/index/Roles')
+);
 
 function Index() {
   /**
@@ -15,11 +21,20 @@ function Index() {
   const tab = router.query.tab as string[];
 
   /**
+   * perm
+   */
+  const [canViewMember, canViewRole] = usePermissions('user', 'role');
+
+  /**
    * variables
    */
   const tabs = [
-    { name: 'Members', slug: 'members', component: Members },
-    { name: 'Roles', slug: 'roles', component: Roles },
+    ...(canViewMember
+      ? [{ name: 'Members', slug: 'members', component: Members }]
+      : []),
+    ...(canViewRole
+      ? [{ name: 'Roles', slug: 'roles', component: Roles }]
+      : []),
   ];
 
   return (

@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../../hooks';
 import { ChargeModel } from '../../../models';
 import Skeleton from '../../libs/Skeleton';
 import TableRow from './Charges/TableRow';
@@ -16,17 +17,26 @@ function Charges() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canViewCharge, canAddCharge] = usePermissions(
+    'charge_view',
+    'charge_add'
+  );
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     charges: ChargeModel[];
     total: number;
   }>(
-    `/charge?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      per_page: 10,
-    })}`,
+    canViewCharge &&
+      `/charge?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        per_page: 10,
+      })}`,
     null,
     { dedupingInterval: 1000 * 60 * 15, revalidateOnFocus: false }
   );
@@ -46,14 +56,16 @@ function Charges() {
         />
 
         <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
+          {canAddCharge && (
+            <AddForm mutate={mutate}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </AddForm>
+          )}
         </div>
       </div>
 

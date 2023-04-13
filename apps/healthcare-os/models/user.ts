@@ -1,3 +1,4 @@
+import { PermissionModel } from './permission';
 import { FacilityModel } from './facility';
 
 export interface UserModel {
@@ -24,4 +25,5 @@ export interface RoleModel {
   name: string;
   code: string;
   created_at: string;
+  permissions: PermissionModel[];
 }

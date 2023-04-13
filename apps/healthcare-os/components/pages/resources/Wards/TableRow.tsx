@@ -3,9 +3,9 @@ import { Confirm, Dropdown } from '@healthcareos/react';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
+import { useStore, usePermissions } from '../../../../hooks';
 import { deleteWardService } from '../../../../services/resource';
 import { WardModel } from '../../../../models';
-import { useStore } from '../../../../hooks';
 import EditForm from './Form';
 
 export interface TableRowProps {
@@ -18,6 +18,11 @@ function TableRow({ ward, mutate }) {
    * store
    */
   const { store } = useStore();
+
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions('ward_edit', 'ward_delete');
 
   /**
    * functions
@@ -61,19 +66,27 @@ function TableRow({ ward, mutate }) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <EditForm params={ward} {...{ mutate }}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEdit || canDelete) && (
+            <Dropdown.Menu>
+              {canEdit && (
+                <EditForm params={ward} {...{ mutate }}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </EditForm>
               )}
-            </EditForm>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

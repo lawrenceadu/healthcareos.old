@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 
-import { useStore } from '../../hooks';
+import { usePermissions, useStore } from '../../hooks';
 import routes from '../../routes';
 
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
@@ -35,6 +35,29 @@ export function Layout({
   const { store } = useStore();
 
   /**
+   * hooks
+   */
+  const [
+    canViewPatient,
+    canViewInvoice,
+    canViewWard,
+    canViewQueue,
+    canViewResource,
+    canViewPharmacy,
+    canViewMembers,
+    canViewInvestigation,
+  ] = usePermissions(
+    'patient',
+    'invoice',
+    'ward',
+    'queue',
+    'resource',
+    'pharmacy',
+    'user',
+    'investigation'
+  );
+
+  /**
    * state
    */
   const [toggle, setToggle] = useState(false);
@@ -44,47 +67,87 @@ export function Layout({
    * variables
    */
   const navlinks = [
-    {
-      name: 'Patients',
-      icon: Icon.UsersIcon,
-      link: routes.dashboard.patients.index,
-    },
-    {
-      name: 'Inventory',
-      icon: Icon.PackageIcon,
-      link: routes.dashboard.inventory.index.replace('[tab]', ''),
-    },
-    {
-      name: 'Pharmacy',
-      icon: Icon.DrugIcon,
-      link: routes.dashboard.pharmacy.index.replace('[tab]', ''),
-    },
-    {
-      name: 'Investigations',
-      icon: Icon.MicroscopeIcon,
-      link: routes.dashboard.investigations.index,
-    },
-    {
-      name: 'Queuing',
-      icon: Icon.UserQueueIcon,
-      link: routes.dashboard.queuing.index,
-    },
-    { name: 'Wards', icon: Icon.BedIcon, link: routes.dashboard.wards.index },
-    {
-      name: 'Invoices',
-      icon: Icon.WalletIcon,
-      link: routes.dashboard.invoices.index,
-    },
-    {
-      name: 'Resources',
-      icon: Icon.LayersIcon,
-      link: routes.dashboard.resources.index.replace('[tab]', ''),
-    },
-    {
-      name: 'Members',
-      icon: Icon.UsersIcon,
-      link: routes.dashboard.members.index.replace('[tab]', ''),
-    },
+    ...(canViewPatient
+      ? [
+          {
+            name: 'Patients',
+            icon: Icon.UsersIcon,
+            link: routes.dashboard.patients.index,
+          },
+        ]
+      : []),
+    ...(true
+      ? [
+          {
+            name: 'Inventory',
+            icon: Icon.PackageIcon,
+            link: routes.dashboard.inventory.index.replace('[tab]', ''),
+          },
+        ]
+      : []),
+    ...(canViewPharmacy
+      ? [
+          {
+            name: 'Pharmacy',
+            icon: Icon.DrugIcon,
+            link: routes.dashboard.pharmacy.index.replace('[tab]', ''),
+          },
+        ]
+      : []),
+    ...(canViewInvestigation
+      ? [
+          {
+            name: 'Investigations',
+            icon: Icon.MicroscopeIcon,
+            link: routes.dashboard.investigations.index,
+          },
+        ]
+      : []),
+    ...(canViewQueue
+      ? [
+          {
+            name: 'Queuing',
+            icon: Icon.UserQueueIcon,
+            link: routes.dashboard.queuing.index,
+          },
+        ]
+      : []),
+    ...(canViewWard
+      ? [
+          {
+            name: 'Wards',
+            icon: Icon.BedIcon,
+            link: routes.dashboard.wards.index,
+          },
+        ]
+      : []),
+    ...(canViewInvoice
+      ? [
+          {
+            name: 'Invoices',
+            icon: Icon.WalletIcon,
+            link: routes.dashboard.invoices.index,
+          },
+        ]
+      : []),
+    ...(canViewResource
+      ? [
+          {
+            name: 'Resources',
+            icon: Icon.LayersIcon,
+            link: routes.dashboard.resources.index.replace('[tab]', ''),
+          },
+        ]
+      : []),
+    ...(canViewMembers
+      ? [
+          {
+            name: 'Members',
+            icon: Icon.UsersIcon,
+            link: routes.dashboard.members.index.replace('[tab]', ''),
+          },
+        ]
+      : []),
     {
       name: 'Settings',
       icon: Icon.SettingsIcon,

@@ -1,10 +1,11 @@
 import { Dropdown, Confirm } from '@healthcareos/react';
 import { DotsHorizIcon } from '@healthcare/icons';
+import { toast } from 'react-toastify';
 
 import { deleteInstitutionService } from '../../../../services/resource';
 import { InstitutionModel } from '../../../../models/institution';
+import { usePermissions } from '../../../../hooks';
 import Form from './Form';
-import { toast } from 'react-toastify';
 
 export interface TableRowsProps {
   institution: InstitutionModel;
@@ -12,6 +13,14 @@ export interface TableRowsProps {
 }
 
 function TableRow({ institution, mutate }: TableRowsProps) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'institution_edit',
+    'institution_delete'
+  );
+
   /**
    * functions
    */
@@ -51,19 +60,27 @@ function TableRow({ institution, mutate }: TableRowsProps) {
           <Dropdown.Toggle className="mx-auto">
             <DotsHorizIcon />
           </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Form params={institution} mutate={mutate}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
+          {(canEdit || canDelete) && (
+            <Dropdown.Menu>
+              {canEdit && (
+                <Form params={institution} mutate={mutate}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </Form>
               )}
-            </Form>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          )}
         </Dropdown>
       </td>
     </tr>

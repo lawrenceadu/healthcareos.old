@@ -4,9 +4,11 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
+import useSWR from 'swr';
 
 import { updateRoleService, createRoleService } from '../../../../../services/members'; // prettier-ignore
 import { RoleModel } from '../../../../../models';
+import { useStore } from '../../../../../hooks';
 
 export interface FormProps {
   mutate: () => void;
@@ -19,6 +21,18 @@ function Form({ children, mutate, params }: FormProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * store
+   */
+  const { store } = useStore();
+
+  /**
+   * api
+   */
+  const { data: roleData } = useSWR<{ role: RoleModel }>(
+    params?.id && show && `/role/${params.id}`
+  );
 
   return (
     <>
