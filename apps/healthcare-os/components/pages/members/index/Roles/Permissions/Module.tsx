@@ -69,7 +69,7 @@ function Toggle({
   /**
    * variables
    */
-  const name = `${module.value}_${action}`;
+  const name = module.section ? module.value : `${module.value}_${action}`;
   const permission = values.find((i) => i.name === name);
 
   return (
@@ -81,7 +81,7 @@ function Toggle({
           setFieldValue('permissions', [
             ...values,
             { name, access_level: 'all' },
-            ...(action === 'view'
+            ...(action === 'view' && !module.section
               ? [{ name: module.value, access_level: 'all' }]
               : []),
           ]);

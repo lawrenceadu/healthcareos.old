@@ -1,9 +1,10 @@
 import { ReactElement, useState } from 'react';
-import { Accordion, Modal } from '@healthcareos/react';
+import { Accordion, Button, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
-import { object } from 'yup';
+import { toast } from 'react-toastify';
 import useSWR from 'swr';
 
+import { updateRolePermissionService } from '../../../../../services/members';
 import { RoleModel } from '../../../../../models';
 import Module from './Permissions/Module';
 
@@ -21,7 +22,9 @@ function Permissions({ children, role }: PermissionsProps) {
   /**
    * api
    */
-  const { data, isLoading } = useSWR<{ role: RoleModel }>(`/role/${role.id}`);
+  const { data, mutate } = useSWR<{ role: RoleModel }>(
+    show && `/role/${role.id}`
+  );
 
   /**
    * variables
@@ -40,7 +43,6 @@ function Permissions({ children, role }: PermissionsProps) {
         { label: 'Visit', value: 'visit' },
         { label: 'Vitals', value: 'vital' },
         { label: 'Consultation', value: 'consultation' },
-        { label: 'Investigation', value: 'investigation' },
         { label: 'Allergy', value: 'allergy' },
         { label: 'Detain / Admin', value: 'admission' },
       ],
@@ -61,7 +63,7 @@ function Permissions({ children, role }: PermissionsProps) {
       modules: [
         { label: 'Pharmacy', value: 'pharmacy', section: true },
         { label: 'Prescription', value: 'prescription' },
-        { label: 'Inventory', value: 'medicineinventory' },
+        { label: 'Inventory', value: 'pharmacyinventory', section: true },
         { label: 'Transfer', value: 'medicinetransfer' },
         { label: 'Purchase', value: 'medicinepurchase' },
         { label: 'Medicine', value: 'medicine' },
@@ -70,10 +72,7 @@ function Permissions({ children, role }: PermissionsProps) {
     },
     {
       label: 'Investigation',
-      modules: [
-        { label: 'Investigation', value: 'investigation' },
-        { label: 'Request', value: 'investigationrequest' },
-      ],
+      modules: [{ label: 'Request', value: 'investigationrequest' }],
     },
     {
       label: 'Queue',
@@ -94,7 +93,6 @@ function Permissions({ children, role }: PermissionsProps) {
         { label: 'Department', value: 'department' },
         { label: 'Location', value: 'location' },
         { label: 'Charge', value: 'charge' },
-        { label: 'Ward', value: 'ward' },
         { label: 'Investigation', value: 'investigation' },
         { label: 'Supplier', value: 'supplier' },
         { label: 'Institution', value: 'institution' },
@@ -106,7 +104,6 @@ function Permissions({ children, role }: PermissionsProps) {
       modules: [
         { label: 'Members', value: 'user' },
         { label: 'Role', value: 'role' },
-        { label: 'Role', value: 'role' },
         { label: 'Permission', value: 'permission' },
       ],
     },
@@ -117,21 +114,28 @@ function Permissions({ children, role }: PermissionsProps) {
       {children({ proceed: () => setShow(true) })}
 
       <Modal
+        size="lg"
         show={show}
         onHide={() => setShow(false)}
         header={`${role.name} Permissions`}
-        size="lg"
       >
         <Formik
-          validateOnMount
           enableReinitialize
-          validationSchema={object({})}
           initialValues={{ permissions }}
-          onSubmit={() => {
-            return;
+          onSubmit={(params, { setSubmitting }) => {
+            updateRolePermissionService(params, role.id)
+              .then(() => {
+                mutate();
+                toast.success('Permissions updated');
+                setShow(false);
+              })
+              .catch((error) => {
+                toast.error(error?.message || 'Unable to update permission');
+              })
+              .finally(() => setSubmitting(false));
           }}
         >
-          {({ values, setFieldValue }) => (
+          {({ values, isValid, isSubmitting, setFieldValue }) => (
             <Form>
               <Accordion className="p-6 grid gap-4">
                 {items.map(({ label, modules }, key) => (
@@ -147,15 +151,23 @@ function Permissions({ children, role }: PermissionsProps) {
                     />
                   </Accordion.Item>
                 ))}
-                {/* <Accordion.Item header="Inventory"></Accordion.Item>
-                <Accordion.Item header="Pharmacy"></Accordion.Item>
-                <Accordion.Item header="Investigations"></Accordion.Item>
-                <Accordion.Item header="Queuing"></Accordion.Item>
-                <Accordion.Item header="Wards"></Accordion.Item>
-                <Accordion.Item header="Invoices"></Accordion.Item>
-                <Accordion.Item header="Resources"></Accordion.Item>
-                <Accordion.Item header="Members"></Accordion.Item> */}
               </Accordion>
+              <div className="modal-footer">
+                <Button
+                  type="button"
+                  onClick={() => setShow(false)}
+                  className="btn-light"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={!isValid}
+                  className="btn btn-primary"
+                  {...{ isSubmitting }}
+                >
+                  Update permission
+                </Button>
+              </div>
             </Form>
           )}
         </Formik>

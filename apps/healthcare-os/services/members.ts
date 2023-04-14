@@ -11,6 +11,11 @@ export const deleteRoleService = (id: string) =>
   http.delete<never, any>(`/role/${id}`);
 // end of roles
 
+// permissions
+export const updateRolePermissionService = (payload: object, id: string) =>
+  http.post<never, any>(`/permission/${id}`, payload);
+// end of permissions
+
 // members
 export const inviteMemberService = (payload: object) =>
   http.post<never, any>(`/user`, payload);

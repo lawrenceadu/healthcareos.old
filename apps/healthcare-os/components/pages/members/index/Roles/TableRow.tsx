@@ -50,7 +50,7 @@ function TableRow({ role, mutate }: TableRowProps) {
       <td>{role.name || '--'}</td>
       <td>{role.code || '--'}</td>
       <td>
-        {role.code !== 'admin' && (
+        {role.code !== 'admkkkin' && (
           <Dropdown>
             <Dropdown.Toggle className="mx-auto">
               <DotsHorizIcon />

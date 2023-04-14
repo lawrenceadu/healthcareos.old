@@ -46,6 +46,7 @@ export function Layout({
     canViewPharmacy,
     canViewMembers,
     canViewInvestigation,
+    canViewInventory,
   ] = usePermissions(
     'patient',
     'invoice',
@@ -54,7 +55,8 @@ export function Layout({
     'resource',
     'pharmacy',
     'user',
-    'investigation'
+    'investigationrequest',
+    'item'
   );
 
   /**
@@ -76,7 +78,7 @@ export function Layout({
           },
         ]
       : []),
-    ...(true
+    ...(canViewInventory
       ? [
           {
             name: 'Inventory',
