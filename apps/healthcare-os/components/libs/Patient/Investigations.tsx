@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { Modal, Tabs } from '@healthcareos/react';
 
+import { usePermissions } from '../../../hooks';
 import Investigation from './Investigations/Investigation';
 import Submit from './Investigations/Submit';
 import Index from './Investigations/Index';
@@ -12,11 +13,23 @@ export interface MedicationProps {
 
 function Investigations({ children }: MedicationProps) {
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'investigationrequest_view',
+    'investigationrequest_add'
+  );
+
+  /**
    * variables
    */
   const tabs = [
-    { name: 'Investigations', slug: 'index', component: Index },
-    { name: 'Request investigation', slug: 'add', component: Add },
+    ...(canView
+      ? [{ name: 'Investigations', slug: 'index', component: Index }]
+      : []),
+    ...(canAdd
+      ? [{ name: 'Request investigation', slug: 'add', component: Add }]
+      : []),
   ];
 
   /**

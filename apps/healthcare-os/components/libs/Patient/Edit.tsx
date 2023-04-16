@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs } from '@healthcareos/react';
+
+import { usePermissions } from '../../../hooks';
 import Onboarding from '../Onboarding';
 
 export function Edit() {
+  /**
+   * perm
+   */
+  const [canEdit] = usePermissions('patient_edit');
+
   /**
    * variables
    */
@@ -25,18 +32,28 @@ export function Edit() {
   const [tab, setTab] = useState(tabs[0].slug);
 
   return (
-    <Tabs
-      tabs={tabs}
-      activeKey={tab}
-      onSelect={(key) => setTab(String(key))}
-      childProps={{
-        params: {},
-        button: 'Save changes',
-        onSubmit: (params, { setSubmitting }) => {
-          return;
-        },
-      }}
-    />
+    <>
+      {canEdit && (
+        <Tabs
+          tabs={tabs}
+          activeKey={tab}
+          onSelect={(key) => setTab(String(key))}
+          childProps={{
+            params: {},
+            button: 'Save changes',
+            onSubmit: (params, { setSubmitting }) => {
+              return;
+            },
+          }}
+        />
+      )}
+
+      {!canEdit && (
+        <p className="text-center">
+          You don&apos;t have permission to edit patient
+        </p>
+      )}
+    </>
   );
 }
 

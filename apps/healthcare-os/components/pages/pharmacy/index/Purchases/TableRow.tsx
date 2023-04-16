@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
+import { useStore, usePermissions } from '../../../../../hooks';
 import { MedicinePurchaseModel } from '../../../../../models';
-import { useStore } from '../../../../../hooks';
 import * as api from '../../../../../services/pharmacy';
 import Form from './Form';
 
@@ -24,6 +24,14 @@ function TableRow({ purchase, mutate }: TableRowProps) {
    * state
    */
   const [toggle, setToggle] = useState(false);
+
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'medicinepurchase_edit',
+    'medicinepurchase_delete'
+  );
 
   /**
    * store
@@ -110,34 +118,44 @@ function TableRow({ purchase, mutate }: TableRowProps) {
             </Dropdown.Toggle>
             {['pending', 'ordered'].includes(purchase.status) && (
               <Dropdown.Menu>
-                {purchase.status === 'pending' && (
-                  <Dropdown.Item onClick={() => handleStatusUpdate('ordered')}>
-                    Mark as ordered
-                  </Dropdown.Item>
+                {canEdit && (
+                  <>
+                    {purchase.status === 'pending' && (
+                      <Dropdown.Item
+                        onClick={() => handleStatusUpdate('ordered')}
+                      >
+                        Mark as ordered
+                      </Dropdown.Item>
+                    )}
+
+                    {purchase.status === 'ordered' && (
+                      <Dropdown.Item
+                        onClick={() => handleStatusUpdate('received')}
+                      >
+                        Mark as received
+                      </Dropdown.Item>
+                    )}
+
+                    <hr />
+
+                    <Form params={purchase} {...{ mutate }}>
+                      {({ proceed }) => (
+                        <Dropdown.Item onClick={() => proceed()}>
+                          Update
+                        </Dropdown.Item>
+                      )}
+                    </Form>
+                  </>
                 )}
 
-                {purchase.status === 'ordered' && (
-                  <Dropdown.Item onClick={() => handleStatusUpdate('received')}>
-                    Mark as received
+                {canDelete && (
+                  <Dropdown.Item
+                    className="text-red-600"
+                    onClick={() => handleDelete()}
+                  >
+                    Delete
                   </Dropdown.Item>
                 )}
-
-                <hr />
-
-                <Form params={purchase} {...{ mutate }}>
-                  {({ proceed }) => (
-                    <Dropdown.Item onClick={() => proceed()}>
-                      Update
-                    </Dropdown.Item>
-                  )}
-                </Form>
-
-                <Dropdown.Item
-                  className="text-red-600"
-                  onClick={() => handleDelete()}
-                >
-                  Delete
-                </Dropdown.Item>
               </Dropdown.Menu>
             )}
           </Dropdown>

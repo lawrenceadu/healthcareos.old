@@ -6,15 +6,21 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { HistoryLog, VitalHistoryModel } from '../../../../models/history';
+import { usePatient, usePermissions } from '../../../../hooks';
 import { deleteVitalsService } from '../../../../services/patient';
-import { usePatient } from '../../../../hooks';
 import VitalsForm from '../Vitals';
+
 export interface VitalsProps {
   isOngoing: boolean;
   data: Omit<HistoryLog, 'details'> & { details: VitalHistoryModel };
 }
 
 export function Vitals({ data, isOngoing }: VitalsProps) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions('vital_edit', 'vital_delete');
+
   /**
    * variables
    */
@@ -104,29 +110,33 @@ export function Vitals({ data, isOngoing }: VitalsProps) {
         <>
           {isOngoing && (
             <>
-              <VitalsForm params={data.details}>
-                {({ proceed }) => (
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      proceed();
-                    }}
-                    className="btn-secondary !h-8 !px-4"
-                  >
-                    update
-                  </Button>
-                )}
-              </VitalsForm>
+              {canEdit && (
+                <VitalsForm params={data.details}>
+                  {({ proceed }) => (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        proceed();
+                      }}
+                      className="btn-secondary !h-8 !px-4"
+                    >
+                      update
+                    </Button>
+                  )}
+                </VitalsForm>
+              )}
 
-              <Button
-                className="!h-8 !px-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
-              >
-                <DeleteIcon size={20} />
-              </Button>
+              {canDelete && (
+                <Button
+                  className="!h-8 !px-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
+                >
+                  <DeleteIcon size={20} />
+                </Button>
+              )}
             </>
           )}
         </>

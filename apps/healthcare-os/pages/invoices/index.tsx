@@ -3,6 +3,7 @@ import { Field, Paginate } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../hooks';
 import { InvoiceModel } from '../../models';
 import Skeleton from '../../components/libs/Skeleton';
 import TableRow from '../../components/pages/invoices/TableRow';
@@ -15,17 +16,23 @@ function Index() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView] = usePermissions('invoice_view');
+
+  /**
    * api
    */
   const { data, mutate, isLoading } = useSWR<{
     invoices: InvoiceModel[];
     total: number;
   }>(
-    `/invoice?${queryString.stringify({
-      ...filters,
-      page: (filters?.page || 0) + 1,
-      per_page: 10,
-    })}`
+    canView &&
+      `/invoice?${queryString.stringify({
+        ...filters,
+        page: (filters?.page || 0) + 1,
+        per_page: 10,
+      })}`
   );
 
   /**

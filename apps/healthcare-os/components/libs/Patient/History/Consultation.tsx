@@ -1,12 +1,12 @@
 import { Accordion, Badge, Button, Confirm } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
-
-import { ConsultationHistoryModel, HistoryLog } from '../../../../models/history'; // prettier-ignore
-import { deleteConsultationService } from '../../../../services/patient';
-import { usePatient } from '../../../../hooks';
-import ConsultationForm from '../Consultation';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
+
+import { ConsultationHistoryModel, HistoryLog } from '../../../../models/history'; // prettier-ignore
+import { usePatient, usePermissions } from '../../../../hooks';
+import { deleteConsultationService } from '../../../../services/patient';
+import ConsultationForm from '../Consultation';
 
 export interface ConsultationProps {
   data: Omit<HistoryLog, 'details'> & { details: ConsultationHistoryModel };
@@ -14,6 +14,14 @@ export interface ConsultationProps {
 }
 
 export function Consultation({ data, isOngoing }: ConsultationProps) {
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'consultation_edit',
+    'consultation_delete'
+  );
+
   /**
    * variables
    */
@@ -35,7 +43,7 @@ export function Consultation({ data, isOngoing }: ConsultationProps) {
     { label: 'Added by', value: data.created_by.name },
     {
       label: 'Added at',
-      value: dayjs(data.created_at).format("ddd DD, MMM YYYY @ hh:mma"),
+      value: dayjs(data.created_at).format('ddd DD, MMM YYYY @ hh:mma'),
     },
   ];
 
@@ -88,39 +96,43 @@ export function Consultation({ data, isOngoing }: ConsultationProps) {
         <>
           {isOngoing && (
             <>
-              <ConsultationForm
-                params={{
-                  id: data.details.id,
-                  plan: data.details.plan,
-                  history_examination: data.details.history_examination,
-                  diagnosis: data.details.diagnoses.map((i) => ({
-                    label: i.name,
-                    value: i.id,
-                  })),
-                }}
-              >
-                {({ proceed }) => (
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      proceed();
-                    }}
-                    className="btn-secondary !h-8 !px-4"
-                  >
-                    update
-                  </Button>
-                )}
-              </ConsultationForm>
+              {canEdit && (
+                <ConsultationForm
+                  params={{
+                    id: data.details.id,
+                    plan: data.details.plan,
+                    history_examination: data.details.history_examination,
+                    diagnosis: data.details.diagnoses.map((i) => ({
+                      label: i.name,
+                      value: i.id,
+                    })),
+                  }}
+                >
+                  {({ proceed }) => (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        proceed();
+                      }}
+                      className="btn-secondary !h-8 !px-4"
+                    >
+                      update
+                    </Button>
+                  )}
+                </ConsultationForm>
+              )}
 
-              <Button
-                className="!h-8 !px-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
-              >
-                <DeleteIcon size={20} />
-              </Button>
+              {canDelete && (
+                <Button
+                  className="!h-8 !px-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
+                >
+                  <DeleteIcon size={20} />
+                </Button>
+              )}
             </>
           )}
         </>

@@ -1,8 +1,8 @@
 import { Accordion } from '@healthcareos/react';
+import dayjs from 'dayjs';
 
 import { AllergyModel } from '../../../../models';
 import { HistoryLog } from '../../../../models/history';
-import dayjs from 'dayjs';
 
 export interface AllergyProps {
   data: Omit<HistoryLog, 'details'> & { details: AllergyModel };

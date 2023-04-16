@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 import { deleteItemCategoryService } from '../../../../../services/inventory';
 import { MedicineCategoryModel } from '../../../../../models';
+import { usePermissions } from '../../../../../hooks';
 import Form from './Form';
 
 export interface TableRowProps {
@@ -43,6 +44,14 @@ function TableRow({ category, mutate }: TableRowProps) {
       }
     });
 
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'medicinecategory_edit',
+    'medicinecategory_delete'
+  );
+
   return (
     <tr>
       <td>{category.name}</td>
@@ -54,17 +63,23 @@ function TableRow({ category, mutate }: TableRowProps) {
             <DotsHorizIcon />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Form params={category} mutate={mutate}>
-              {({ proceed }) => (
-                <Dropdown.Item onClick={() => proceed()}>Update</Dropdown.Item>
-              )}
-            </Form>
-            <Dropdown.Item
-              className="text-red-600"
-              onClick={() => handleDelete()}
-            >
-              Delete
-            </Dropdown.Item>
+            {canEdit && (
+              <Form params={category} mutate={mutate}>
+                {({ proceed }) => (
+                  <Dropdown.Item onClick={() => proceed()}>
+                    Update
+                  </Dropdown.Item>
+                )}
+              </Form>
+            )}
+            {canDelete && (
+              <Dropdown.Item
+                className="text-red-600"
+                onClick={() => handleDelete()}
+              >
+                Delete
+              </Dropdown.Item>
+            )}
           </Dropdown.Menu>
         </Dropdown>
       </td>

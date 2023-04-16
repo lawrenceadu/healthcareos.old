@@ -197,7 +197,9 @@ export function Vitals({ params, children }: VitalsProps) {
               </div>
 
               <div className="sticky bottom-0 flex gap-6 justify-end bg-white border-t border-gray-200 py-3 px-6">
-                <Button>Cancel</Button>
+                <Button type="button" onClick={() => setShow(false)}>
+                  Cancel
+                </Button>
                 <Button
                   type="submit"
                   disabled={!isValid}

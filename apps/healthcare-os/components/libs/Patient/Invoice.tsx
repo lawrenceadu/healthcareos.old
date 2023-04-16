@@ -4,8 +4,8 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePatient, usePermissions } from '../../../hooks';
 import { InvoiceModel } from '../../../models';
-import { usePatient } from '../../../hooks';
 import AddForm from './Invoice/Add';
 import Float from '../Float';
 import Item from './Invoice/Item';
@@ -15,6 +15,11 @@ export function Invoice() {
    * state
    */
   const [filters, setFilters] = useState<any>({ page: 0 });
+
+  /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('invoice_view', 'invoice_add');
 
   /**
    * hooks
@@ -28,11 +33,12 @@ export function Invoice() {
     invoices: InvoiceModel[];
     total: number;
   }>(
-    `/invoice?${queryString.stringify({
-      ...filters,
-      page: filters?.page + 1,
-      patient: patient.id,
-    })}`
+    canView &&
+      `/invoice?${queryString.stringify({
+        ...filters,
+        page: filters?.page + 1,
+        patient: patient.id,
+      })}`
   );
 
   /**
@@ -72,16 +78,18 @@ export function Invoice() {
         </>
       )}
 
-      <Float>
-        <AddForm {...{ mutate }}>
-          {({ proceed }) => (
-            <Button onClick={() => proceed()} className="btn-primary">
-              <PlusIcon />
-              <span>Create invoice</span>
-            </Button>
-          )}
-        </AddForm>
-      </Float>
+      {canAdd && (
+        <Float>
+          <AddForm {...{ mutate }}>
+            {({ proceed }) => (
+              <Button onClick={() => proceed()} className="btn-primary">
+                <PlusIcon />
+                <span>Create invoice</span>
+              </Button>
+            )}
+          </AddForm>
+        </Float>
+      )}
     </div>
   );
 }

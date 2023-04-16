@@ -5,8 +5,8 @@ import { Progress } from '@healthcareos/react';
 import { toast } from 'react-toastify';
 
 import { addPatientService } from '../../services/patient';
+import { usePermissions } from '../../hooks';
 import { PatientModel } from '../../models';
-import { useStore } from '../../hooks';
 import Onboarding from '../../components/libs/Onboarding';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
@@ -18,6 +18,11 @@ export default function New() {
   const [index, setIndex] = useState(0);
 
   /**
+   * perm
+   */
+  const [canAdd] = usePermissions('patient_add');
+
+  /**
    * session
    */
   const [session, setSession] = useSession<any>('onboarding_form');
@@ -26,11 +31,6 @@ export default function New() {
    * routes
    */
   const router = useRouter();
-
-  /**
-   * store
-   */
-  const { store } = useStore();
 
   /**
    * functions
@@ -174,7 +174,7 @@ export default function New() {
         }
       }}
     >
-      {section && (
+      {canAdd && section && (
         <>
           <Progress
             step={index + 1}

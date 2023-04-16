@@ -6,6 +6,7 @@ import { helpers } from '@healthcare/utils';
 import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 
+import { usePermissions } from '../../../hooks';
 import { InvoiceModel } from '../../../models';
 import { useStore } from '../../../hooks';
 import TakePayment from '../../libs/Patient/Invoice/TakePayment';
@@ -22,6 +23,11 @@ function TableRow({ invoice, mutate }: TableRowProps) {
    * routes
    */
   const router = useRouter();
+
+  /**
+   * perm
+   */
+  const [canEdit] = usePermissions('invoice_edit');
 
   /**
    * state
@@ -112,7 +118,7 @@ function TableRow({ invoice, mutate }: TableRowProps) {
                 </tr>
               )}
 
-              {['unpaid', 'draft'].includes(invoice.status) && (
+              {canEdit && ['unpaid', 'draft'].includes(invoice.status) && (
                 <tr>
                   <td colSpan={6}>
                     <div className="flex gap-4 justify-center w-full">

@@ -3,11 +3,10 @@ import { Button, Confirm, Field, Modal } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
-import dayjs from 'dayjs';
-
-import { useLocations, usePatient } from '../../../hooks';
-import { startVisitationService } from '../../../services/patient';
 import { toast } from 'react-toastify';
+
+import { startVisitationService, endVisitationService } from '../../../services/patient'; // prettier-ignore
+import { useLocations, usePatient } from '../../../hooks';
 
 export interface VisitationProps {
   children: (props: { proceed: () => void }) => void;
@@ -22,7 +21,7 @@ function Visitation({ children }: VisitationProps) {
   /**
    * hook
    */
-  const { patient, mutate } = usePatient();
+  const { patient, mutate, updateHistory } = usePatient();
   const locations = useLocations();
 
   /**
@@ -46,7 +45,16 @@ function Visitation({ children }: VisitationProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        // console.log('hi');
+        endVisitationService(patient.id)
+          .then(() => {
+            mutate();
+            setShow(false);
+            updateHistory();
+            toast.success('Visitation ended');
+          })
+          .catch((error) =>
+            toast.error(error?.message || 'Unable to end visitation')
+          );
       }
     });
 

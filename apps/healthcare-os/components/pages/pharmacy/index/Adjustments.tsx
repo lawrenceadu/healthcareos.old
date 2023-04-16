@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { MedicineAdjustmentModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 import DropdownFilter from '../../../libs/DropdownFilter';
 import Skeleton from '../../../libs/Skeleton';
 import TableRow from './Adjustments/TableRow';
@@ -17,19 +18,28 @@ function Adjustments() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'medicinestock_view',
+    'medicinestock_add'
+  );
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     stocks: MedicineAdjustmentModel[];
     total: number;
   }>(
-    `/medicine/stock?${queryString.stringify(
-      {
-        ...filters,
-        page: filters?.page + 1,
-      },
-      { skipEmptyString: true, skipNull: true }
-    )}`,
+    canView &&
+      `/medicine/stock?${queryString.stringify(
+        {
+          ...filters,
+          page: filters?.page + 1,
+        },
+        { skipEmptyString: true, skipNull: true }
+      )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );
@@ -62,14 +72,16 @@ function Adjustments() {
         />
 
         <div className="ml-auto">
-          <Form {...{ mutate }}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </Form>
+          {canAdd && (
+            <Form {...{ mutate }}>
+              {({ proceed }) => (
+                <Button onClick={() => proceed()} className="btn-primary">
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </Form>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { InvestigationRequestModel } from '../../models';
+import { usePermissions } from '../../hooks';
 import DropdownFilter from '../../components/libs/DropdownFilter';
 import Skeleton from '../../components/libs/Skeleton';
 import TableRow from '../../components/pages/investigations/TableRow';
@@ -16,6 +17,11 @@ function Index() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView] = usePermissions('investigationrequest_view');
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
@@ -23,14 +29,15 @@ function Index() {
     total: number;
     page: number;
   }>(
-    `/investigation/request?${queryString.stringify(
-      {
-        ...filters,
-        per_page: 10,
-        page: (filters?.page || 0) + 1,
-      },
-      { skipEmptyString: true, skipNull: true }
-    )}`
+    canView &&
+      `/investigation/request?${queryString.stringify(
+        {
+          ...filters,
+          per_page: 10,
+          page: (filters?.page || 0) + 1,
+        },
+        { skipEmptyString: true, skipNull: true }
+      )}`
   );
 
   /**

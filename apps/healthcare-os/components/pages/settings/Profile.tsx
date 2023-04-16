@@ -3,12 +3,12 @@ import { Form, Formik } from 'formik';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { useRef } from 'react';
+import { toast } from 'react-toastify';
 import Image from 'next/image';
 
 import { updateProfileService } from '../../../services/settings';
 import { UserModel } from '../../../models';
 import { useStore } from '../../../hooks';
-import { toast } from 'react-toastify';
 
 export default function Profile() {
   /**
@@ -48,7 +48,10 @@ export default function Profile() {
           phone: user?.phone || '',
           photo: {} as File,
         }}
-        onSubmit={({ photo, ...params }, { setSubmitting, resetForm }) => {
+        onSubmit={(
+          { photo, ...params },
+          { setSubmitting, setErrors, resetForm }
+        ) => {
           const formData = new FormData();
           Object.keys(params).map((key) => formData.append(key, params[key]));
 
@@ -61,7 +64,13 @@ export default function Profile() {
                 user: { ...store.user, ...user },
               }));
             })
-            .catch(() => toast.error('Unable to update profile'))
+            .catch((error) => {
+              if (error?.fields) {
+                return setErrors(error.fields);
+              }
+
+              toast.error(error?.message || 'Unable to update profile');
+            })
             .finally(() => setSubmitting(false));
         }}
       >

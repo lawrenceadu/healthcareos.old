@@ -17,7 +17,11 @@ function TableRow({ role, mutate }: TableRowProps) {
   /**
    * perm
    */
-  const [canEdit, canDelete] = usePermissions('role_edit', 'role_delete');
+  const [canEdit, canDelete, canAddPermission] = usePermissions(
+    'role_edit',
+    'role_delete',
+    'permission'
+  );
 
   /**
    * function
@@ -55,26 +59,25 @@ function TableRow({ role, mutate }: TableRowProps) {
             <Dropdown.Toggle className="mx-auto">
               <DotsHorizIcon />
             </Dropdown.Toggle>
-            {(canEdit || canDelete) && (
+            {(canEdit || canDelete || canAddPermission) && (
               <Dropdown.Menu>
                 {canEdit && (
-                  <>
-                    <UpdateForm params={role} {...{ mutate }}>
-                      {({ proceed }) => (
-                        <Dropdown.Item onClick={() => proceed()}>
-                          Update
-                        </Dropdown.Item>
-                      )}
-                    </UpdateForm>
-
-                    <UpdatePermissions role={role}>
-                      {({ proceed }) => (
-                        <Dropdown.Item onClick={() => proceed()}>
-                          Update permissions
-                        </Dropdown.Item>
-                      )}
-                    </UpdatePermissions>
-                  </>
+                  <UpdateForm params={role} {...{ mutate }}>
+                    {({ proceed }) => (
+                      <Dropdown.Item onClick={() => proceed()}>
+                        Update
+                      </Dropdown.Item>
+                    )}
+                  </UpdateForm>
+                )}
+                {canAddPermission && (
+                  <UpdatePermissions role={role}>
+                    {({ proceed }) => (
+                      <Dropdown.Item onClick={() => proceed()}>
+                        Update permissions
+                      </Dropdown.Item>
+                    )}
+                  </UpdatePermissions>
                 )}
                 {canDelete && (
                   <Dropdown.Item

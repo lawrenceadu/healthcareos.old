@@ -7,6 +7,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
+import { usePermissions } from '../../../../hooks';
 import { PatientModel } from '../../../../models';
 import PatientFilter from './PatientFilter';
 import Skeleton from '../../../libs/Skeleton';
@@ -17,6 +18,11 @@ function Index() {
    * state
    */
   const [filters, setFilters] = useState<any>({ page: 0 });
+
+  /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('patient_view', 'patient_add');
 
   /**
    * api
@@ -67,12 +73,14 @@ function Index() {
           )}
         </PatientFilter>
 
-        <Button
-          className="btn-outline md:ml-auto hidden md:block"
-          onClick={() => router.push(routes.dashboard.patients.new)}
-        >
-          Add patient
-        </Button>
+        {canAdd && (
+          <Button
+            className="btn-outline md:ml-auto hidden md:block"
+            onClick={() => router.push(routes.dashboard.patients.new)}
+          >
+            Add patient
+          </Button>
+        )}
       </div>
 
       <div className="table-responsive">
@@ -107,11 +115,12 @@ function Index() {
                     key={key}
                     role="button"
                     onClick={() => {
-                      router.push({
-                        pathname: routes.dashboard.patients.details.index
-                          .replace('[id]', patient.id)
-                          .replace('[tab]', 'history'),
-                      });
+                      canView &&
+                        router.push({
+                          pathname: routes.dashboard.patients.details.index
+                            .replace('[id]', patient.id)
+                            .replace('[tab]', 'history'),
+                        });
                     }}
                   >
                     <td>{patient.folder_number || '--'}</td>

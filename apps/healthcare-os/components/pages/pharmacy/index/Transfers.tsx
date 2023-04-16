@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { MedicineTransferModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 import DropdownFilter from '../../../libs/DropdownFilter';
 import Skeleton from '../../../libs/Skeleton';
 import TableRow from './Transfers/TableRow';
@@ -17,15 +18,24 @@ function Transfers() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'medicinetransfer_view',
+    'medicinetransfer_add'
+  );
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     transfers: MedicineTransferModel[];
   }>(
-    `/medicine/transfer?${queryString.stringify(
-      { ...filters },
-      { skipEmptyString: true, skipNull: true }
-    )}`
+    canView &&
+      `/medicine/transfer?${queryString.stringify(
+        { ...filters },
+        { skipEmptyString: true, skipNull: true }
+      )}`
   );
 
   /**
@@ -55,17 +65,19 @@ function Transfers() {
           }
         />
 
-        <Form {...{ mutate }}>
-          {({ proceed }) => (
-            <Button
-              onClick={() => proceed()}
-              className="lg:ml-auto btn-primary"
-            >
-              <PlusIcon />
-              <span>Add</span>
-            </Button>
-          )}
-        </Form>
+        {canAdd && (
+          <Form {...{ mutate }}>
+            {({ proceed }) => (
+              <Button
+                onClick={() => proceed()}
+                className="lg:ml-auto btn-primary"
+              >
+                <PlusIcon />
+                <span>Add</span>
+              </Button>
+            )}
+          </Form>
+        )}
       </div>
 
       <div className="overflow-x-auto">

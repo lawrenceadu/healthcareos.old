@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
 
 import { InvestigationRequestModel } from '../../../models';
+import { usePermissions } from '../../../hooks';
 import Patient from '../../libs/Patient';
 import routes from '../../../routes';
 
@@ -18,6 +19,11 @@ function TableRow({ investigation, mutate }: TableRowProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * perm
+   */
+  const [canEdit] = usePermissions('investigationrequest_edit');
 
   /**
    * routes
@@ -46,30 +52,30 @@ function TableRow({ investigation, mutate }: TableRowProps) {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item onClick={() => setShow(true)}>View</Dropdown.Item>
-              {investigation.status === 'pending' && (
-                <>
-                  <Dropdown.Item
-                    onClick={() =>
-                      router.push(
-                        routes.dashboard.patients.details.index
-                          .replace('[id]', investigation.patient.id)
-                          .replace('[tab]', 'history')
-                      )
-                    }
-                  >
-                    View patient
-                  </Dropdown.Item>
-                  <Patient.Investigations.Submit
-                    investigation={investigation}
-                    mutate={mutate}
-                  >
-                    {({ proceed }) => (
-                      <Dropdown.Item onClick={() => proceed()}>
-                        Submit results
-                      </Dropdown.Item>
-                    )}
-                  </Patient.Investigations.Submit>
-                </>
+
+              <Dropdown.Item
+                onClick={() =>
+                  router.push(
+                    routes.dashboard.patients.details.index
+                      .replace('[id]', investigation.patient.id)
+                      .replace('[tab]', 'history')
+                  )
+                }
+              >
+                View patient
+              </Dropdown.Item>
+
+              {canEdit && investigation.status === 'pending' && (
+                <Patient.Investigations.Submit
+                  investigation={investigation}
+                  mutate={mutate}
+                >
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Submit results
+                    </Dropdown.Item>
+                  )}
+                </Patient.Investigations.Submit>
               )}
             </Dropdown.Menu>
           </Dropdown>

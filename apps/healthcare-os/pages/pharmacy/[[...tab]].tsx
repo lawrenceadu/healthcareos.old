@@ -4,14 +4,15 @@ import { Tabs } from '@healthcareos/react';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
+import { usePermissions } from '../../hooks';
 import FiltersProvider from '../../contexts/Filters';
 import Prescriptions from '../../components/pages/pharmacy/index/Prescriptions';
-import Inventory from '../../components/pages/pharmacy/index/Inventory';
 import Adjustments from '../../components/pages/pharmacy/index/Adjustments';
+import Inventory from '../../components/pages/pharmacy/index/Inventory';
 import Purchases from '../../components/pages/pharmacy/index/Purchases';
 import Transfers from '../../components/pages/pharmacy/index/Transfers';
-import Category from '../../components/pages/pharmacy/index/Category';
 import Medicines from '../../components/pages/pharmacy/index/Medicines';
+import Category from '../../components/pages/pharmacy/index/Category';
 
 function Index() {
   /**
@@ -21,16 +22,57 @@ function Index() {
   const tab = router.query.tab as string[];
 
   /**
+   * perm
+   */
+  const [
+    canViewPrescription,
+    canViewInventory,
+    canViewAdjustment,
+    canViewTransfer,
+    canViewPurchase,
+    canViewMedicine,
+    canViewCategory,
+  ] = usePermissions(
+    'prescription',
+    'pharmacyinventory',
+    'medicinestock',
+    'medicinetransfer',
+    'medicinepurchase',
+    'medicine',
+    'medicinecategory'
+  );
+
+  /**
    * variables
    */
   const tabs = [
-    { name: 'Prescriptions', slug: 'prescriptions', component: Prescriptions },
-    { name: 'Inventory', slug: 'inventory', component: Inventory },
-    { name: 'Adjustments', slug: 'adjustments', component: Adjustments },
-    { name: 'Transfers', slug: 'transfer', component: Transfers },
-    { name: 'Purchases', slug: 'purchases', component: Purchases },
-    { name: 'Medicines', slug: 'medicines', component: Medicines },
-    { name: 'Category', slug: 'category', component: Category },
+    ...(canViewPrescription
+      ? [
+          {
+            name: 'Prescriptions',
+            slug: 'prescriptions',
+            component: Prescriptions,
+          },
+        ]
+      : []),
+    ...(canViewInventory
+      ? [{ name: 'Inventory', slug: 'inventory', component: Inventory }]
+      : []),
+    ...(canViewAdjustment
+      ? [{ name: 'Adjustments', slug: 'adjustments', component: Adjustments }]
+      : []),
+    ...(canViewTransfer
+      ? [{ name: 'Transfers', slug: 'transfer', component: Transfers }]
+      : []),
+    ...(canViewPurchase
+      ? [{ name: 'Purchases', slug: 'purchases', component: Purchases }]
+      : []),
+    ...(canViewMedicine
+      ? [{ name: 'Medicines', slug: 'medicines', component: Medicines }]
+      : []),
+    ...(canViewCategory
+      ? [{ name: 'Category', slug: 'category', component: Category }]
+      : []),
   ];
 
   return (

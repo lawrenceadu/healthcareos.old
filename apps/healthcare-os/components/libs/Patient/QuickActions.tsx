@@ -15,7 +15,7 @@ import Vitals from './Vitals';
 import Admit from './Admit';
 import Move from './Move';
 
-import { usePatient } from '../../../hooks';
+import { usePatient, usePermissions } from '../../../hooks';
 import routes from '../../../routes';
 
 export interface QuickActionsProps {
@@ -44,7 +44,7 @@ function QuickActions({ children }: QuickActionsProps) {
               'transition',
               'bg-black/50',
               'w-full h-full',
-              'fixed left-0 z-[110]',
+              'fixed left-0 z-[1010]',
               show ? 'bottom-0' : '-bottom-[100%]'
             )}
           >
@@ -80,6 +80,35 @@ const Actions = () => {
   const { patient } = usePatient();
 
   /**
+   * perm
+   */
+  const [
+    canAddVisit,
+    canEditPatient,
+    canAddVital,
+    canAddConsultation,
+    canViewInvestigationRequest,
+    canViewPrescription,
+    canViewAllergy,
+    canEditQueue,
+    canAdmit,
+    canEndVisit,
+    canEndAdmission,
+  ] = usePermissions(
+    'visit_add',
+    'patient_edit',
+    'vital_add',
+    'consultation_add',
+    'investigationrequest',
+    'prescription',
+    'allergy',
+    'queue_edit',
+    'admission_add',
+    'visit_edit',
+    'admission_edit'
+  );
+
+  /**
    * variables
    */
   const inVisistation = ['visiting', 'detained', 'admitted'].includes(
@@ -90,7 +119,7 @@ const Actions = () => {
 
   return (
     <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-      {!inVisistation && (
+      {canAddVisit && !inVisistation && (
         <Visitation>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -101,18 +130,20 @@ const Actions = () => {
         </Visitation>
       )}
 
-      <StyledCard
-        role="button"
-        onClick={() =>
-          router.push({
-            pathname: routes.dashboard.patients.details.edit,
-            query: { id },
-          })
-        }
-      >
-        <Icon.UserEditIcon />
-        <p>Edit profile</p>
-      </StyledCard>
+      {canEditPatient && (
+        <StyledCard
+          role="button"
+          onClick={() =>
+            router.push({
+              pathname: routes.dashboard.patients.details.edit,
+              query: { id },
+            })
+          }
+        >
+          <Icon.UserEditIcon />
+          <p>Edit profile</p>
+        </StyledCard>
+      )}
 
       {/* {!inVisistation && (
         <StyledCard
@@ -136,7 +167,7 @@ const Actions = () => {
         </StyledCard>
       )} */}
 
-      {inVisistation && (
+      {canAddVital && inVisistation && (
         <Vitals>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -147,7 +178,7 @@ const Actions = () => {
         </Vitals>
       )}
 
-      {inVisistation && (
+      {canAddConsultation && inVisistation && (
         <Consultation>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -158,7 +189,7 @@ const Actions = () => {
         </Consultation>
       )}
 
-      {inVisistation && (
+      {canViewInvestigationRequest && inVisistation && (
         <Investigations>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -169,7 +200,7 @@ const Actions = () => {
         </Investigations>
       )}
 
-      {inVisistation && (
+      {canViewPrescription && inVisistation && (
         <Medication>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -180,7 +211,7 @@ const Actions = () => {
         </Medication>
       )}
 
-      {inVisistation && (
+      {canViewAllergy && inVisistation && (
         <Allergies>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -191,7 +222,7 @@ const Actions = () => {
         </Allergies>
       )}
 
-      {inVisistation && (
+      {canEditQueue && inVisistation && (
         <Move>
           {({ proceed }) => (
             <StyledCard role="button" onClick={() => proceed()}>
@@ -202,31 +233,55 @@ const Actions = () => {
         </Move>
       )}
 
-      {inVisistation && !isDetained && !isAdmitted && (
-        <Detain>
-          {({ proceed }) => (
-            <StyledCard role="button" onClick={() => proceed()}>
-              <Icon.HeartPulseIcon />
-              <p>Detain patient</p>
-            </StyledCard>
-          )}
-        </Detain>
-      )}
-
-      {inVisistation && !isAdmitted && (
-        <Admit>
-          {({ proceed }) => (
-            <StyledCard role="button" onClick={() => proceed()}>
-              <Icon.BedIcon />
-              <p>Admit patient</p>
-            </StyledCard>
-          )}
-        </Admit>
-      )}
-
-      {inVisistation && ['visiting'].includes(patient.status) && (
+      {canAdmit && (
         <>
-          <Visitation>
+          {inVisistation && !isDetained && !isAdmitted && (
+            <Detain>
+              {({ proceed }) => (
+                <StyledCard role="button" onClick={() => proceed()}>
+                  <Icon.HeartPulseIcon />
+                  <p>Detain patient</p>
+                </StyledCard>
+              )}
+            </Detain>
+          )}
+
+          {inVisistation && !isAdmitted && (
+            <Admit>
+              {({ proceed }) => (
+                <StyledCard role="button" onClick={() => proceed()}>
+                  <Icon.BedIcon />
+                  <p>Admit patient</p>
+                </StyledCard>
+              )}
+            </Admit>
+          )}
+        </>
+      )}
+
+      {canEndVisit &&
+        inVisistation &&
+        ['visiting'].includes(patient.status) && (
+          <>
+            <Visitation>
+              {({ proceed }) => (
+                <StyledCard
+                  role="button"
+                  onClick={() => proceed()}
+                  className="!border-red-200 !bg-red-50 !text-red-600"
+                >
+                  <Icon.HeartBookIcon className="!text-red-600" />
+                  <p>End visitation</p>
+                </StyledCard>
+              )}
+            </Visitation>
+          </>
+        )}
+
+      {canEndAdmission &&
+        inVisistation &&
+        ['detained', 'admitted'].includes(patient.status) && (
+          <Discharge>
             {({ proceed }) => (
               <StyledCard
                 role="button"
@@ -234,27 +289,11 @@ const Actions = () => {
                 className="!border-red-200 !bg-red-50 !text-red-600"
               >
                 <Icon.HeartBookIcon className="!text-red-600" />
-                <p>End visitation</p>
+                <p>Discharge patient</p>
               </StyledCard>
             )}
-          </Visitation>
-        </>
-      )}
-
-      {inVisistation && ['detained', 'admitted'].includes(patient.status) && (
-        <Discharge>
-          {({ proceed }) => (
-            <StyledCard
-              role="button"
-              onClick={() => proceed()}
-              className="!border-red-200 !bg-red-50 !text-red-600"
-            >
-              <Icon.HeartBookIcon className="!text-red-600" />
-              <p>Discharge patient</p>
-            </StyledCard>
-          )}
-        </Discharge>
-      )}
+          </Discharge>
+        )}
     </div>
   );
 };

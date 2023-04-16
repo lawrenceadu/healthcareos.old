@@ -64,27 +64,28 @@ function Login() {
                     }),
                   }));
 
-                  if (user.email_verified_at) {
-                    if (user.facilities.length === 1) {
-                      router.push(routes.dashboard.patients.index);
+                  setTimeout(() => {
+                    if (user.email_verified_at) {
+                      if (user.facilities.length === 1) {
+                        router.push(routes.dashboard.patients.index);
+                      } else {
+                        router.push(routes.auth.facility);
+                      }
                     } else {
-                      router.push(routes.auth.facility);
+                      router.push({
+                        pathname: routes.auth.otp,
+                        query: { page: 'signup' },
+                      });
                     }
-                  } else {
-                    sendOtpService({ email: user.email });
-                    router.push({
-                      pathname: routes.auth.otp,
-                      query: { page: 'signup' },
-                    });
-                  }
+                  });
                 }
               )
-              .catch((error) =>
+              .catch((error) => {
                 setErrors(
                   error?.fields || { username: 'Invalid credentials provided' }
-                )
-              )
-              .finally(() => setSubmitting(false));
+                );
+                setSubmitting(false);
+              });
           }}
         >
           {({

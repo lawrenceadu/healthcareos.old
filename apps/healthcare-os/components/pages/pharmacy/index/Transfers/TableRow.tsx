@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { MedicineTransferModel } from '../../../../../models';
-import { useStore } from '../../../../../hooks';
+import { usePermissions } from '../../../../../hooks';
 import * as api from '../../../../../services/pharmacy';
 import Form from './Form';
 
@@ -23,9 +23,12 @@ function TableRow({ transfer, mutate }: TableRowProps) {
   const [toggle, setToggle] = useState(false);
 
   /**
-   * store
+   * perm
    */
-  const { store } = useStore();
+  const [canEdit, canDelete] = usePermissions(
+    'medicinetransfer_edit',
+    'medicinetransfer_delete'
+  );
 
   /**
    * function
@@ -109,33 +112,41 @@ function TableRow({ transfer, mutate }: TableRowProps) {
                 <DotsHorizIcon />
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleStatusUpdate('approved')}>
-                  Approve
-                </Dropdown.Item>
-
-                <Dropdown.Item
-                  className="text-red-600"
-                  onClick={() => handleStatusUpdate('rejected')}
-                >
-                  Reject
-                </Dropdown.Item>
-
-                <hr />
-
-                <Form params={transfer} {...{ mutate }}>
-                  {({ proceed }) => (
-                    <Dropdown.Item onClick={() => proceed()}>
-                      Update
+                {canEdit && (
+                  <>
+                    <Dropdown.Item
+                      onClick={() => handleStatusUpdate('approved')}
+                    >
+                      Approve
                     </Dropdown.Item>
-                  )}
-                </Form>
 
-                <Dropdown.Item
-                  className="text-red-600"
-                  onClick={() => handleDelete()}
-                >
-                  Delete
-                </Dropdown.Item>
+                    <Dropdown.Item
+                      className="text-red-600"
+                      onClick={() => handleStatusUpdate('rejected')}
+                    >
+                      Reject
+                    </Dropdown.Item>
+
+                    <hr />
+
+                    <Form params={transfer} {...{ mutate }}>
+                      {({ proceed }) => (
+                        <Dropdown.Item onClick={() => proceed()}>
+                          Update
+                        </Dropdown.Item>
+                      )}
+                    </Form>
+                  </>
+                )}
+
+                {canDelete && (
+                  <Dropdown.Item
+                    className="text-red-600"
+                    onClick={() => handleDelete()}
+                  >
+                    Delete
+                  </Dropdown.Item>
+                )}
               </Dropdown.Menu>
             </Dropdown>
           )}

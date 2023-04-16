@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { Modal, Tabs } from '@healthcareos/react';
 
+import { usePermissions } from '../../../hooks';
 import Index from './Allergies/Index';
 import Add from './Allergies/Add';
 
@@ -10,11 +11,18 @@ export interface AllergiesProps {
 
 export function Allergies({ children }: AllergiesProps) {
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('allergy_view', 'allergy_add');
+
+  /**
    * variables
    */
   const tabs = [
-    { name: 'Allergies', slug: 'index', component: Index },
-    { name: 'Add allergies', slug: 'add', component: Add },
+    ...(canView
+      ? [{ name: 'Allergies', slug: 'index', component: Index }]
+      : []),
+    ...(canAdd ? [{ name: 'Add allergies', slug: 'add', component: Add }] : []),
   ];
 
   /**

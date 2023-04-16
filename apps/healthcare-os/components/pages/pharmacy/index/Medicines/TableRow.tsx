@@ -1,12 +1,12 @@
-import { Confirm, Dropdown } from '@healthcareos/react';
-import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
 import { useState } from 'react';
+import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons'; // prettier-ignore
+import { Confirm, Dropdown } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 
+import { useStore, usePermissions } from '../../../../../hooks';
 import { deleteMedicineService } from '../../../../../services/pharmacy';
 import { MedicineModel } from '../../../../../models';
-import { useStore } from '../../../../../hooks';
 import Form from './Form';
 
 export interface TableRowProps {
@@ -24,6 +24,14 @@ function TableRow({ medicine, mutate }: TableRowProps) {
    * store
    */
   const { store } = useStore();
+
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions(
+    'medicine_edit',
+    'medicine_delete'
+  );
 
   /**
    * variables
@@ -83,19 +91,23 @@ function TableRow({ medicine, mutate }: TableRowProps) {
               <DotsHorizIcon />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Form params={medicine} mutate={mutate}>
-                {({ proceed }) => (
-                  <Dropdown.Item onClick={() => proceed()}>
-                    Update
-                  </Dropdown.Item>
-                )}
-              </Form>
-              <Dropdown.Item
-                className="text-red-600"
-                onClick={() => handleDelete()}
-              >
-                Delete
-              </Dropdown.Item>
+              {canEdit && (
+                <Form params={medicine} mutate={mutate}>
+                  {({ proceed }) => (
+                    <Dropdown.Item onClick={() => proceed()}>
+                      Update
+                    </Dropdown.Item>
+                  )}
+                </Form>
+              )}
+              {canDelete && (
+                <Dropdown.Item
+                  className="text-red-600"
+                  onClick={() => handleDelete()}
+                >
+                  Delete
+                </Dropdown.Item>
+              )}
             </Dropdown.Menu>
           </Dropdown>
         </td>

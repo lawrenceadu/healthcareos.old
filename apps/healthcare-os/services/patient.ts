@@ -8,8 +8,13 @@ export const updatePatientService = (payload: object, id: string) =>
   http.patch<never, any>(`/patient/${id}`, payload);
 // end of patient
 
+// visit
 export const startVisitationService = (payload: object) =>
   http.post<never, any>('/visit', payload);
+
+export const endVisitationService = (id: string) =>
+  http.post<never, any>(`/visit/${id}`);
+// end of visit
 
 // vitals
 export const createVitalsService = (payload: object) =>

@@ -3,7 +3,7 @@ import { Button, Tabs } from '@healthcareos/react';
 import { useRouter } from 'next/router';
 import { AddIcon } from '@healthcare/icons';
 
-import { usePatient } from '../../../../hooks';
+import { usePatient, usePermissions } from '../../../../hooks';
 import Patient from '../../../../components/libs/Patient';
 import Layout from '../../../../components/libs/Layout';
 import routes from '../../../../routes';
@@ -15,6 +15,11 @@ function Details() {
    */
   const router = useRouter();
   const { id, tab: paths } = router.query;
+
+  /**
+   * perm
+   */
+  const [canViewInvoice] = usePermissions('invoice_view');
 
   /**
    * hooks
@@ -30,15 +35,17 @@ function Details() {
     ...(['admitted', 'detained'].includes(patient?.status)
       ? [
           { name: 'Overview', slug: 'overview', component: Patient.Overview },
-          { name: 'Notes', slug: 'notes', component: Patient.Notes },
-          { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
+          // { name: 'Notes', slug: 'notes', component: Patient.Notes },
+          // { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
           { name: 'History', slug: 'history', component: Patient.History },
           // {
           //   name: 'Drug chart',
           //   slug: 'drug',
           //   component: () => <div className="text-2xl font-bold">WIP</div>,
           // },
-          { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
+          ...(canViewInvoice
+            ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
+            : []),
         ]
       : []),
 
@@ -50,7 +57,9 @@ function Details() {
             slug: 'insurance',
             component: Patient.Insurance,
           },
-          { name: 'Invoice', slug: 'invoice', component: Patient.Invoice },
+          ...(canViewInvoice
+            ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
+            : []),
         ]
       : []),
   ];

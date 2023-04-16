@@ -4,6 +4,7 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { usePermissions } from '../../../../hooks';
 import { MedicineModel } from '../../../../models';
 import Skeleton from '../../../libs/Skeleton';
 import TableRow from './Medicines/TableRow';
@@ -16,20 +17,26 @@ function Items() {
   const [filters, setFilters] = useState<any>({ page: 0 });
 
   /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions('medicine_view', 'medicine_add');
+
+  /**
    * api
    */
   const { data, error, mutate } = useSWR<{
     medicines: MedicineModel[];
     total: number;
   }>(
-    `/medicine?${queryString.stringify(
-      {
-        ...filters,
-        page: filters.page + 1,
-        per_page: 10,
-      },
-      { skipEmptyString: true, skipNull: true }
-    )}`,
+    canView &&
+      `/medicine?${queryString.stringify(
+        {
+          ...filters,
+          page: filters.page + 1,
+          per_page: 10,
+        },
+        { skipEmptyString: true, skipNull: true }
+      )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );
@@ -49,14 +56,16 @@ function Items() {
         />
 
         <div className="ml-auto">
-          <Form mutate={mutate}>
-            {({ proceed }) => (
-              <Button className="btn-primary !px-4" onClick={() => proceed()}>
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </Form>
+          {canAdd && (
+            <Form mutate={mutate}>
+              {({ proceed }) => (
+                <Button className="btn-primary !px-4" onClick={() => proceed()}>
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </Form>
+          )}
         </div>
       </div>
 

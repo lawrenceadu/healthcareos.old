@@ -5,8 +5,8 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { deletePatientInvoiceService } from '../../../../services/patient';
+import { useStore, usePermissions } from '../../../../hooks';
 import { InvoiceModel } from '../../../../models';
-import { useStore } from '../../../../hooks';
 import TakePayment from './TakePayment';
 import EditForm from './Edit';
 
@@ -20,6 +20,11 @@ function Item({ mutate, invoice }: ItemProps) {
    * store
    */
   const { store } = useStore();
+
+  /**
+   * perm
+   */
+  const [canEdit, canDelete] = usePermissions('invoice_edit', 'invoice_delete');
 
   /**
    * function
@@ -52,7 +57,7 @@ function Item({ mutate, invoice }: ItemProps) {
       actions={
         <>
           <Badge variant={invoice.status}>{invoice.status}</Badge>
-          {!invoice.readonly && invoice.status === 'unpaid' && (
+          {canDelete && !invoice.readonly && invoice.status === 'unpaid' && (
             <Button className="!h-auto px-0" onClick={() => handleDelete()}>
               <DeleteIcon size={20} />
             </Button>
@@ -134,7 +139,7 @@ function Item({ mutate, invoice }: ItemProps) {
           </div>
         </div>
 
-        {['unpaid', 'draft'].includes(invoice.status) && (
+        {canEdit && ['unpaid', 'draft'].includes(invoice.status) && (
           <div className="flex gap-4 justify-end">
             {!invoice.readonly && (
               <EditForm {...{ invoice, mutate }}>

@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { MedicineCategoryModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 import Skeleton from '../../../libs/Skeleton';
 import TableRow from './Category/TableRow';
 import Form from './Category/Form';
@@ -13,7 +14,15 @@ function Category() {
   /**
    * state
    */
-  const [filters, setFilters] = useState<any>({});
+  const [filters, setFilters] = useState<any>({ page: 0 });
+
+  /**
+   * perm
+   */
+  const [canView, canAdd] = usePermissions(
+    'medicinecategory_view',
+    'medicinecategory_add'
+  );
 
   /**
    * api
@@ -22,10 +31,11 @@ function Category() {
     categories: MedicineCategoryModel[];
     total: number;
   }>(
-    `/medicine/category?${queryString.stringify(
-      { ...filters, page: (filters?.page || 0) + 1, per_page: 10 },
-      { skipEmptyString: true, skipNull: true }
-    )}`,
+    canView &&
+      `/medicine/category?${queryString.stringify(
+        { ...filters, page: (filters?.page || 0) + 1, per_page: 10 },
+        { skipEmptyString: true, skipNull: true }
+      )}`,
     null,
     { dedupingInterval: 1000 * 60 * 15 }
   );
@@ -45,14 +55,16 @@ function Category() {
         />
 
         <div className="ml-auto">
-          <Form mutate={mutate}>
-            {({ proceed }) => (
-              <Button className="btn-primary !px-4" onClick={() => proceed()}>
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </Form>
+          {canAdd && (
+            <Form mutate={mutate}>
+              {({ proceed }) => (
+                <Button className="btn-primary !px-4" onClick={() => proceed()}>
+                  <PlusIcon />
+                  <span>Add</span>
+                </Button>
+              )}
+            </Form>
+          )}
         </div>
       </div>
 

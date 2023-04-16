@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 
 import { PrescriptionModel } from '../../../../../models';
+import { usePermissions } from '../../../../../hooks';
 import Dispense from './Dispense';
 import routes from '../../../../../routes';
 
@@ -21,6 +22,11 @@ function TableRow({ mutate, prescription }: TableRowProps) {
    * state
    */
   const [toggle, setToggle] = useState(false);
+
+  /**
+   * perm
+   */
+  const [canEdit] = usePermissions('prescription_edit');
 
   /**
    * routes
@@ -54,7 +60,7 @@ function TableRow({ mutate, prescription }: TableRowProps) {
               <DotsHorizIcon />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {prescription.status === 'pending' && (
+              {canEdit && prescription.status === 'pending' && (
                 <Dispense {...{ prescription, mutate }}>
                   {({ proceed }) => (
                     <Dropdown.Item onClick={() => proceed()}>

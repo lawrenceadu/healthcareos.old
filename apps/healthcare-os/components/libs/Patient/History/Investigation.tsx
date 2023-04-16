@@ -1,8 +1,8 @@
+import { Fragment } from 'react';
 import { Accordion } from '@healthcareos/react';
+import dayjs from 'dayjs';
 
 import { HistoryLog, InvestigationHistoryModel } from '../../../../models/history'; // prettier-ignore
-import dayjs from 'dayjs';
-import { Fragment } from 'react';
 
 export interface InvestigationProps {
   data: Omit<HistoryLog, 'details'> & { details: InvestigationHistoryModel };

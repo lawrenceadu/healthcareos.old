@@ -41,7 +41,7 @@ function Index() {
     <Layout title="Members">
       <Tabs
         tabs={tabs}
-        activeKey={tab ? tab[0] : tabs[0].slug}
+        activeKey={tab ? tab[0] : tabs[0]?.slug}
         onSelect={(key) =>
           router.push({
             pathname: routes.dashboard.members.index.replace('[tab]', key),
