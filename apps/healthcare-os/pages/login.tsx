@@ -5,7 +5,7 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import Head from 'next/head';
 
-import { loginService, sendOtpService } from '../services/auth';
+import { loginService } from '../services/auth';
 import { UserModel } from '../models';
 import { useStore } from '../hooks';
 import Layout from '../components/pages/auth/Layout';

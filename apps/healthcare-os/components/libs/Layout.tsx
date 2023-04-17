@@ -4,11 +4,13 @@ import { helpers } from '@healthcare/utils';
 import { Button } from '@healthcareos/react';
 import { motion } from 'framer-motion';
 import * as Icon from '@healthcare/icons';
+import useSWRImmutable from 'swr/immutable';
 import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import { usePermissions, useStore } from '../../hooks';
+import { UserModel } from '../../models';
 import routes from '../../routes';
 
 export interface LayoutProps extends HtmlHTMLAttributes<HTMLDivElement> {
@@ -32,7 +34,25 @@ export function Layout({
   /**
    * store
    */
-  const { store } = useStore();
+  const { store, setStore } = useStore();
+
+  /**
+   * api
+   */
+  useSWRImmutable<{ user: UserModel }>(store?.user && `/profile`, null, {
+    onSuccess: ({ user }) => {
+      const facility = user.facilities.find((f) => f.id === store.facility?.id);
+      if (facility) {
+        setStore((store) => ({
+          ...store,
+          user,
+          facility,
+          role: facility.role,
+          permissions: facility.permissions,
+        }));
+      }
+    },
+  });
 
   /**
    * hooks

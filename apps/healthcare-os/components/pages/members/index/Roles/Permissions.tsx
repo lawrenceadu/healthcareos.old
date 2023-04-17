@@ -44,7 +44,7 @@ function Permissions({ children, role }: PermissionsProps) {
         { label: 'Vitals', value: 'vital' },
         { label: 'Consultation', value: 'consultation' },
         { label: 'Allergy', value: 'allergy' },
-        { label: 'Detain / Admin', value: 'admission' },
+        { label: 'Detain / Admit', value: 'admission' },
       ],
     },
     {
