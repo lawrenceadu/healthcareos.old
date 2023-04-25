@@ -34,9 +34,9 @@ function Form({ children, params, mutate }: FormProps) {
           enableReinitialize
           validationSchema={object({
             name: schema.requireString('Name'),
-            email: schema.requireEmail('Email address'),
-            phone: schema.requirePhoneNumber('Phone number'),
-            address: schema.requireString('Address'),
+            email: schema.requireEmail('Email address', false),
+            phone: schema.requirePhoneNumber('Phone number', false),
+            address: schema.requireString('Address', false),
           })}
           initialValues={{
             name: params?.name || '',

@@ -18,8 +18,12 @@ export default function Members() {
   /**
    * api
    */
-  const { data, error, mutate } = useSWR<{ users: UserModel[]; total: number }>(
-    `/user?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
+  const { data, error } = useSWR<{ users: UserModel[]; total: number }>(
+    `/user?${queryString.stringify({
+      ...filters,
+      per_page: 10,
+      page: (filters?.page || 0) + 1,
+    })}`
   );
 
   /**

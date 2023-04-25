@@ -7,9 +7,9 @@ import { useSWRConfig } from 'swr';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import * as api from '../../../../services/pharmacy';
 import { PrescriptionModel } from '../../../../models';
 import { usePatient } from '../../../../hooks';
+import * as api from '../../../../services/pharmacy';
 import SearchSelect from '../../SearchSelect';
 
 function Add({
@@ -29,6 +29,7 @@ function Add({
         dose: i.dose,
         unit: i.unit,
         route: i.route,
+        notes: i.notes,
         schedule: i.schedule,
         start_date: i.start_date || '',
         stop_date: i.stop_date || '',
@@ -39,11 +40,12 @@ function Add({
         {
           medicine: { label: '', value: '' },
           dose: '',
-          unit: 'mg',
+          unit: '',
           route: '',
+          notes: '',
           schedule: '',
-          start_date: '',
           stop_date: '',
+          start_date: '',
           administration_time: [],
         },
       ];
@@ -66,9 +68,10 @@ function Add({
               label: schema.requireString('Medicine'),
               value: schema.requireString('Medicine'),
             }),
-            dose: schema.requireString('Dose'),
-            unit: schema.requireString('Unit'),
-            route: schema.requireString('Route'),
+            dose: schema.requireString('Dose', false),
+            unit: schema.requireString('Unit', false),
+            route: schema.requireString('Route', false),
+            notes: schema.requireString('Notes', false),
             schedule: schema.requireString('Schedule'),
             start_date: string().when('schedule', (schedule, sch) => {
               return schema.requireString('Start date', schedule !== 'stat', sch); // prettier-ignore
@@ -79,11 +82,9 @@ function Add({
             administration_time: array(),
           })
         ),
-        notes: schema.requireString('Notes'),
       })}
       initialValues={{
         medicines: initialValues,
-        notes: params?.notes || '',
       }}
       onSubmit={(
         { medicines, ...data },
@@ -287,6 +288,18 @@ function Add({
                               </>
                             )}
                           </div>
+                          <div className="grid md:grid-cols-2">
+                            <Field.Group
+                              label="Notes"
+                              wrapperClassName="!mb-0"
+                              name={`medicines.${key}.notes`}
+                            >
+                              <Field.Input
+                                name={`medicines.${key}.notes`}
+                                value={pres.notes || ''}
+                              />
+                            </Field.Group>
+                          </div>
                         </div>
 
                         {key !== 0 && (
@@ -315,15 +328,6 @@ function Add({
                 </div>
               )}
             </FieldArray>
-
-            <Field.Group name="notes" label="Additional notes">
-              <Field.Input
-                name="notes"
-                as="textarea"
-                className="py-4"
-                value={values.notes}
-              />
-            </Field.Group>
           </div>
 
           <div className="modal-footer">

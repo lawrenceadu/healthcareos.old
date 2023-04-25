@@ -28,7 +28,11 @@ export function Prescription({
   const medicines = prescription.medicines.map((medicine) => ({
     medicine: medicine.medicine,
     items: [
-      { label: 'Dosage', value: `${medicine.dose} ${medicine.unit}` },
+      {
+        label: 'Dosage',
+        value:
+          medicine.dose && medicine.unit && `${medicine.dose} ${medicine.unit}`,
+      },
       { label: 'Route', value: startCase(medicine.route) },
       { label: 'Schedule', value: startCase(medicine.schedule) },
       {
@@ -57,6 +61,7 @@ export function Prescription({
               .join(', ')
           : '',
       },
+      { label: 'Notes', value: medicine.notes },
     ],
   }));
 

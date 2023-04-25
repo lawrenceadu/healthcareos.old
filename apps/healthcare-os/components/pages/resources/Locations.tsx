@@ -34,7 +34,7 @@ function Locations() {
     canViewLocation &&
       `/location?${queryString.stringify({
         ...filters,
-        page: filters?.page + 1,
+        page: (filters?.page || 0) + 1,
         per_page: 10,
       })}`,
     null,

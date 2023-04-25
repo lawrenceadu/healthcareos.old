@@ -3,6 +3,13 @@ export interface InvestigationModel {
   code: string;
   name: string;
   description: string;
+  parameters: {
+    name: string;
+    type: string;
+    unit: string;
+    required: boolean;
+    options: { label: ''; value: '' }[];
+  }[];
 }
 
 export interface InvestigationRequestModel {

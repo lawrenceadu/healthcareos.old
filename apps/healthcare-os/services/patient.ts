@@ -13,7 +13,7 @@ export const startVisitationService = (payload: object) =>
   http.post<never, any>('/visit', payload);
 
 export const endVisitationService = (id: string) =>
-  http.post<never, any>(`/visit/${id}`);
+  http.post<never, any>(`/visit/end`, { patient: id });
 // end of visit
 
 // vitals

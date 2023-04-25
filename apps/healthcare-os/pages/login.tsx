@@ -53,31 +53,37 @@ function Login() {
                   const facility =
                     user.facilities.length === 1 ? user.facilities[0] : null;
 
-                  setStore((store) => ({
-                    ...store,
-                    user,
-                    token: access_token,
-                    ...(facility && {
-                      facility,
-                      role: facility.role,
-                      permissions: facility.permissions,
-                    }),
-                  }));
+                  if (facility) {
+                    setStore((store) => ({
+                      ...store,
+                      user,
+                      token: access_token,
+                      ...(facility && {
+                        facility,
+                        role: facility.role,
+                        permissions: facility.permissions,
+                      }),
+                    }));
 
-                  setTimeout(() => {
-                    if (user.email_verified_at) {
-                      if (user.facilities.length === 1) {
-                        router.push(routes.dashboard.patients.index);
+                    setTimeout(() => {
+                      if (user.email_verified_at) {
+                        if (user.facilities.length === 1) {
+                          router.push(routes.dashboard.patients.index);
+                        } else {
+                          router.push(routes.auth.facility);
+                        }
                       } else {
-                        router.push(routes.auth.facility);
+                        router.push({
+                          pathname: routes.auth.otp,
+                          query: { page: 'signup' },
+                        });
                       }
-                    } else {
-                      router.push({
-                        pathname: routes.auth.otp,
-                        query: { page: 'signup' },
-                      });
-                    }
-                  });
+                    });
+                  }
+
+                  if (!facility) {
+                    setErrors({ username: 'Invalid credentials provided' });
+                  }
                 }
               )
               .catch((error) => {

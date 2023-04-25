@@ -27,7 +27,10 @@ export default function Members() {
    */
   const { data, error, mutate } = useSWR<{ users: UserModel[]; total: number }>(
     canView &&
-      `/user?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
+      `/user?${queryString.stringify({
+        ...filters,
+        page: (filters?.page || 0) + 1,
+      })}`
   );
 
   /**

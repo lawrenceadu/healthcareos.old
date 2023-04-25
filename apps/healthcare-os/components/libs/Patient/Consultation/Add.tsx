@@ -32,7 +32,7 @@ export function Add({ children }: AddProps) {
               diagnosis: schema
                 .requireArray('Diagnosis')
                 .of(schema.requireString('Diagnosis')),
-              plan: schema.requireString('Plan'),
+              plan: schema.requireString('Plan', false),
             })}
             initialValues={{
               plan: '',

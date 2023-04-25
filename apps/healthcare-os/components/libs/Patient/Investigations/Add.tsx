@@ -88,6 +88,7 @@ export function Add({ onHide, setTab }: AddProps) {
                   name="expected_date"
                   value={values.expected_date}
                   options={{
+                    enableTime: true,
                     minDate: dayjs().startOf('day').toDate(),
                   }}
                   {...{ setFieldValue, setFieldTouched }}

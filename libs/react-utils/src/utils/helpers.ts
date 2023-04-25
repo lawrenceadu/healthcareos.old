@@ -54,6 +54,9 @@ export const medicineUnits = (() => {
     { label: 'Tablespoon (tbsp)', value: 'tbsp' },
     { label: 'Drop (gtt)', value: 'gtt' },
     { label: 'Puff', value: 'puff' },
+    { label: 'Tablet', value: 'tablet' },
+    { label: 'Capsule', value: 'capsule' },
+    { label: 'Application', value: 'application' },
   ];
 })();
 

@@ -54,12 +54,12 @@ function TableRow({ role, mutate }: TableRowProps) {
       <td>{role.name || '--'}</td>
       <td>{role.code || '--'}</td>
       <td>
-        {role.code !== 'admkkkin' && (
-          <Dropdown>
-            <Dropdown.Toggle className="mx-auto">
-              <DotsHorizIcon />
-            </Dropdown.Toggle>
-            {(canEdit || canDelete || canAddPermission) && (
+        <Dropdown>
+          <Dropdown.Toggle className="mx-auto">
+            <DotsHorizIcon />
+          </Dropdown.Toggle>
+          {role.code !== 'admin' &&
+            (canEdit || canDelete || canAddPermission) && (
               <Dropdown.Menu>
                 {canEdit && (
                   <UpdateForm params={role} {...{ mutate }}>
@@ -89,8 +89,7 @@ function TableRow({ role, mutate }: TableRowProps) {
                 )}
               </Dropdown.Menu>
             )}
-          </Dropdown>
-        )}
+        </Dropdown>
       </td>
     </tr>
   );

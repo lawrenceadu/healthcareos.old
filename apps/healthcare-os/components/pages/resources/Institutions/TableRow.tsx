@@ -52,9 +52,9 @@ function TableRow({ institution, mutate }: TableRowsProps) {
   return (
     <tr>
       <td>{institution.name}</td>
-      <td>{institution.email}</td>
-      <td>{institution.phone}</td>
-      <td>{institution.address}</td>
+      <td>{institution.email || '--'}</td>
+      <td>{institution.phone || '--'}</td>
+      <td>{institution.address || '--'}</td>
       <td>
         <Dropdown>
           <Dropdown.Toggle className="mx-auto">

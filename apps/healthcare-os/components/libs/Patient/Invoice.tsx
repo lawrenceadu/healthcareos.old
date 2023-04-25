@@ -36,7 +36,8 @@ export function Invoice() {
     canView &&
       `/invoice?${queryString.stringify({
         ...filters,
-        page: filters?.page + 1,
+        per_page: 10,
+        page: (filters?.page || 0) + 1,
         patient: patient.id,
       })}`
   );

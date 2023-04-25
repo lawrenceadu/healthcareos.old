@@ -27,7 +27,11 @@ export default function Roles() {
    */
   const { data, error, mutate } = useSWR<{ roles: RoleModel[]; total: number }>(
     canView &&
-      `/role?${queryString.stringify({ ...filters, page: filters?.page + 1 })}`
+      `/role?${queryString.stringify({
+        ...filters,
+        per_page: 10,
+        page: (filters?.page || 0) + 1,
+      })}`
   );
 
   /**

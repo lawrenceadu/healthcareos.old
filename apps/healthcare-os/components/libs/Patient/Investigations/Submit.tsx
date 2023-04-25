@@ -1,8 +1,8 @@
 import { Fragment, ReactElement, useState } from 'react';
 import { Button, Field, FileUpload, Modal } from '@healthcareos/react';
+import { array, object, string, lazy } from 'yup';
 import { FieldArray, Form, Formik } from 'formik';
 import { DeleteIcon, PlusIcon } from '@healthcare/icons';
-import { object } from 'yup';
 import { schema } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
@@ -31,6 +31,8 @@ export function Submit({
   /**
    * variables
    */
+  const parameters = investigation.investigation.parameters;
+
   const items = [
     { label: 'Investigation', value: investigation.investigation.name },
     {
@@ -73,11 +75,14 @@ export function Submit({
 
           <Formik
             validateOnMount
+            enableReinitialize
             validationSchema={object({
-              results: schema.requireArray('Results').of(
+              results: schema.requireArray('Results', false).of(
                 object().shape({
-                  label: schema.requireString('Label'),
-                  value: schema.requireString('Result'),
+                  label: schema.requireString('Label', false),
+                  value: lazy((value) =>
+                    Array.isArray(value) ? array().of(string()) : string()
+                  ),
                 })
               ),
               report: schema.requireString('Report'),
@@ -90,7 +95,10 @@ export function Submit({
               }),
             })}
             initialValues={{
-              results: [{ label: '', value: '' }],
+              results: parameters?.map((i) => ({
+                label: i.name,
+                value: i.type === 'text' ? '' : [],
+              })) || [{ label: '', value: '' }],
               report: '',
               notes: '',
               attachment: {} as File,
@@ -104,7 +112,10 @@ export function Submit({
 
               results.map((r, key) => {
                 formData.append(`results[${key}][label]`, r.label);
-                formData.append(`results[${key}][value]`, r.value);
+                formData.append(
+                  `results[${key}][value]`,
+                  Array.isArray(r.value) ? JSON.stringify(r.value) : r.value
+                );
               });
 
               submitInvestigationResultService(formData, investigation.id)
@@ -131,41 +142,90 @@ export function Submit({
                     <p className="mb-4 font-medium">Results</p>
                     <FieldArray name="results">
                       {(helper) => (
-                        <div className="grid gap-4">
+                        <div className="grid gap-4 pb-4 border-b border-neutral-200">
                           {values.results.map((i, key) => (
-                            <div
-                              key={key}
-                              className="grid grid-cols-[repeat(2,minmax(0,1fr)),3rem] gap-6"
-                            >
-                              <Field.Group
-                                label="Label"
-                                wrapperClassName="!mb-0"
-                                name={`results.${key}.label`}
-                              >
-                                <Field.Input
-                                  value={i.label}
-                                  name={`results.${key}.label`}
-                                />
-                              </Field.Group>
-
-                              <Field.Group
-                                label="Result"
-                                wrapperClassName="!mb-0"
-                                name={`results.${key}.value`}
-                              >
-                                <Field.Input
-                                  value={i.value}
-                                  name={`results.${key}.value`}
-                                />
-                              </Field.Group>
-                              {key !== 0 && (
-                                <Button
-                                  type="button"
-                                  className="mt-6 !px-0 w-full"
-                                  onClick={() => helper.remove(key)}
+                            <div key={key} className="grid gap-6">
+                              {!parameters?.[key] && (
+                                <div
+                                  key={key}
+                                  className="grid grid-cols-[repeat(2,minmax(0,1fr)),3rem] gap-6"
                                 >
-                                  <DeleteIcon />
-                                </Button>
+                                  <Field.Group
+                                    label="Label"
+                                    wrapperClassName="!mb-0"
+                                    name={`results.${key}.label`}
+                                  >
+                                    <Field.Input
+                                      value={i.label}
+                                      name={`results.${key}.label`}
+                                    />
+                                  </Field.Group>
+
+                                  <Field.Group
+                                    label="Result"
+                                    wrapperClassName="!mb-0"
+                                    name={`results.${key}.value`}
+                                  >
+                                    <Field.Input
+                                      value={i.value}
+                                      name={`results.${key}.value`}
+                                    />
+                                  </Field.Group>
+                                  {key !== 0 && (
+                                    <Button
+                                      type="button"
+                                      className="mt-6 !px-0 w-full"
+                                      onClick={() => helper.remove(key)}
+                                    >
+                                      <DeleteIcon />
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
+
+                              {parameters?.[key] && (
+                                <Field.Group
+                                  label={i.label}
+                                  wrapperClassName="!mb-0"
+                                  name={`results.${key}.value`}
+                                >
+                                  {parameters[key]?.type === 'text' && (
+                                    <Field.Input
+                                      name={`results.${key}.value`}
+                                    />
+                                  )}
+
+                                  {parameters[key]?.type === 'select' && (
+                                    <Field.Select
+                                      value={i.value}
+                                      onChange={({
+                                        value,
+                                      }: {
+                                        value: string;
+                                      }) =>
+                                        setFieldValue(
+                                          `results.${key}.value`,
+                                          value
+                                        )
+                                      }
+                                      options={parameters[key].options}
+                                    />
+                                  )}
+
+                                  {parameters[key]?.type === 'multi-select' && (
+                                    <Field.Select
+                                      isMulti
+                                      value={i.value}
+                                      onChange={(i) =>
+                                        setFieldValue(
+                                          `results.${key}.value`,
+                                          i.map((i) => i.value)
+                                        )
+                                      }
+                                      options={parameters[key].options}
+                                    />
+                                  )}
+                                </Field.Group>
                               )}
                             </div>
                           ))}

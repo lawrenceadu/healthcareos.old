@@ -115,6 +115,7 @@ export interface PrescriptionModel {
     schedule: string;
     start_date: string;
     stop_date: string;
+    notes: string;
     administration_time: string[];
     medicine: MedicineModel;
   }[];

@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 
 import { deleteInvestigationRequestService } from '../../../../services/investigation';
 import { InvestigationRequestModel } from '../../../../models';
+import { usePermissions } from '../../../../hooks';
 
 export interface InvestigationProps extends HtmlHTMLAttributes<HTMLDivElement> {
   investigation: InvestigationRequestModel;
@@ -20,6 +21,11 @@ export function Investigation({
   ...props
 }: InvestigationProps) {
   /**
+   * perm
+   */
+  const [canDelete] = usePermissions('investigationrequest_delete');
+
+  /**
    * variables
    */
   const requestItems = [
@@ -28,7 +34,7 @@ export function Investigation({
     {
       label: 'Expected date',
       value: investigation.expected_date
-        ? dayjs(investigation.expected_date).format('DD/MM/YYYY')
+        ? dayjs(investigation.expected_date).format('DD/MM/YYYY @ h:mm a')
         : '',
     },
     {
@@ -46,7 +52,14 @@ export function Investigation({
       ? [
           ...investigation.results.map((item, key) => ({
             label: item.label,
-            value: item.value,
+            value: (() => {
+              try {
+                const i = JSON.parse(item.value);
+                return i.join(', ');
+              } catch (error) {
+                return item.value;
+              }
+            })(),
           })),
           { label: 'Report', value: investigation.report },
           { label: 'Submitted by', value: investigation.submitted_by.name },
@@ -98,15 +111,17 @@ export function Investigation({
           {investigation.status === 'pending' && (
             <>
               <Badge variant="pending">Pending</Badge>
-              <Button
-                className="!h-auto !px-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete();
-                }}
-              >
-                <DeleteIcon />
-              </Button>
+              {canDelete && (
+                <Button
+                  className="!h-auto !px-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
+                >
+                  <DeleteIcon />
+                </Button>
+              )}
             </>
           )}
         </>

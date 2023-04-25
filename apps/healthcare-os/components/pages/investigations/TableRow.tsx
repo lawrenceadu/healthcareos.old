@@ -23,7 +23,10 @@ function TableRow({ investigation, mutate }: TableRowProps) {
   /**
    * perm
    */
-  const [canEdit] = usePermissions('investigationrequest_edit');
+  const [canEdit, canViewPatient] = usePermissions(
+    'investigationrequest_edit',
+    'patient_view'
+  );
 
   /**
    * routes
@@ -36,7 +39,7 @@ function TableRow({ investigation, mutate }: TableRowProps) {
         <td>{investigation.investigation.name}</td>
         <td>
           {investigation.expected_date
-            ? dayjs(investigation.expected_date).format('ddd DD, MMM YYYY')
+            ? dayjs(investigation.expected_date).format('ddd DD, MMM YYYY @ h:mm a')
             : '--'}
         </td>
         <td>{investigation.created_by.name}</td>
@@ -53,17 +56,19 @@ function TableRow({ investigation, mutate }: TableRowProps) {
             <Dropdown.Menu>
               <Dropdown.Item onClick={() => setShow(true)}>View</Dropdown.Item>
 
-              <Dropdown.Item
-                onClick={() =>
-                  router.push(
-                    routes.dashboard.patients.details.index
-                      .replace('[id]', investigation.patient.id)
-                      .replace('[tab]', 'history')
-                  )
-                }
-              >
-                View patient
-              </Dropdown.Item>
+              {canViewPatient && (
+                <Dropdown.Item
+                  onClick={() =>
+                    router.push(
+                      routes.dashboard.patients.details.index
+                        .replace('[id]', investigation.patient.id)
+                        .replace('[tab]', 'history')
+                    )
+                  }
+                >
+                  View patient
+                </Dropdown.Item>
+              )}
 
               {canEdit && investigation.status === 'pending' && (
                 <Patient.Investigations.Submit

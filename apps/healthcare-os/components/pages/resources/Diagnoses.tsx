@@ -22,7 +22,7 @@ function Diagnoses() {
   }>(
     `/diagnosis?${queryString.stringify({
       ...filters,
-      page: filters?.page + 1,
+      page: (filters?.page || 0) + 1,
       per_page: 10,
     })}`
   );
@@ -40,17 +40,6 @@ function Diagnoses() {
             setFilters((filters) => ({ ...filters, search }))
           }
         />
-
-        {/* <div className="ml-auto">
-          <AddForm mutate={mutate}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Add</span>
-              </Button>
-            )}
-          </AddForm>
-        </div> */}
       </div>
 
       <div className="overflow-x-auto mb-8">
@@ -67,7 +56,7 @@ function Diagnoses() {
               <>
                 {!diagnoses.length && (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={2}>
                       <p className="text-center">No diagnoses yet</p>
                     </td>
                   </tr>

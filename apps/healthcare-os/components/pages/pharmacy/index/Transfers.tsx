@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Field } from '@healthcareos/react';
+import { Button, Field, Paginate } from '@healthcareos/react';
 import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
@@ -30,10 +30,11 @@ function Transfers() {
    */
   const { data, error, mutate } = useSWR<{
     transfers: MedicineTransferModel[];
+    total: number;
   }>(
     canView &&
       `/medicine/transfer?${queryString.stringify(
-        { ...filters },
+        { ...filters, per_page: 10, page: (filters?.page || 0) + 1 },
         { skipEmptyString: true, skipNull: true }
       )}`
   );
@@ -80,7 +81,7 @@ function Transfers() {
         )}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-8">
         <table>
           <thead>
             <tr>
@@ -114,6 +115,15 @@ function Transfers() {
           </tbody>
         </table>
       </div>
+      {data && (
+        <div className="flex justify-end">
+          <Paginate
+            page={filters?.page}
+            pageCount={Math.ceil(data.total / 10)}
+            setPage={(page) => setFilters((filters) => ({ ...filters, page }))}
+          />
+        </div>
+      )}
     </>
   );
 }

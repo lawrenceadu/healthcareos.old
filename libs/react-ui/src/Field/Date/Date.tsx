@@ -37,7 +37,12 @@ export function Date({
           'disabled:bg-gray-100 disabled:text-gray-500'
         )}
         onChange={(date) => {
-          setFieldValue(String(name), dayjs(date[0]).format('YYYY-MM-DD'));
+          setFieldValue(
+            String(name),
+            dayjs(date[0]).format(
+              options?.enableTime ? 'YYYY-MM-DDThh:mm' : 'YYYY-MM-DD'
+            )
+          );
           setTimeout(
             () => setFieldTouched && setFieldTouched(String(name), true)
           );
@@ -45,9 +50,14 @@ export function Date({
         options={{
           ...options,
           disableMobile: true,
-          dateFormat: 'd - M - Y',
+          dateFormat: options?.enableTime ? 'd - M - Y @ h:i K' : 'd - M - Y',
         }}
-        placeholder={placeholder || '01 -  jan - 2023'}
+        placeholder={
+          placeholder ||
+          (options?.enableTime
+            ? '01 - jan - 2023 @ 6:00 PM'
+            : '01 -  jan - 2023')
+        }
         {...props}
       />
       <span className="px-4 pointer-events-none absolute right-0">
