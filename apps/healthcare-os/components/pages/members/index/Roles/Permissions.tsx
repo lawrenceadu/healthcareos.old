@@ -63,6 +63,7 @@ function Permissions({ children, role }: PermissionsProps) {
       modules: [
         { label: 'Pharmacy', value: 'pharmacy', section: true },
         { label: 'Prescription', value: 'prescription' },
+        { label: 'Dispense', value: 'dispense' },
         { label: 'Inventory', value: 'pharmacyinventory', section: true },
         { label: 'Transfer', value: 'medicinetransfer' },
         { label: 'Purchase', value: 'medicinepurchase' },

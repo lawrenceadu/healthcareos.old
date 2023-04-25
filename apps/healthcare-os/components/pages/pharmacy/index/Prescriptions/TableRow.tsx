@@ -26,7 +26,7 @@ function TableRow({ mutate, prescription }: TableRowProps) {
   /**
    * perm
    */
-  const [canEdit] = usePermissions('prescription_edit');
+  const [canEdit] = usePermissions('dispense_edit');
 
   /**
    * routes
@@ -105,8 +105,12 @@ function TableRow({ mutate, prescription }: TableRowProps) {
                 {prescription.medicines.map((medicine, key) => (
                   <tr key={key}>
                     <td>{medicine.medicine.name}</td>
-                    <td>{`${medicine.dose} ${medicine.unit}`}</td>
-                    <td>{startCase(medicine.route)}</td>
+                    <td>
+                      {medicine.dose && medicine.unit
+                        ? `${medicine.dose} ${medicine.unit}`
+                        : '--'}
+                    </td>
+                    <td>{startCase(medicine.route || '--')}</td>
                     <td>{startCase(medicine.schedule)}</td>
                     <td>
                       {medicine.start_date

@@ -50,40 +50,40 @@ function Login() {
                   user: UserModel;
                   access_token: string;
                 }) => {
-                  const facility =
-                    user.facilities.length === 1 ? user.facilities[0] : null;
-
-                  if (facility) {
-                    setStore((store) => ({
-                      ...store,
-                      user,
-                      token: access_token,
-                      ...(facility && {
-                        facility,
-                        role: facility.role,
-                        permissions: facility.permissions,
-                      }),
-                    }));
-
-                    setTimeout(() => {
-                      if (user.email_verified_at) {
-                        if (user.facilities.length === 1) {
-                          router.push(routes.dashboard.patients.index);
-                        } else {
-                          router.push(routes.auth.facility);
-                        }
-                      } else {
-                        router.push({
-                          pathname: routes.auth.otp,
-                          query: { page: 'signup' },
-                        });
-                      }
+                  if (user.facilities.length === 0) {
+                    return setErrors({
+                      username: 'Invalid credentials provided',
                     });
                   }
 
-                  if (!facility) {
-                    setErrors({ username: 'Invalid credentials provided' });
-                  }
+                  const facility =
+                    user.facilities.length === 1 ? user.facilities[0] : null;
+
+                  setStore((store) => ({
+                    ...store,
+                    user,
+                    token: access_token,
+                    ...(facility && {
+                      facility,
+                      role: facility.role,
+                      permissions: facility.permissions,
+                    }),
+                  }));
+
+                  setTimeout(() => {
+                    if (user.email_verified_at) {
+                      if (user.facilities.length === 1) {
+                        router.push(routes.dashboard.patients.index);
+                      } else {
+                        router.push(routes.auth.facility);
+                      }
+                    } else {
+                      router.push({
+                        pathname: routes.auth.otp,
+                        query: { page: 'signup' },
+                      });
+                    }
+                  });
                 }
               )
               .catch((error) => {
