@@ -75,4 +75,5 @@ export const medicineRoutes = (() =>
     'Sublingual',
     'Topical',
     'Vaginal',
+    'Intravenous',
   ].map((i) => ({ label: i, value: i.toLowerCase() })))();

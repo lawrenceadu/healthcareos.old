@@ -191,6 +191,20 @@ export function Submit({
                                 >
                                   {parameters[key]?.type === 'text' && (
                                     <Field.Input
+                                      {...(parameters[key]?.unit && {
+                                        value: (i.value as string).replace(
+                                          parameters[key].unit,
+                                          ''
+                                        ),
+                                        onChange: ({
+                                          currentTarget: { value },
+                                        }) => {
+                                          setFieldValue(
+                                            `results.${key}.value`,
+                                            `${value}${parameters[key].unit}`
+                                          );
+                                        },
+                                      })}
                                       name={`results.${key}.value`}
                                     />
                                   )}
@@ -224,6 +238,12 @@ export function Submit({
                                       }
                                       options={parameters[key].options}
                                     />
+                                  )}
+
+                                  {parameters[key]?.unit && (
+                                    <span className="block px-4">
+                                      {parameters[key].unit}
+                                    </span>
                                   )}
                                 </Field.Group>
                               )}

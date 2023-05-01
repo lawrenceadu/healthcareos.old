@@ -160,6 +160,10 @@ function Form({ mutate, children, params }: FormProps) {
                                         `parameters.${key}.options`,
                                         [{ label: '', value: '' }]
                                       );
+                                      setFieldValue(
+                                        `parameters.${key}.unit`,
+                                        ''
+                                      );
                                     }
                                   }}
                                 />
@@ -168,6 +172,7 @@ function Form({ mutate, children, params }: FormProps) {
                                 label="Unit"
                                 wrapperClassName="!mb-0"
                                 name={`parameters.${key}.unit`}
+                                disabled={param.type !== 'text'}
                               >
                                 <Field.Input name={`parameters.${key}.unit`} />
                               </Field.Group>
