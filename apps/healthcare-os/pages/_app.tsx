@@ -12,6 +12,7 @@ import StoreProvider from '../contexts/Store';
 import NoSSR from '../components/libs/NoSSR';
 
 import './styles.scss';
+import Script from 'next/script';
 
 dayjs.extend(relativeTime);
 
@@ -21,6 +22,18 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Welcome to Healthcare OS</title>
       </Head>
+      <Script id="tawkto">
+        {`var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+          (function(){
+          var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+          s1.async=true;
+          s1.src='https://embed.tawk.to/645395bd31ebfa0fe7fbf006/1gvj81s0a';
+          s1.charset='UTF-8';
+          s1.setAttribute('crossorigin','*');
+          s0.parentNode.insertBefore(s1,s0);
+          })();`}
+      </Script>
+
       <style jsx global>{`
         html {
           font-family: ${font.style.fontFamily};
