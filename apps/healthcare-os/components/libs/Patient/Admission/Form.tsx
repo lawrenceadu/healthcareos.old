@@ -69,7 +69,14 @@ function Form({ button, type, params, onSuccess }: FormProps) {
 
             onSuccess?.();
           })
-          .catch((error) => setErrors(error?.fields || {}))
+          .catch((error) => {
+            if (error?.fields) {
+              setErrors(error?.fields || {});
+            }
+            if (error?.message) {
+              toast.error(error.message);
+            }
+          })
           .finally(() => setSubmitting(false));
       }}
     >

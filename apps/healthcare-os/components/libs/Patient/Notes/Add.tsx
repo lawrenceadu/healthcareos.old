@@ -5,15 +5,24 @@ import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
 
+import { createPatientNotesService } from '../../../../services/patient';
+import { usePatient } from '../../../../hooks';
+
 export interface AddProps {
   children: (props: { proceed: () => void }) => void;
+  mutate: () => void;
 }
 
-export function Add({ children }: AddProps) {
+export function Add({ children, mutate }: AddProps) {
   /**
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * hook
+   */
+  const { patient } = usePatient();
 
   return (
     <>
@@ -24,9 +33,23 @@ export function Add({ children }: AddProps) {
           validateOnMount
           validationSchema={object({ notes: schema.requireString('Notes') })}
           initialValues={{ notes: '' }}
-          onSubmit={() => {
-            toast.success('Notes added');
-            setShow(false);
+          onSubmit={(params, { setSubmitting, setErrors }) => {
+            createPatientNotesService({ ...params, patient: patient.id })
+              .then(() => {
+                mutate();
+                toast.success('Notes added');
+                setShow(false);
+              })
+              .catch((error) => {
+                if (error?.fields) {
+                  setErrors(error.fields);
+                }
+
+                if (error?.message) {
+                  toast.error(error.message);
+                }
+              })
+              .finally(() => setSubmitting(false));
           }}
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (

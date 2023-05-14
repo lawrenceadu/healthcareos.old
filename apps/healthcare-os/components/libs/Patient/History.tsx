@@ -11,6 +11,7 @@ import Location from './History/Location';
 import Allergy from './History/Allergy';
 import Vitals from './History/Vitals';
 import Queue from './History/Queue';
+import Visit from './History/Visit';
 
 export function History() {
   /**
@@ -41,6 +42,8 @@ export function History() {
    * variables
    */
   const histories = data?.visits || [];
+
+  // console.log(histories?.[0]?.logs);
 
   return (
     <>
@@ -120,6 +123,8 @@ export function History() {
                       {i.reference === 'investigation' && (
                         <Investigation data={i} />
                       )}
+
+                      {i.reference === 'end' && <Visit data={i} />}
                     </Fragment>
                   ))}
                 </div>

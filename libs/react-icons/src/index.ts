@@ -26,6 +26,7 @@ export { default as ArrowUpIcon } from './icons/ArrowUp';
 export { default as SortAscIcon } from './icons/SortAsc';
 export { default as SpinnerIcon } from './icons/Spinner';
 export { default as PackageIcon } from './icons/Package';
+export { default as BarChartIcon } from './icons/BarChart';
 export { default as CalendarIcon } from './icons/Calendar';
 export { default as MedicineIcon } from './icons/Medicine';
 export { default as PasscodeIcon } from './icons/Passcode';

@@ -25,7 +25,7 @@ export function Badge({ variant, children }: BadgeProps) {
           'approved',
           'paid',
         ].includes(variant) && 'text-green-500 bg-green-50',
-        ['rejected', 'failed', 'suspended'].includes(variant) &&
+        ['rejected', 'failed', 'suspended', 'danger'].includes(variant) &&
           'text-red-600 bg-red-50',
         ['warning', 'pending', 'unpaid'].includes(variant) &&
           'text-amber-500 bg-amber-50',

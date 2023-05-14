@@ -35,14 +35,10 @@ function Details() {
     ...(['admitted', 'detained'].includes(patient?.status)
       ? [
           { name: 'Overview', slug: 'overview', component: Patient.Overview },
-          // { name: 'Notes', slug: 'notes', component: Patient.Notes },
-          // { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
           { name: 'History', slug: 'history', component: Patient.History },
-          // {
-          //   name: 'Drug chart',
-          //   slug: 'drug',
-          //   component: () => <div className="text-2xl font-bold">WIP</div>,
-          // },
+          { name: 'Notes', slug: 'notes', component: Patient.Notes },
+          { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
+          { name: 'Drug chart', slug: 'drug', component: Patient.DrugChart },
           ...(canViewInvoice
             ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
             : []),

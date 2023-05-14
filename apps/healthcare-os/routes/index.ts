@@ -8,6 +8,9 @@ const routes = {
   },
 
   dashboard: {
+    dashboard: {
+      index: '/dashboard/[tab]',
+    },
     patients: {
       index: '/patients',
       new: '/patients/new',

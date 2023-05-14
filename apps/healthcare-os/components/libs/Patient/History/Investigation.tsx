@@ -34,7 +34,14 @@ export function Investigation({ data }: InvestigationProps) {
       ? [
           ...investigation.results.map((item, key) => ({
             label: item.label,
-            value: item.value,
+            value: (() => {
+              try {
+                const i = JSON.parse(item.value);
+                return i.join(', ');
+              } catch (error) {
+                return item.value;
+              }
+            })(),
           })),
           { label: 'Report', value: investigation.report },
           { label: 'Submitted by', value: investigation.submitted_by.name },

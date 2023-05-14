@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 export interface DateProps extends DateTimePickerProps {
   setFieldValue: (
     field: string,
-    value: string,
+    value: string | string[],
     shouldValidate?: boolean
   ) => void;
   setFieldTouched?: (
@@ -30,22 +30,35 @@ export function Date({
   return (
     <>
       <Flatpickr
-        value={value ? dayjs(value as string).toDate() : ''}
+        value={
+          value
+            ? Array.isArray(value)
+              ? value.map((i) => dayjs(i).toDate())
+              : dayjs(value as string).toDate()
+            : ''
+        }
         className={helpers.classNames(
           className,
           'input block outline-none w-full px-4',
           'disabled:bg-gray-100 disabled:text-gray-500'
         )}
         onChange={(date) => {
-          setFieldValue(
-            String(name),
-            dayjs(date[0]).format(
-              options?.enableTime ? 'YYYY-MM-DDThh:mm' : 'YYYY-MM-DD'
-            )
-          );
-          setTimeout(
-            () => setFieldTouched && setFieldTouched(String(name), true)
-          );
+          const value =
+            options?.mode === 'range'
+              ? date.map((d) => dayjs(d).format('YYYY-MM-DD'))
+              : dayjs(date[0]).format(
+                  options?.enableTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD'
+                );
+
+          if (options?.mode === 'range') {
+            if (value.length === 2) {
+              setFieldValue(String(name), value);
+            }
+          } else {
+            setFieldValue(String(name), value);
+          }
+          
+          setTimeout(() => setFieldTouched?.(String(name), true));
         }}
         options={{
           ...options,

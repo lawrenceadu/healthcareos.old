@@ -71,3 +71,11 @@ export const finalizePatientInvoiceService = (payload: object, id: string) =>
 export const deletePatientInvoiceService = (id: string) =>
   http.delete(`/invoice/${id}`);
 // end of invoice
+
+// notes
+export const createPatientNotesService = (payload: object) =>
+  http.post<never, any>(`/note`, payload);
+
+export const updatePatientNotesService = (payload: object, id: string) =>
+  http.post<never, any>(`/note/`, payload);
+// end of notes

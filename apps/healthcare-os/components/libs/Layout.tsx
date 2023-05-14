@@ -89,6 +89,11 @@ export function Layout({
    * variables
    */
   const navlinks = [
+    {
+      name: 'Dashboard',
+      icon: Icon.BarChartIcon,
+      link: routes.dashboard.dashboard.index.replace('[tab]', ''),
+    },
     ...(canViewPatient
       ? [
           {

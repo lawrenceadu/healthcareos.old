@@ -1,35 +1,57 @@
-import { useState } from 'react';
-import { Accordion, Button, Field, Filter } from '@healthcareos/react';
+// import { useState } from 'react';
+import { Accordion, Button } from '@healthcareos/react';
 import { PlusIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
+import useSWR from 'swr';
 
+import { usePatient } from '../../../hooks';
+import { NoteModel } from '../../../models';
 import AddForm from './Notes/Add';
 import Float from '../Float';
+import dayjs from 'dayjs';
 
 export function Notes() {
   /**
+   * hooks
+   */
+  const { patient } = usePatient();
+
+  /**
    * state
    */
-  const [filters, setFilters] = useState<
-    Partial<{ search: string; filter: string }>
-  >({});
+  // const [filters, setFilters] = useState<
+  //   Partial<{ search: string; filter: string }>
+  // >({});
+
+  /**
+   * api
+   */
+  const { data, mutate } = useSWR<{ notes: NoteModel[] }>(
+    `/note?patient=${patient.id}`
+  );
 
   /**
    * variables
    */
-  const items = [
-    { label: 'Added by', value: 'Doctor Fred Osei' },
-    { label: 'Added on', value: '04 jan. 2023 04:30 pm' },
-    {
-      label: 'Notes',
-      value:
-        'This patient is being detain so we can conduct further investigations. ',
-    },
-  ];
+  const items =
+    data?.notes?.map((note) => ({
+      reference: note.reference,
+      items: [
+        { label: 'Added by', value: note.created_by.name },
+        {
+          label: 'Added on',
+          value: dayjs(note.created_at).format('DD MMM, YYYY @ h:mm a'),
+        },
+        {
+          label: 'Notes',
+          value: note.notes,
+        },
+      ],
+    })) || [];
 
   return (
     <>
-      <div className="flex gap-4 items-center mb-6">
+      {/* <div className="flex gap-4 items-center mb-6">
         <Field.Search
           onSearch={(key) => setFilters({ ...filters, search: key })}
         />
@@ -45,19 +67,19 @@ export function Notes() {
             setFilters({ ...filters, filter: value })
           }
         />
-      </div>
+      </div> */}
 
       <Accordion className="flex flex-col gap-4">
-        {Array.from({ length: 3 }, (_, i) => (
+        {items.map((item, key) => (
           <Accordion.Item
-            key={i}
-            defaultOpen={i === 0}
+            key={key}
+            defaultOpen={!key}
             className="rounded-lg p-4 border border-gray-200"
-            header={<p className="text-lg font-bold">04 Jan. 2023</p>}
+            header={<p className="text-lg font-bold">{item.reference}</p>}
           >
             <div className="grid gap-2 font-medium">
-              <p className="text-xs text-green-700">Doctor</p>
-              {items.map((i, key) => (
+              {/* <p className="text-xs text-green-700">Doctor</p> */}
+              {item.items.map((i, key) => (
                 <div key={key}>
                   <small className="text-gray-600 block">{i.label}</small>
                   <small>{i.value}</small>
@@ -69,7 +91,7 @@ export function Notes() {
       </Accordion>
 
       <Float>
-        <AddForm>
+        <AddForm {...{ mutate }}>
           {({ proceed }) => (
             <Button
               onClick={() => proceed()}

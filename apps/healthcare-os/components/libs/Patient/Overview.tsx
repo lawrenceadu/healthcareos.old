@@ -1,24 +1,13 @@
 import { Fragment } from 'react';
 import { Accordion, Badge } from '@healthcareos/react';
-import { useRouter } from 'next/router';
 import { startCase } from 'lodash';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
-import { usePatient, useStore } from '../../../hooks';
 import { AdmissionModel } from '../../../models';
+import { usePatient } from '../../../hooks';
 
 function Overview() {
-  /**
-   * routes
-   */
-  const router = useRouter();
-
-  /**
-   * store
-   */
-  const { store } = useStore();
-
   /**
    * hook
    */
@@ -51,7 +40,8 @@ function Overview() {
             className="mb-6 border border-gray-200 rounded-lg p-4"
             header={
               <h5 className="text-xl font-bold">
-                {admission.type === 'admit' ? 'Admission' : 'Detention'}
+                {admission.type === 'admit' ? 'Admission' : 'Detention'} -{' '}
+                {dayjs(admission.created_at).format('YYYYMMDD')}
               </h5>
             }
             actions={

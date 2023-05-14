@@ -16,7 +16,9 @@ export interface HistoryLog {
     | 'consultation'
     | 'allergy'
     | 'queue'
-    | 'investigation';
+    | 'investigation'
+    | 'invoice'
+    | 'end';
   details: any;
   created_at: string;
   created_by: {
@@ -62,6 +64,9 @@ export interface ConsultationHistoryModel {
   history_examination: string;
   diagnoses: { id: string; name: string }[];
 }
+
+// eslint-disable-next-line
+export interface PrescriptionHistoryModel {}
 
 // eslint-disable-next-line
 export interface InvestigationHistoryModel extends InvestigationRequestModel {}

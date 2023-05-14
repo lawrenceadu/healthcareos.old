@@ -4,6 +4,7 @@ import { default as QuickActions } from './Patient/QuickActions';
 import { default as Medication } from './Patient/Medication';
 import { default as Visitation } from './Patient/Visitation';
 import { default as Allergies } from './Patient/Allergies';
+import { default as DrugChart } from './Patient/DrugChart';
 import { default as Insurance } from './Patient/Insurance';
 import { default as Dispense } from './Patient/Dispense';
 import { default as Dropdown } from './Patient/Dropdown';
@@ -29,6 +30,7 @@ export default Object.assign(
     Medication,
     Visitation,
     Allergies,
+    DrugChart,
     Insurance,
     Dispense,
     Dropdown,
