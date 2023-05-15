@@ -58,6 +58,7 @@ export function Layout({
    * hooks
    */
   const [
+    canViewDashboard,
     canViewPatient,
     canViewInvoice,
     canViewWard,
@@ -68,6 +69,7 @@ export function Layout({
     canViewInvestigation,
     canViewInventory,
   ] = usePermissions(
+    'dashboard',
     'patient',
     'invoice',
     'ward',
@@ -89,11 +91,15 @@ export function Layout({
    * variables
    */
   const navlinks = [
-    {
-      name: 'Dashboard',
-      icon: Icon.DashboardIcon,
-      link: routes.dashboard.dashboard.index.replace('[tab]', ''),
-    },
+    ...(canViewDashboard
+      ? [
+          {
+            name: 'Dashboard',
+            icon: Icon.DashboardIcon,
+            link: routes.dashboard.dashboard.index.replace('[tab]', ''),
+          },
+        ]
+      : []),
     ...(canViewPatient
       ? [
           {

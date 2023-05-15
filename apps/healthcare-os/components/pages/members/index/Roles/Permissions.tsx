@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { updateRolePermissionService } from '../../../../../services/members';
 import { RoleModel } from '../../../../../models';
 import Module from './Permissions/Module';
+import Dashboard from './Permissions/Dashboard';
 
 export interface PermissionsProps {
   children: (props: { proceed: () => void }) => ReactElement;
@@ -139,6 +140,7 @@ function Permissions({ children, role }: PermissionsProps) {
           {({ values, isValid, isSubmitting, setFieldValue }) => (
             <Form>
               <Accordion className="p-6 grid gap-4">
+                <Dashboard values={values.permissions} {...{ setFieldValue }} />
                 {items.map(({ label, modules }, key) => (
                   <Accordion.Item
                     key={key}

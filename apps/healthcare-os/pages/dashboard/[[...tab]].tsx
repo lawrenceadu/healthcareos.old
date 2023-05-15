@@ -6,6 +6,7 @@ import routes from '../../routes';
 
 import FiltersProvider from '../../contexts/Filters';
 
+import { usePermissions } from '../../hooks';
 import IncomeAndExpenditure from '../../components/pages/dashboard/IncomeAndExpenditure';
 import Dashboard from '../../components/pages/dashboard/Dashboard';
 // import DHIMS from '../../components/pages/dashboard/DHIMS';
@@ -18,16 +19,45 @@ function Index() {
   const tab = router.query.tab as string[];
 
   /**
+   * perm
+   */
+  const [
+    patientSummary,
+    diagnosesSummary,
+    investigationSummary,
+    medicationSummary,
+    wardSummary,
+    financeSummary,
+  ] = usePermissions(
+    'report_patient_summary',
+    'report_diagnosis_summary',
+    'report_investigation_request_summary',
+    'report_medicine_summary',
+    'report_ward_summary',
+    'report_finance_summary'
+  );
+
+  /**
    * variables
    */
   const tabs = [
-    { name: 'Dashboard', slug: 'dashboard', component: Dashboard },
+    ...(patientSummary ||
+    diagnosesSummary ||
+    investigationSummary ||
+    medicationSummary ||
+    wardSummary
+      ? [{ name: 'Dashboard', slug: 'dashboard', component: Dashboard }]
+      : []),
     // { name: 'DHIMS', slug: 'dhims', component: DHIMS },
-    {
-      name: 'Income & Expenditure',
-      slug: 'income-and-expenditure',
-      component: IncomeAndExpenditure,
-    },
+    ...(financeSummary
+      ? [
+          {
+            name: 'Income & Expenditure',
+            slug: 'income-and-expenditure',
+            component: IncomeAndExpenditure,
+          },
+        ]
+      : []),
   ];
 
   return (
