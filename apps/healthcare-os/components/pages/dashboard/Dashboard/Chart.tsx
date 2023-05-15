@@ -1,15 +1,20 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { helpers, useWidth } from '@healthcare/utils';
 
+import TooltipContent from '../../../libs/Tooltip';
+
 function Chart({
+  label,
   items,
 }: {
+  label?: string;
   items: { label: string; value: number; color: string }[];
 }) {
   /**
    * variables
    */
   const width = useWidth();
+  const total = items.reduce((a, b) => a + b.value, 0);
 
   return (
     <div className="flex gap-6 items-center">
@@ -27,22 +32,45 @@ function Chart({
                 paddingAngle={0}
                 innerRadius={width >= 1024 ? 80 : 50}
                 outerRadius={width >= 1024 ? 114 : 80}
-                data={items.map(({ color, label, ...genders }) => ({
-                  name: label,
-                  ...genders,
-                }))}
+                data={
+                  total
+                    ? items.map(({ label, value }) => ({
+                        name: label,
+                        value,
+                      }))
+                    : [{ name: '', value: 1 }]
+                }
               >
-                {items.map(({ color }, key) => (
-                  <Cell key={`cell-${key}`} fill={color} />
-                ))}
+                {!!total &&
+                  items.map(({ color }, key) => (
+                    <Cell
+                      style={{ outline: 'none' }}
+                      key={`cell-${key}`}
+                      fill={color}
+                    />
+                  ))}
+                {!total && (
+                  <Cell
+                    style={{ outline: 'none' }}
+                    key="cell-default"
+                    fill="#c3c3c3"
+                  />
+                )}
               </Pie>
-              <Tooltip />
+              <Tooltip
+                cursor={false}
+                content={({ payload, label: localLabel }) => (
+                  <TooltipContent
+                    {...{ label: localLabel || label, payload }}
+                  />
+                )}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
       )}
 
-      <div>
+      <div className="max-h-[160px] lg:max-h-[228px] overflow-auto">
         {[
           {
             label: 'Total',

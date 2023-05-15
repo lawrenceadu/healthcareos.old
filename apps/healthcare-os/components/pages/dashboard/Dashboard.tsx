@@ -6,11 +6,8 @@ import useSWR from 'swr';
 import dayjs from 'dayjs';
 
 import { usePermissions } from '../../../hooks';
-import Investigations from './Dashboard/Investigations';
-import Medications from './Dashboard/Medications';
 import Onboarding from './Dashboard/Onboarding';
-import Diagnoses from './Dashboard/Diagnoses';
-import Wards from './Dashboard/Wards';
+import TopTens from './Dashboard/TopTens';
 import PD from './Dashboard/PD';
 
 function Dashboard() {
@@ -37,29 +34,29 @@ function Dashboard() {
   const format = 'YYYY-MM-DD';
   const tabs = [
     ...(diagnosesSummary
-      ? [{ name: 'Diagnoses', slug: 'diagnoses', component: Diagnoses }]
+      ? [{ name: 'Diagnoses', slug: 'diagnosis', component: TopTens }]
       : []),
     ...(investigationSummary
       ? [
           {
             name: 'Investigations',
-            slug: 'investigations',
-            component: Investigations,
+            slug: 'investigation',
+            component: TopTens,
           },
         ]
       : []),
     ...(medicationSummary
-      ? [{ name: 'Medications', slug: 'medications', component: Medications }]
+      ? [{ name: 'Medications', slug: 'medicine', component: TopTens }]
       : []),
     ...(wardSummary
-      ? [{ name: 'Wards', slug: 'wards', component: Wards }]
+      ? [{ name: 'Wards', slug: 'ward', component: TopTens }]
       : []),
   ];
 
   /**
    * state
    */
-  const [topActiveKey, setTopActiveKey] = useState('diagnoses');
+  const [topActiveKey, setTopActiveKey] = useState('diagnosis');
   const [summaryDates, setSummaryDates] = useState<string[]>([
     dayjs().startOf('month').format(format),
     dayjs().endOf('month').format(format),
@@ -115,7 +112,7 @@ function Dashboard() {
           <Tabs
             tabs={tabs}
             activeKey={topActiveKey}
-            childProps={{ dates: topDates }}
+            childProps={{ dates: topDates, slug: topActiveKey }}
             onSelect={(key) => setTopActiveKey(key)}
           />
         </div>

@@ -9,11 +9,11 @@ function PD({
     <>
       <div className="p-6 rounded-lg border border-neutral-200">
         <p className="text-sm font-bold mb-6">Inpatient</p>
-        <Chart items={data?.inpatient || []} />
+        <Chart label="Inpatient" items={data?.inpatient || []} />
       </div>
       <div className="p-6 rounded-lg border border-neutral-200">
         <p className="text-sm font-bold mb-6">Outpatient</p>
-        <Chart items={data?.outpatient || []} />
+        <Chart label="Outpatient" items={data?.outpatient || []} />
       </div>
     </>
   );

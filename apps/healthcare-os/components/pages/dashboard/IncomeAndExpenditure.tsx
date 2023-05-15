@@ -1,9 +1,12 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ArrowDownIcon, ArrowUpIcon } from '@healthcare/icons';
+import { Field, Tabs } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
-import { Field } from '@healthcareos/react';
+import queryString from 'query-string';
+import useSWR from 'swr';
 import dayjs from 'dayjs';
 
+import Breakdown from './IncomeAndExpenditure/Breakdown';
 import Trends from './IncomeAndExpenditure/Trends';
 
 function IncomeAndExpenditure() {
@@ -11,27 +14,48 @@ function IncomeAndExpenditure() {
    * variables
    */
   const format = 'YYYY-MM-DD';
+  const tabs = [
+    { name: 'Income', slug: 'income', component: Breakdown },
+    { name: 'Expense', slug: 'expense', component: Breakdown },
+  ];
 
   /**
    * state
    */
+  const [activeKey, setActiveKey] = useState('income');
   const [dates, setDates] = useState<string[]>([
     dayjs().startOf('month').format(format),
     dayjs().endOf('month').format(format),
   ]);
 
+  /**
+   * api
+   */
+  const { data } = useSWR<{
+    summary: {
+      income: number;
+      expense: number;
+      trends: { label: string; income: number; expense: number }[];
+    };
+  }>(
+    `/report/finance/summary?${queryString.stringify({
+      start_date: dates[0],
+      end_date: dates[1],
+    })}`
+  );
+
   const cards = [
     {
       label: 'Total income',
       slug: 'income',
-      value: 'Ghs 123,454.01',
+      value: `Ghs ${data?.summary?.income || 0}`,
       color: '#22C55E',
       icon: ArrowUpIcon,
     },
     {
       label: 'Total expense',
       slug: 'expense',
-      value: 'Ghs 33',
+      value: `Ghs ${data?.summary?.expense || 0}`,
       color: '#DC2626',
       icon: ArrowDownIcon,
     },
@@ -78,7 +102,17 @@ function IncomeAndExpenditure() {
         <p className="text-lg font-bold mb-6">
           Trends of income vs expenditure
         </p>
-        <Trends />
+        <Trends dates={dates} data={data?.summary?.trends} />
+      </div>
+
+      <div className="mb-14">
+        <p className="text-lg mb-4 font-bold">Report breakdown</p>
+        <Tabs
+          tabs={tabs}
+          activeKey={activeKey}
+          childProps={{ slug: activeKey, dates }}
+          onSelect={(key) => setActiveKey(key)}
+        />
       </div>
     </div>
   );

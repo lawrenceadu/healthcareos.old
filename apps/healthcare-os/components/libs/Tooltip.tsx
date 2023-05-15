@@ -10,11 +10,11 @@ function Index({ label, payload }) {
               style={{
                 width: 8,
                 height: 8,
-                backgroundColor: i.color,
+                backgroundColor: i?.color || i?.payload?.fill,
               }}
             />
             <div style={{ fontSize: 12 }}>
-              {i.dataKey} - <b>{i.value}</b>
+              {i.name} - <b>{i.value}</b>
             </div>
           </div>
         ))}

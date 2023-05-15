@@ -4,17 +4,19 @@ import { SSRProvider } from '@restart/ui/ssr';
 import { SWRConfig } from 'swr';
 import { AppProps } from 'next/app';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
 import Head from 'next/head';
 
 import PatientProvider from '../contexts/Patient';
 import StoreProvider from '../contexts/Store';
+import Script from 'next/script';
 import NoSSR from '../components/libs/NoSSR';
 
 import './styles.scss';
-import Script from 'next/script';
 
 dayjs.extend(relativeTime);
+dayjs.extend(isBetween);
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (

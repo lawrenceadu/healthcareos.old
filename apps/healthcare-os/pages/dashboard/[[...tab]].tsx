@@ -8,7 +8,7 @@ import FiltersProvider from '../../contexts/Filters';
 
 import IncomeAndExpenditure from '../../components/pages/dashboard/IncomeAndExpenditure';
 import Dashboard from '../../components/pages/dashboard/Dashboard';
-import DHIMS from '../../components/pages/dashboard/DHIMS';
+// import DHIMS from '../../components/pages/dashboard/DHIMS';
 
 function Index() {
   /**
@@ -22,7 +22,7 @@ function Index() {
    */
   const tabs = [
     { name: 'Dashboard', slug: 'dashboard', component: Dashboard },
-    { name: 'DHIMS', slug: 'dhims', component: DHIMS },
+    // { name: 'DHIMS', slug: 'dhims', component: DHIMS },
     {
       name: 'Income & Expenditure',
       slug: 'income-and-expenditure',
