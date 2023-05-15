@@ -15,8 +15,7 @@ function Breakdown({ slug, dates }: { slug: string; dates: string[] }) {
    * api
    */
   const { data, isLoading } = useSWR<{
-    total: number;
-    summary: { label: string; value: number }[];
+    summary: { breakdown: { label: string; value: number }[]; total: number };
   }>(
     `/report/finance/${slug}?${queryString.stringify({
       page: page + 1,
@@ -24,6 +23,8 @@ function Breakdown({ slug, dates }: { slug: string; dates: string[] }) {
       end_date: dates[1],
     })}`
   );
+
+  const { breakdown = [], total } = data?.summary || {};
 
   return (
     <div>
@@ -43,7 +44,7 @@ function Breakdown({ slug, dates }: { slug: string; dates: string[] }) {
             {isLoading && <Skeleton.Table count={2} />}
             {data && (
               <>
-                {!data?.summary?.length && (
+                {!breakdown?.length && (
                   <tr>
                     <td colSpan={2} className="text-center">
                       <div className="py-4">
@@ -53,7 +54,7 @@ function Breakdown({ slug, dates }: { slug: string; dates: string[] }) {
                   </tr>
                 )}
 
-                {data?.summary?.map((summary, key) => (
+                {breakdown?.map((summary, key) => (
                   <tr key={key}>
                     <td>{summary?.label}</td>
                     <td>Ghs {summary?.value}</td>
@@ -64,9 +65,9 @@ function Breakdown({ slug, dates }: { slug: string; dates: string[] }) {
           </tbody>
         </table>
       </div>
-      {data && (
+      {!!total && (
         <div className="flex justify-end">
-          <Paginate pageCount={data?.total || 0} {...{ page, setPage }} />
+          <Paginate pageCount={Math.ceil(total / 10)} {...{ page, setPage }} />
         </div>
       )}
     </div>
