@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { Accordion, Badge, Field } from '@healthcareos/react';
+import { Accordion, Badge, Button, Field } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import queryString from 'query-string';
+import useSWR from 'swr';
 import dayjs from 'dayjs';
+
+import { MedicineModel, PrescriptionModel } from '../../../models';
+import { usePatient } from '../../../hooks';
+import Float from '../Float';
+import Administer from './DrugChart/Administer';
 
 function DrugChart() {
   /**
@@ -13,9 +20,34 @@ function DrugChart() {
    * state
    */
   const [dates, setDates] = useState([
-    dayjs().startOf('week').format(format),
-    dayjs().endOf('week').format(format),
+    dayjs().startOf('day').format(format),
+    dayjs().endOf('day').format(format),
   ]);
+
+  /**
+   * hooks
+   */
+  const { patient } = usePatient();
+
+  /**
+   * api
+   */
+  const { data, mutate, isLoading } = useSWR<{ chart: any }>(
+    `/prescription/chart?${queryString.stringify({
+      patient: patient.id,
+      start_date: dates[0],
+      end_date: dates[1],
+    })}`
+  );
+
+  const prescriptions = data?.chart
+    ? (Object.entries(data.chart) as [
+        string,
+        (Omit<PrescriptionModel['medicines'][0], 'medicine'> & {
+          medicine: MedicineModel;
+        })[]
+      ][])
+    : [];
 
   return (
     <div>
@@ -34,32 +66,72 @@ function DrugChart() {
       </div>
 
       <Accordion className="flex flex-col gap-4">
-        <Accordion.Item
-          className="rounded-lg p-4 border border-gray-200"
-          header={<p className="text-lg font-bold">26 Feb. 2023</p>}
-        >
-          {[1, 2, 3].map((i, key) => (
+        {isLoading &&
+          Array.from({ length: 3 }, (_, i) => (
             <div
-              key={key}
-              className={helpers.classNames(
-                key !== 3 - 1 && 'mb-2 pb-2 border-b border-neutral-200'
-              )}
-            >
-              <div className="flex gap-2 justify-between items-end font-medium">
-                <div>
-                  <p className="text-xs text-gray-600">04:30 pm</p>
-                  <p className="text-sm font-bold">
-                    Multivitamin oral suspension
-                  </p>
-                </div>
-                <span>
-                  <Badge variant="danger">stat</Badge>
-                </span>
-              </div>
-            </div>
+              key={i}
+              className="h-[96px] rounded-lg bg-neutral-200 animate-pulse"
+            />
           ))}
-        </Accordion.Item>
+
+        {prescriptions.map((i, key) => {
+          const date = i[0];
+          const prescriptions = i[1];
+
+          return (
+            <Accordion.Item
+              key={key}
+              className="rounded-lg p-4 border border-gray-200"
+              header={
+                <p className="text-lg font-bold">
+                  {dayjs(date).format('DD MMM YYYY')}
+                </p>
+              }
+            >
+              {prescriptions.map((prescription, key) => {
+                return (
+                  <div
+                    key={key}
+                    className={helpers.classNames(
+                      key !== prescriptions.length - 1 &&
+                        'mb-2 pb-2 border-b border-neutral-200'
+                    )}
+                  >
+                    <div className="flex gap-2 justify-between items-end font-medium">
+                      <div>
+                        {!!prescription.administration_time?.length && (
+                          <p className="text-xs text-gray-600">
+                            {prescription.administration_time.join(', ')}
+                          </p>
+                        )}
+                        <p className="text-sm font-bold">
+                          {prescription.medicine.name}
+                        </p>
+                      </div>
+                      <span>
+                        <Badge variant={prescription.schedule}>
+                          {prescription.schedule}
+                        </Badge>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </Accordion.Item>
+          );
+        })}
       </Accordion>
+
+      {/* float */}
+      <Float>
+        <Administer {...{ mutate }}>
+          {({ proceed }) => (
+            <Button className="btn-primary" onClick={() => proceed()}>
+              Administer drug
+            </Button>
+          )}
+        </Administer>
+      </Float>
     </div>
   );
 }

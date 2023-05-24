@@ -112,7 +112,7 @@ export function Vitals({ params, children }: VitalsProps) {
         >
           {({ values, isValid, isSubmitting, handleSubmit }) => (
             <Form>
-              <div className="py-10 px-6 max-h-[600px] overflow-y-auto">
+              <div className="py-10 px-6">
                 <Field.Group name="respiratory_rate" label="Respiratory rate">
                   <Field.Input
                     name="respiratory_rate"

@@ -147,7 +147,7 @@ function Dispense({ mutate, prescription, children }: DispenseProps) {
             setFieldTouched,
           }) => (
             <Form>
-              <div className="p-6 max-h-[600px] overflow-y-auto">
+              <div className="p-6">
                 <FieldArray name="medicines">
                   {(helper) => (
                     <div className="mb-6">

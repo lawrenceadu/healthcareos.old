@@ -3,6 +3,7 @@ import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
 
 import { FacilityModel, UserModel } from '../models';
+import { http } from '@healthcare/utils';
 
 export interface StoreInterface {
   token: string;
@@ -58,10 +59,10 @@ const StoreProvider = ({ children }: { children: any }) => {
    */
   const logout = () => {
     setStore({});
-   
+
     mutate(() => true, undefined, { revalidate: false });
     sessionStorage.clear();
-   
+
     router.push({ pathname: '/login' });
   };
 
@@ -75,6 +76,8 @@ const StoreProvider = ({ children }: { children: any }) => {
         JSON.stringify(store)
       );
     }
+
+    http.injectStore({ ...store, logout });
   }, [store]);
 
   return (

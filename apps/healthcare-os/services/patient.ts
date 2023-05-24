@@ -79,3 +79,8 @@ export const createPatientNotesService = (payload: object) =>
 export const updatePatientNotesService = (payload: object, id: string) =>
   http.post<never, any>(`/note/`, payload);
 // end of notes
+
+// drug chart
+export const administerDrugService = (payload: object) =>
+  http.post<never, any>(`/prescription/administration`, payload);
+// end of drug chart

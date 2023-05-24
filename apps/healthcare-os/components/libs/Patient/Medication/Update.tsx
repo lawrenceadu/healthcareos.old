@@ -26,7 +26,7 @@ function Update({ prescription, children }: UpdateProps) {
         onHide={() => setShow(false)}
         header="Update prescription"
       >
-        <div className="max-h-[600px] pt-6 overflow-y-auto">
+        <div className="pt-6">
           <Form
             params={prescription}
             onHide={() => setShow(false)}

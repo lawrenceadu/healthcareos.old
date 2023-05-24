@@ -27,6 +27,11 @@ export function Date({
   setFieldTouched,
   ...props
 }: DateProps) {
+  /**
+   * variables
+   */
+  const _options = { noCalendar: false, ...options };
+
   return (
     <>
       <Flatpickr
@@ -44,30 +49,34 @@ export function Date({
         )}
         onChange={(date) => {
           const value =
-            options?.mode === 'range'
+            _options?.mode === 'range'
               ? date.map((d) => dayjs(d).format('YYYY-MM-DD'))
               : dayjs(date[0]).format(
-                  options?.enableTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD'
+                  _options?.enableTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD'
                 );
 
-          if (options?.mode === 'range') {
+          if (_options?.mode === 'range') {
             if (value.length === 2) {
               setFieldValue(String(name), value);
             }
           } else {
             setFieldValue(String(name), value);
           }
-          
+
           setTimeout(() => setFieldTouched?.(String(name), true));
         }}
         options={{
-          ...options,
+          ..._options,
           disableMobile: true,
-          dateFormat: options?.enableTime ? 'd - M - Y @ h:i K' : 'd - M - Y',
+          ...(!_options?.noCalendar && {
+            dateFormat: _options?.enableTime
+              ? 'd - M - Y @ h:i K'
+              : 'd - M - Y',
+          }),
         }}
         placeholder={
           placeholder ||
-          (options?.enableTime
+          (_options?.enableTime
             ? '01 - jan - 2023 @ 6:00 PM'
             : '01 -  jan - 2023')
         }

@@ -108,6 +108,7 @@ export interface PrescriptionModel {
   id: string;
   notes: string;
   patient: PatientModel;
+  prints: number;
   medicines: {
     dose: string;
     unit: string;
@@ -122,4 +123,12 @@ export interface PrescriptionModel {
   status: string;
   created_by: UserModel;
   created_at: string;
+}
+
+export interface PrescriptionPrintModel {
+  id: string;
+  file: string;
+  created_by: UserModel;
+  created_at: string;
+  details: PrescriptionModel['medicines'];
 }

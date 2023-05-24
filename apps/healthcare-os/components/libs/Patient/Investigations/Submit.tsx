@@ -57,7 +57,7 @@ export function Submit({
       {children({ proceed: () => setShow(true) })}
 
       <Modal show={show} onHide={() => setShow(false)} header="Submit Results">
-        <div className="max-h-[820px] overflow-y-auto">
+        <>
           <div className="px-6 pt-6">
             <div className="border border-gray-200 rounded-lg bg-neutral-100 p-4 flex flex-col gap-1">
               {items.map((item, key) => (
@@ -310,7 +310,7 @@ export function Submit({
               </Form>
             )}
           </Formik>
-        </div>
+        </>
       </Modal>
     </>
   );

@@ -133,18 +133,26 @@ export function Modal({
           'flex',
           'relative',
           'mx-auto w-full my-6',
-          'min-h-[calc(100%-3rem)]',
+          'h-[calc(100%-3rem)]',
           dialogProps?.className
         )}
       >
         <div
           className={helpers.classNames(
             'w-full rounded-lg mx-4 my-auto',
-            'shadow-3xl bg-white relative'
+            'shadow-3xl bg-white relative',
+            'max-h-full overflow-auto'
           )}
         >
           {header && (
-            <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200">
+            <div
+              className={helpers.classNames(
+                'px-5 py-4',
+                'sticky top-0 z-[1]',
+                'border-b border-gray-200 bg-white',
+                'flex justify-between items-center'
+              )}
+            >
               <h5 className="mb-0 text-xl font-bold">{header}</h5>
               <Button
                 onClick={() => handleClose()}

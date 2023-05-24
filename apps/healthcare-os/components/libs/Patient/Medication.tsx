@@ -46,15 +46,13 @@ function Medication({ children }: MedicationProps) {
         header="Medication"
         size="xl"
       >
-        <div className="max-h-[600px] overflow-y-auto">
-          <Tabs
-            tabs={tabs}
-            activeKey={tab}
-            navClassName="px-6 pt-2"
-            onSelect={(key) => setTab(key)}
-            childProps={{ onHide: () => setShow(false), setTab }}
-          />
-        </div>
+        <Tabs
+          tabs={tabs}
+          activeKey={tab}
+          navClassName="px-6 pt-2"
+          onSelect={(key) => setTab(key)}
+          childProps={{ onHide: () => setShow(false), setTab }}
+        />
       </Modal>
     </>
   );

@@ -139,7 +139,7 @@ function Form({ params, mutate, children }: FormInterface) {
             setFieldTouched,
           }) => (
             <BaseForm>
-              <div className="p-6 max-h-[600px] overflow-y-auto">
+              <div className="p-6">
                 <div className="mb-6">
                   <p className="mb-4 font-medium">Items</p>
 

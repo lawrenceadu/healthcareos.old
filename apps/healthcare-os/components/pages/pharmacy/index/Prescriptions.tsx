@@ -39,6 +39,8 @@ function Prescriptions() {
    */
   const prescriptions = data?.prescriptions || [];
 
+  console.log(prescriptions);
+
   return (
     <>
       <div className="overflow-x-auto mb-8">

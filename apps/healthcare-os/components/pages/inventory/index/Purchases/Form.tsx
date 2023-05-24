@@ -174,7 +174,7 @@ function Form({ params, mutate, children }: FormInterface) {
             setFieldTouched,
           }) => (
             <BaseForm>
-              <div className="p-6 max-h-[600px] overflow-y-auto">
+              <div className="p-6">
                 <Field.Group name="supplier" label="Supplier">
                   <SearchSelect.Suppliers
                     value={values.supplier}
