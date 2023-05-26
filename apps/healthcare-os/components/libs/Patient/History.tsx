@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Accordion, Badge, Field, Filter } from '@healthcareos/react';
+import { helpers } from '@healthcare/utils';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
@@ -7,10 +8,15 @@ import { usePatient, useStore } from '../../../hooks';
 import { HistoryModel } from '../../../models/history';
 import Investigation from './History/Investigation';
 import Consultation from './History/Consultation';
+import Prescription from './History/Prescription';
+import Admission from './History/Admission';
+import Dispense from './History/Dispense';
 import Location from './History/Location';
 import Allergy from './History/Allergy';
+import Triage from './History/Triage';
 import Vitals from './History/Vitals';
 import Queue from './History/Queue';
+import Print from './History/Print';
 import Visit from './History/Visit';
 
 export function History() {
@@ -42,8 +48,6 @@ export function History() {
    * variables
    */
   const histories = data?.visits || [];
-
-  // console.log(histories?.[0]?.logs);
 
   return (
     <>
@@ -95,13 +99,18 @@ export function History() {
                 }
                 header={
                   <p className="text-lg font-bold">
-                    {dayjs(history.start_date).format('ddd MM. YYYY')}
+                    {dayjs(history.start_date).format('ddd, DD MMM. YYYY')}
                     {history.end_date &&
-                      dayjs(history.end_date).format('- DD MM. YYYY')}
+                      dayjs(history.end_date).format(' - ddd, DD MMM. YYYY')}
                   </p>
                 }
               >
-                <div className="grid gap-2">
+                <div
+                  className={helpers.classNames(
+                    'grid grid-cols-1',
+                    'divide-y divider-gray-200'
+                  )}
+                >
                   {history.logs.map((i, key) => (
                     <Fragment key={key}>
                       {i.reference === 'vital' && (
@@ -125,6 +134,20 @@ export function History() {
                       )}
 
                       {i.reference === 'end' && <Visit data={i} />}
+
+                      {i.reference === 'triage' && <Triage data={i} />}
+
+                      {i.reference === 'prescription' && (
+                        <Prescription data={i} />
+                      )}
+
+                      {['admission', 'detention'].includes(i.reference) && (
+                        <Admission data={i} />
+                      )}
+
+                      {i.reference === 'dispense' && <Dispense data={i} />}
+
+                      {i.reference === 'dispense_print' && <Print data={i} />}
                     </Fragment>
                   ))}
                 </div>

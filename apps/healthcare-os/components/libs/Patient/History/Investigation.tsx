@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Accordion } from '@healthcareos/react';
+import { Accordion, Badge } from '@healthcareos/react';
 import dayjs from 'dayjs';
 
 import { HistoryLog, InvestigationHistoryModel } from '../../../../models/history'; // prettier-ignore
@@ -56,66 +56,72 @@ export function Investigation({ data }: InvestigationProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-green-700">Investigation</p>
-          <p className="text-sm font-bold">{data.details.investigation.name}</p>
+          <Badge className="bg-red-50 text-red-600">Investigation</Badge>
+          <p className="text-sm font-bold mt-1">
+            {data.details.investigation.name}
+          </p>
         </>
       }
     >
-      <div className="pb-2 border-b border-gray-200">
-        <div className="flex flex-col">
-          {requestItems.map((i, key) => (
-            <Fragment key={key}>
-              {i.value && (
-                <div className="flex gap-4" key={key}>
-                  <div className="flex-[0_0_120px]">
-                    <small className="text-muted text-sm">{i.label}:</small>
-                  </div>
-                  <small className="text-sm">{i.value}</small>
+      <div className="flex flex-col">
+        {requestItems.map((i, key) => (
+          <Fragment key={key}>
+            {i.value && (
+              <div className="flex gap-4" key={key}>
+                <div className="flex-[0_0_120px]">
+                  <small className="text-muted text-sm font-medium">
+                    {i.label}:
+                  </small>
                 </div>
-              )}
-            </Fragment>
-          ))}
-        </div>
-
-        {investigation.status === 'submitted' && (
-          <div className="mt-6">
-            <p className="text-sm font-medium">Results</p>
-            <div className="flex flex-col gap-2">
-              {submitItems.map((i, key) => (
-                <Fragment key={key}>
-                  {i.value && (
-                    <div className="flex gap-4">
-                      <div className="flex-[0_0_120px]">
-                        <small className="text-muted text-sm">{i.label}:</small>
-                      </div>
-                      <small className="text-sm">{i.value}</small>
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-
-              {investigation.attachment && (
-                <div className="flex gap-4">
-                  <div className="flex-[0_0_120px]">
-                    <small className="text-muted text-sm">Attachment:</small>
-                  </div>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={investigation.attachment}
-                    className="text-sm underline text-blue-700"
-                  >
-                    View attachment
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+                <small className="text-sm">{i.value}</small>
+              </div>
+            )}
+          </Fragment>
+        ))}
       </div>
+
+      {investigation.status === 'submitted' && (
+        <div className="mt-6">
+          <p className="text-sm font-medium">Results</p>
+          <div className="flex flex-col">
+            {submitItems.map((i, key) => (
+              <Fragment key={key}>
+                {i.value && (
+                  <div className="flex gap-4">
+                    <div className="flex-[0_0_120px]">
+                      <small className="text-muted text-sm font-medium">
+                        {i.label}:
+                      </small>
+                    </div>
+                    <small className="text-sm">{i.value}</small>
+                  </div>
+                )}
+              </Fragment>
+            ))}
+
+            {investigation.attachment && (
+              <div className="flex gap-4">
+                <div className="flex-[0_0_120px]">
+                  <small className="text-muted text-sm font-medium">
+                    Attachment:
+                  </small>
+                </div>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={investigation.attachment}
+                  className="text-sm underline text-blue-700"
+                >
+                  View attachment
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </Accordion.Item>
   );
 }

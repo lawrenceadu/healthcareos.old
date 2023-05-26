@@ -132,3 +132,24 @@ export interface PrescriptionPrintModel {
   created_at: string;
   details: PrescriptionModel['medicines'];
 }
+
+export interface DispenseModel {
+  id: string;
+  subtotal: number;
+  total: number;
+  date: string;
+  discount: number;
+  notes: number;
+  created_at: string;
+  created_by: UserModel;
+  location: LocationModel;
+  details: {
+    batch_no: string;
+    expiry_date: string;
+    id: string;
+    medicine: MedicineModel;
+    quantity: number;
+    total: number;
+    unit_price: number;
+  }[];
+}

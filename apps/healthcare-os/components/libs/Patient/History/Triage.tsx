@@ -2,20 +2,21 @@ import { Accordion, Badge } from '@healthcareos/react';
 import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
-import { HistoryLog } from '../../../../models/history';
+import { HistoryLog, TriageHistoryModel } from '../../../../models/history';
 
-export interface VisitProps {
-  data: Omit<HistoryLog, 'details'>;
+export interface Triage {
+  data: Omit<HistoryLog, 'details'> & { details: TriageHistoryModel };
 }
 
-function Visit({ data }: VisitProps) {
+function Triage({ data }: Triage) {
   /**
    * variables
    */
   const items = [
-    { label: 'Ended by', value: data.created_by.name || '--' },
+    { label: 'Triage', value: startCase(data.details.name) },
+    { label: 'Assigned by', value: data.created_by.name || '--' },
     {
-      label: 'Ended at',
+      label: 'Assigned at',
       value: dayjs(data.created_at).format('ddd DD, MMM YYYY @ hh:mma'),
     },
   ];
@@ -23,9 +24,18 @@ function Visit({ data }: VisitProps) {
   return (
     <Accordion.Item
       className="py-2"
-      header={<Badge className="bg-teal-50 text-teal-600">Visit ended</Badge>}
+      header={
+        <>
+          <Badge className="bg-pink-50 text-pink-600">
+            {startCase(data.reference)}
+          </Badge>
+          <p className="text-sm font-bold mt-1">
+            {startCase(data.details.name)}
+          </p>
+        </>
+      }
     >
-      <div className="flex flex-col pb-2 border-b border-gray-200">
+      <div className="flex flex-col">
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
             <div className="flex-[0_0_120px]">
@@ -41,4 +51,4 @@ function Visit({ data }: VisitProps) {
   );
 }
 
-export default Visit;
+export default Triage;

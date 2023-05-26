@@ -1,4 +1,6 @@
 import { InvestigationRequestModel } from './investigation';
+import { PrescriptionModel } from './medicine';
+import { TriageModel } from './triage';
 
 export interface HistoryModel {
   id: string;
@@ -18,7 +20,13 @@ export interface HistoryLog {
     | 'queue'
     | 'investigation'
     | 'invoice'
-    | 'end';
+    | 'end'
+    | 'triage'
+    | 'dispense_print'
+    | 'prescription'
+    | 'dispense'
+    | 'admission'
+    | 'detention';
   details: any;
   created_at: string;
   created_by: {
@@ -66,7 +74,10 @@ export interface ConsultationHistoryModel {
 }
 
 // eslint-disable-next-line
-export interface PrescriptionHistoryModel {}
+export interface PrescriptionHistoryModel extends PrescriptionModel {}
 
 // eslint-disable-next-line
 export interface InvestigationHistoryModel extends InvestigationRequestModel {}
+
+// eslint-disable-next-line
+export interface TriageHistoryModel extends TriageModel {}

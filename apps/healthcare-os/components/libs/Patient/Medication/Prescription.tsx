@@ -107,29 +107,33 @@ export function Prescription({
       }
       actions={
         <>
-          <Update prescription={prescription}>
-            {({ proceed }) => (
+          {prescription.status === 'pending' && (
+            <>
+              <Update prescription={prescription}>
+                {({ proceed }) => (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      proceed();
+                    }}
+                    className="btn-secondary !h-8 !px-4"
+                  >
+                    update
+                  </Button>
+                )}
+              </Update>
+
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  proceed();
+                  handleDelete();
                 }}
-                className="btn-secondary !h-8 !px-4"
+                className="!px-0 !h-auto"
               >
-                update
+                <DeleteIcon size={20} />
               </Button>
-            )}
-          </Update>
-
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete();
-            }}
-            className="!px-0 !h-auto"
-          >
-            <DeleteIcon size={20} />
-          </Button>
+            </>
+          )}
         </>
       }
       className="p-4 border border-gray-200 rounded-lg"

@@ -3,12 +3,12 @@ import { Paginate } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
-import { PrescriptionModel } from '../../../../models';
+import { PatientModel, PrescriptionModel } from '../../../../models';
 import { usePermissions } from '../../../../hooks';
 import Skeleton from '../../../../components/libs/Skeleton';
 import TableRow from './Prescriptions/TableRow';
 
-function Prescriptions() {
+function Prescriptions({ patient }: { patient?: PatientModel }) {
   /**
    * state
    */
@@ -27,11 +27,15 @@ function Prescriptions() {
     total: number;
   }>(
     canView &&
-      `/prescription?${queryString.stringify({
-        ...filters,
-        per_page: 10,
-        page: (filters?.page || 0) + 1,
-      })}`
+      `/prescription?${queryString.stringify(
+        {
+          ...filters,
+          per_page: 10,
+          patient: patient?.id,
+          page: (filters?.page || 0) + 1,
+        },
+        { skipEmptyString: true, skipNull: true }
+      )}`
   );
 
   /**
@@ -39,20 +43,18 @@ function Prescriptions() {
    */
   const prescriptions = data?.prescriptions || [];
 
-  console.log(prescriptions);
-
   return (
     <>
       <div className="overflow-x-auto mb-8">
         <table>
           <thead>
             <tr>
-              <th>Patient</th>
+              {!patient && <th>Patient</th>}
               <th>Medicines</th>
               <th>Prescribed by</th>
               <th>Prescription date</th>
               <th>Status</th>
-              <th className="text-center">Action</th>
+              {!patient && <th className="text-center">Action</th>}
             </tr>
           </thead>
           <tbody>
@@ -61,7 +63,7 @@ function Prescriptions() {
               <>
                 {!prescriptions.length && (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={6}>
                       <p className="text-center">No prescriptions yet</p>
                     </td>
                   </tr>
@@ -70,7 +72,10 @@ function Prescriptions() {
                 {!!prescriptions.length && (
                   <>
                     {prescriptions.map((prescription, key) => (
-                      <TableRow {...{ prescription, mutate }} key={key} />
+                      <TableRow
+                        {...{ prescription, patient, mutate }}
+                        key={key}
+                      />
                     ))}
                   </>
                 )}

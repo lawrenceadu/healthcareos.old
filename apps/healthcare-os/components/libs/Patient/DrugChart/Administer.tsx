@@ -22,6 +22,7 @@ function Administer({ mutate, children }: AdministerProps) {
    * state
    */
   const [show, setShow] = useState(false);
+  const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
 
   /**
    * hook
@@ -29,15 +30,10 @@ function Administer({ mutate, children }: AdministerProps) {
   const { patient } = usePatient();
 
   /**
-   * variables
-   */
-  const date = dayjs().format('YYYY-MM-DD');
-
-  /**
    * api
    */
   const { data, isLoading } = useSWR<{
-    prescriptions: PrescriptionModel['medicines'];
+    prescriptions: PrescriptionModel['medicines'] & { id: string };
   }>(
     show &&
       `/prescription/daily?${queryString.stringify({
@@ -53,139 +49,152 @@ function Administer({ mutate, children }: AdministerProps) {
       {children({ proceed: () => setShow(true) })}
 
       <Modal show={show} onHide={() => setShow(false)} header="Administer drug">
-        <Formik
-          validateOnMount
-          validationSchema={object({
-            patient: schema.requireString('Patient'),
-            date: schema.requireString('Date'),
-            medicines: schema.requireArray('Medicines').of(
-              object().shape({
-                id: schema.requireString('Medicine'),
-                time: schema.requireString('Time'),
-              })
-            ),
-          })}
-          initialValues={{
-            patient: patient.id,
-            date,
-            medicines: [],
-          }}
-          onSubmit={(params, { setSubmitting }) => {
-            administerDrugService(params)
-              .then(() => {
-                mutate();
-                toast.success('Drug administration recorded');
-                setShow(false);
-              })
-              .catch((error) => {
-                toast.error(error?.message || 'Unable to administer drugs');
-              })
-              .finally(() => setSubmitting(false));
-          }}
-        >
-          {({ values, isValid, isSubmitting, setFieldValue }) => {
-            return (
-              <Form>
-                <div className="p-6 divide-y divide-neutral-200">
-                  {isLoading &&
-                    Array.from({ length: 3 }, (_, i) => (
-                      <div className="py-3" key={i}>
-                        <div className="bg-neutral-200 animate-pulse h-[14px] w-full" />
-                      </div>
-                    ))}
+        <>
+          <Formik
+            validateOnMount
+            enableReinitialize
+            validationSchema={object({
+              patient: schema.requireString('Patient'),
+              date: schema.requireString('Date'),
+              medicines: schema.requireArray('Medicines').of(
+                object().shape({
+                  id: schema.requireString('Medicine'),
+                  time: schema.requireString('Time'),
+                })
+              ),
+            })}
+            initialValues={{
+              patient: patient.id,
+              date,
+              medicines: [],
+            }}
+            onSubmit={(params, { setSubmitting }) => {
+              administerDrugService(params)
+                .then(() => {
+                  mutate();
+                  toast.success('Drug administration recorded');
+                  setShow(false);
+                })
+                .catch((error) => {
+                  toast.error(error?.message || 'Unable to administer drugs');
+                })
+                .finally(() => setSubmitting(false));
+            }}
+          >
+            {({ values, isValid, isSubmitting, setFieldValue }) => {
+              return (
+                <Form>
+                  <div className="p-6 divide-y divide-neutral-200">
+                    <Field.Group name="date" withFormik={false} label="Date">
+                      <Field.Date
+                        name="date"
+                        value={date}
+                        setFieldValue={(name, value) =>
+                          setDate(value as string)
+                        }
+                      />
+                    </Field.Group>
 
-                  {prescriptions.map((prescription, key) => {
-                    const index = values.medicines.findIndex(
-                      (i) => i.id === prescription.medicine.id
-                    );
-                    const checked = index >= 0;
-
-                    return (
-                      <div
-                        key={key}
-                        className={helpers.classNames(
-                          'py-3',
-                          'flex items-center gap-2'
-                        )}
-                      >
-                        <Field.Checkbox
-                          checked={checked}
-                          className="!gap-0"
-                          onChange={({ currentTarget: { checked } }) => {
-                            if (checked) {
-                              setFieldValue('medicines', [
-                                ...values.medicines,
-                                { id: prescription.medicine.id, time: '' },
-                              ]);
-                            } else {
-                              setFieldValue(
-                                'medicines',
-                                values.medicines.filter(
-                                  ({ id }) => id !== prescription.medicine.id
-                                )
-                              );
-                            }
-                          }}
-                        />
-                        <div>
-                          <p className="font-medium">
-                            {prescription.medicine.name}
-                          </p>
-                          {!!prescription.administration_time.length && (
-                            <p className="text-muted text-xs">
-                              Dosage schedule:{' '}
-                              {prescription.administration_time.join(', ')}
-                            </p>
-                          )}
-                          {checked && (
-                            <Field.Group
-                              wrapperClassName="mt-1"
-                              name={`medicines.${index}.time`}
-                            >
-                              <Field.Date
-                                placeholder="h:m"
-                                name={`medicines.${index}.time`}
-                                setFieldValue={(name, value) =>
-                                  setFieldValue(
-                                    name,
-                                    dayjs(value as string).format('HH:mm')
-                                  )
-                                }
-                                options={{
-                                  enableTime: true,
-                                  noCalendar: true,
-                                  dateFormat: 'h:i K',
-                                }}
-                              />
-                            </Field.Group>
-                          )}
+                    {isLoading &&
+                      Array.from({ length: 3 }, (_, i) => (
+                        <div className="py-3" key={i}>
+                          <div className="bg-neutral-200 animate-pulse h-[14px] w-full" />
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="modal-footer">
-                  <Button
-                    type="button"
-                    className="btn-light"
-                    onClick={() => setShow(false)}
-                  >
-                    Cancel
-                  </Button>
+                      ))}
 
-                  <Button
-                    type="submit"
-                    disabled={!isValid}
-                    className="btn btn-primary"
-                    {...{ isSubmitting }}
-                  >
-                    Administer drug
-                  </Button>
-                </div>
-              </Form>
-            );
-          }}
-        </Formik>
+                    {prescriptions.map((prescription, key) => {
+                      const index = values.medicines.findIndex(
+                        (i) => i.id === prescription.id
+                      );
+                      const checked = index >= 0;
+
+                      return (
+                        <div
+                          key={key}
+                          className={helpers.classNames(
+                            'py-3',
+                            'flex items-center gap-2'
+                          )}
+                        >
+                          <Field.Checkbox
+                            checked={checked}
+                            className="!gap-0"
+                            onChange={({ currentTarget: { checked } }) => {
+                              if (checked) {
+                                setFieldValue('medicines', [
+                                  ...values.medicines,
+                                  { id: prescription.id, time: '' },
+                                ]);
+                              } else {
+                                setFieldValue(
+                                  'medicines',
+                                  values.medicines.filter(
+                                    ({ id }) => id !== prescription.id
+                                  )
+                                );
+                              }
+                            }}
+                          />
+                          <div>
+                            <p className="font-medium">
+                              {prescription.medicine.name}
+                            </p>
+                            {!!prescription.administration_time.length && (
+                              <p className="text-muted text-xs">
+                                Dosage schedule:{' '}
+                                {prescription.administration_time.join(', ')}
+                              </p>
+                            )}
+                            {checked && (
+                              <Field.Group
+                                wrapperClassName="mt-1"
+                                name={`medicines.${index}.time`}
+                              >
+                                <Field.Date
+                                  placeholder="h:m"
+                                  name={`medicines.${index}.time`}
+                                  setFieldValue={(name, value) =>
+                                    setFieldValue(
+                                      name,
+                                      dayjs(value as string).format('HH:mm')
+                                    )
+                                  }
+                                  options={{
+                                    enableTime: true,
+                                    noCalendar: true,
+                                    dateFormat: 'h:i K',
+                                  }}
+                                />
+                              </Field.Group>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="modal-footer">
+                    <Button
+                      type="button"
+                      className="btn-light"
+                      onClick={() => setShow(false)}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      disabled={!isValid}
+                      className="btn btn-primary"
+                      {...{ isSubmitting }}
+                    >
+                      Administer drug
+                    </Button>
+                  </div>
+                </Form>
+              );
+            }}
+          </Formik>
+        </>
       </Modal>
     </>
   );

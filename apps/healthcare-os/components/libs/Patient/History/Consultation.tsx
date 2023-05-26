@@ -85,11 +85,11 @@ export function Consultation({ data, isOngoing }: ConsultationProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-yellow-500">Consultation</p>
-          <p className="text-sm font-bold">{description}</p>
+          <Badge className="bg-green-50 text-green-600">Consultation</Badge>
+          <p className="text-sm font-bold mt-1">{description}</p>
         </>
       }
       actions={
@@ -138,10 +138,10 @@ export function Consultation({ data, isOngoing }: ConsultationProps) {
         </>
       }
     >
-      <div className="flex gap-2 flex-col pb-2 border-b border-gray-200">
+      <div className="flex gap-2 flex-col">
         {items.map((i, key) => (
           <div className="flex justify-between gap-4" key={key}>
-            <small className="text-muted text-sm">{i.label}</small>
+            <small className="text-muted text-sm font-medium">{i.label}</small>
             {typeof i.value === 'string' ? (
               <small className="text-sm font-medium">{i.value}</small>
             ) : (

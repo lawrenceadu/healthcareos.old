@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Accordion, Button, Confirm } from '@healthcareos/react';
+import { Accordion, Badge, Button, Confirm } from '@healthcareos/react';
 import { DeleteIcon } from '@healthcare/icons';
 import { startCase } from 'lodash';
 import { toast } from 'react-toastify';
@@ -99,11 +99,13 @@ export function Vitals({ data, isOngoing }: VitalsProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-red-600">{startCase(data.reference)}</p>
-          <p className="text-sm font-bold">{startCase(data.description)}</p>
+          <Badge className="bg-emerald-50 text-emerald-600">
+            {startCase(data.reference)}
+          </Badge>
+          <p className="text-sm font-bold mt-1">{startCase(data.description)}</p>
         </>
       }
       actions={
@@ -142,13 +144,15 @@ export function Vitals({ data, isOngoing }: VitalsProps) {
         </>
       }
     >
-      <div className="flex gap-2 flex-col pb-2 border-b border-gray-200">
+      <div className="flex gap-2 flex-col">
         {items.map((i, key) => (
           <Fragment key={key}>
             {i.value && (
               <div className="flex gap-4 justify-between" key={key}>
-                <small className="text-sm">{i.label}:</small>
                 <small className="text-muted font-medium text-sm">
+                  {i.label}:
+                </small>
+                <small className="text-sm">
                   {i.value}
                   {i?.unit}
                 </small>

@@ -14,7 +14,7 @@ function DrugChart() {
   /**
    * variables
    */
-  const format = 'YYYY/MM/DD';
+  const format = 'YYYY-MM-DD';
 
   /**
    * state

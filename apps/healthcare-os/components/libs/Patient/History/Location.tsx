@@ -1,4 +1,4 @@
-import { Accordion } from '@healthcareos/react';
+import { Accordion, Badge } from '@healthcareos/react';
 import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
@@ -23,15 +23,17 @@ function Location({ data }: LocationProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-green-700">{startCase(data.reference)}</p>
+          <Badge className="bg-gray-100 text-gray-700">
+            {startCase(data.reference)}
+          </Badge>
           <p className="text-sm font-bold">{startCase(data.details.name)}</p>
         </>
       }
     >
-      <div className="flex flex-col pb-2 border-b border-gray-200">
+      <div className="flex flex-col">
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
             <div className="flex-[0_0_120px]">

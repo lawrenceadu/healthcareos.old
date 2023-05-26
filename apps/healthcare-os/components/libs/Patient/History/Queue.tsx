@@ -1,4 +1,4 @@
-import { Accordion } from '@healthcareos/react';
+import { Accordion, Badge } from '@healthcareos/react';
 import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
@@ -23,11 +23,13 @@ function Queue({ data }: QueueProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-green-700">{startCase(data.reference)}</p>
-          <p className="text-sm font-bold">
+          <Badge className="bg-orange-50 text-orange-600">
+            {startCase(data.reference)}
+          </Badge>
+          <p className="text-sm font-bold mt-1">
             {startCase(data.details.location.name)}
           </p>
         </>
@@ -37,7 +39,9 @@ function Queue({ data }: QueueProps) {
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
             <div className="flex-[0_0_120px]">
-              <small className="text-muted text-sm">{i.label}:</small>
+              <small className="text-muted text-sm font-medium">
+                {i.label}:
+              </small>
             </div>
             <small className="text-sm">{i.value}</small>
           </div>

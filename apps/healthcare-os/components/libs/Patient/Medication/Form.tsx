@@ -152,7 +152,7 @@ function Add({
                         key={key}
                         className="grid gap-4 grid-cols-[minmax(0,1fr)_3rem]"
                       >
-                        <div className="grid gap-4 pb-4 border-b border-gray-200">
+                        <div className="grid grid-cols-1 gap-4 pb-4 border-b border-gray-200">
                           <div className="grid gap-4 lg:grid-cols-[400px_repeat(3,minmax(0,1fr))]">
                             <Field.Group
                               label="Medicine"

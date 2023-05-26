@@ -1,4 +1,4 @@
-import { Accordion } from '@healthcareos/react';
+import { Accordion, Badge } from '@healthcareos/react';
 import dayjs from 'dayjs';
 
 import { AllergyModel } from '../../../../models';
@@ -26,19 +26,21 @@ export function Allergy({ data }: AllergyProps) {
 
   return (
     <Accordion.Item
-      className="px-2"
+      className="py-2"
       header={
         <>
-          <p className="text-xs !text-green-700">Investigation</p>
-          <p className="text-sm font-bold">{data.description}</p>
+          <Badge className="bg-yellow-50 text-yellow-600">Allery</Badge>
+          <p className="text-sm font-bold mt-1">{data.details.symptoms}</p>
         </>
       }
     >
-      <div className="flex flex-col pb-2 border-b border-gray-200">
+      <div className="flex flex-col">
         {items.map((i, key) => (
           <div className="flex gap-4" key={key}>
             <div className="flex-[0_0_144px]">
-              <small className="text-muted text-sm">{i.label}:</small>
+              <small className="text-muted text-sm font-medium">
+                {i.label}:
+              </small>
             </div>
             <small className="text-sm">{i.value}</small>
           </div>
