@@ -27,10 +27,11 @@ export function Add({ children }: AddProps) {
         <div className="p-6">
           <Formik
             validateOnMount
+            enableReinitialize
             validationSchema={object({
               history: schema.requireString('History and examination'),
               diagnosis: schema
-                .requireArray('Diagnosis')
+                .requireArray('Diagnosis', false)
                 .of(schema.requireString('Diagnosis')),
               plan: schema.requireString('Plan', false),
             })}

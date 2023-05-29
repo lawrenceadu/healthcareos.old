@@ -49,7 +49,7 @@ export function Consultation({ params, children }: ConsultationProps) {
             history_examination: schema.requireString(
               'History and examination'
             ),
-            diagnosis: schema.requireArray('Diagnosis').of(
+            diagnosis: schema.requireArray('Diagnosis', false).of(
               object().shape({
                 label: schema.requireString('Label'),
                 value: schema.requireString('Value'),
@@ -60,7 +60,7 @@ export function Consultation({ params, children }: ConsultationProps) {
           initialValues={{
             plan: params?.plan || '',
             history_examination: params?.history_examination,
-            diagnosis: params?.diagnosis || [{ label: '', value: '' }],
+            diagnosis: params?.diagnosis || [],
           }}
           onSubmit={(data, { setSubmitting, setErrors }) => {
             // cleanup data

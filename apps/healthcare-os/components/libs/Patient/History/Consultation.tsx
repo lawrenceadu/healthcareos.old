@@ -89,7 +89,9 @@ export function Consultation({ data, isOngoing }: ConsultationProps) {
       header={
         <>
           <Badge className="bg-green-50 text-green-600">Consultation</Badge>
-          <p className="text-sm font-bold mt-1">{description}</p>
+          {description && (
+            <p className="text-sm font-bold mt-1">{description}</p>
+          )}
         </>
       }
       actions={
