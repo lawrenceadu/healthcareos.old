@@ -102,7 +102,6 @@ export function Investigation({
 
   return (
     <Accordion.Item
-      defaultOpen
       header={
         <p className="text-lg font-bold">{investigation.investigation.name}</p>
       }

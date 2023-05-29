@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction } from 'react';
+import { Form, Formik, FieldArray } from 'formik';
+import { AddIcon, DeleteIcon } from '@healthcare/icons';
+import { helpers, schema } from '@healthcare/utils';
 import { Button, Field } from '@healthcareos/react';
-import { Form, Formik } from 'formik';
 import { object } from 'yup';
-import { schema } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -24,27 +25,37 @@ export function Add({ onHide, setTab }: AddProps) {
   return (
     <Formik
       validateOnMount
+      enableReinitialize
       validationSchema={object({
-        investigation: object().shape({
-          label: schema.requireString('Label'),
-          value: schema.requireString('Value'),
-        }),
-        expected_date: schema.requireString('Expected date', false),
-        notes: schema.requireString('Notes', false),
+        investigations: schema.requireArray('Investigations').of(
+          object().shape({
+            investigation: object().shape({
+              label: schema.requireString('Label'),
+              value: schema.requireString('Value'),
+            }),
+            expected_date: schema.requireString('Expected date', false),
+            notes: schema.requireString('Notes', false),
+          })
+        ),
       })}
       initialValues={{
-        investigation: { label: '', value: '' },
-        expected_date: '',
-        notes: '',
+        investigations: [
+          {
+            investigation: { label: '', value: '' },
+            expected_date: '',
+            notes: '',
+          },
+        ],
       }}
       onSubmit={(
-        { investigation, ...params },
+        { investigations, ...params },
         { setSubmitting, setErrors, resetForm }
       ) => {
-        const data = { ...params, investigation: investigation.value };
-
         requestInvestigationService({
-          ...data,
+          investigations: investigations.map(({ investigation, ...rest }) => ({
+            ...rest,
+            id: investigation.value,
+          })),
           patient: patient.id,
         })
           .then(() => {
@@ -66,44 +77,100 @@ export function Add({ onHide, setTab }: AddProps) {
         setFieldTouched,
       }) => (
         <Form>
-          <div className="px-6 pb-6">
-            <div className="grid gap-6 lg:grid-cols-2 mb-6">
-              <Field.Group
-                name="investigation"
-                wrapperClassName="!mb-0"
-                label="Find investigation"
-              >
-                <SearchSelect.Investigations
-                  value={values.investigation}
-                  onChange={(value) => setFieldValue('investigation', value)}
-                />
-              </Field.Group>
+          <div
+            className={helpers.classNames(
+              'px-6 mb-6',
+              'divide-y divide-neutral-200'
+            )}
+          >
+            <FieldArray name="investigations">
+              {(helper) => (
+                <>
+                  {values.investigations.map((item, key) => (
+                    <div
+                      key={key}
+                      className={helpers.classNames(
+                        'py-6',
+                        !key ? '' : 'grid gap-4 grid-cols-[minmax(0,1fr)_3rem]'
+                      )}
+                    >
+                      <div>
+                        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
+                          <Field.Group
+                            wrapperClassName="!mb-0"
+                            label="Find investigation"
+                            name={`investigations.${key}.investigation.value`}
+                          >
+                            <SearchSelect.Investigations
+                              value={item.investigation}
+                              onChange={(value) =>
+                                setFieldValue(
+                                  `investigations.${key}.investigation`,
+                                  value
+                                )
+                              }
+                            />
+                          </Field.Group>
+                          <Field.Group
+                            label="Expected date"
+                            wrapperClassName="!mb-0"
+                            name={`investigations.${key}.expected_date`}
+                          >
+                            <Field.Date
+                              value={item.expected_date}
+                              name={`investigations.${key}.expected_date`}
+                              options={{
+                                enableTime: true,
+                                minDate: dayjs().startOf('day').toDate(),
+                              }}
+                              {...{ setFieldValue, setFieldTouched }}
+                            />
+                          </Field.Group>
+                        </div>
 
-              <Field.Group
-                name="expected_date"
-                label="Expected date"
-                wrapperClassName="!mb-0"
-              >
-                <Field.Date
-                  name="expected_date"
-                  value={values.expected_date}
-                  options={{
-                    enableTime: true,
-                    minDate: dayjs().startOf('day').toDate(),
-                  }}
-                  {...{ setFieldValue, setFieldTouched }}
-                />
-              </Field.Group>
-            </div>
+                        <Field.Group
+                          label="Notes"
+                          name={`investigations.${key}.notes`}
+                        >
+                          <Field.Input
+                            as="textarea"
+                            className="py-4"
+                            value={item.notes}
+                            name={`investigations.${key}.notes`}
+                          />
+                        </Field.Group>
+                      </div>
 
-            <Field.Group name="notes" label="Notes">
-              <Field.Input
-                as="textarea"
-                className="py-4"
-                name="notes"
-                value={values.notes}
-              />
-            </Field.Group>
+                      {key !== 0 && (
+                        <Button
+                          type="button"
+                          aria-label="Remove"
+                          className="!p-0 mt-6"
+                          onClick={() => helper.remove(key)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+
+                  <Button
+                    type="button"
+                    className="btn-light"
+                    onClick={() =>
+                      helper.push({
+                        investigation: { label: '', value: '' },
+                        expected_date: '',
+                        notes: '',
+                      })
+                    }
+                  >
+                    <AddIcon />
+                    <span>Add request</span>
+                  </Button>
+                </>
+              )}
+            </FieldArray>
           </div>
 
           <div className="px-6 py-3 border-t border-gray-200 flex gap-6 justify-end">

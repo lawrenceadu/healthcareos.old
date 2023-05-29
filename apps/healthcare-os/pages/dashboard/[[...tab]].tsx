@@ -65,7 +65,7 @@ function Index() {
       <FiltersProvider>
         <Tabs
           tabs={tabs}
-          activeKey={tab ? tab[0] : tabs[0].slug}
+          activeKey={tab ? tab[0] : tabs[0]?.slug}
           onSelect={(key) =>
             router.push({
               pathname: routes.dashboard.dashboard.index.replace('[tab]', key),
