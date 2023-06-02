@@ -69,7 +69,7 @@ export function Edit() {
       component: (props) => (
         <Onboarding.Institution
           {...props}
-          params={{ institution: patient.institution.id }}
+          params={{ institution: patient?.institution?.id }}
         />
       ),
     },

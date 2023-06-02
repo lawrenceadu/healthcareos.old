@@ -31,7 +31,7 @@ function Institution({ button, params, onSubmit }: InstitutionProps) {
           institution: schema.requireString('Institution', false),
         })}
         initialValues={{
-          institution: '',
+          institution: params?.institution || '',
         }}
         onSubmit={onSubmit}
       >

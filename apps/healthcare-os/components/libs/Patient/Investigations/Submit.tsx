@@ -1,9 +1,9 @@
 import { Fragment, ReactElement, useState } from 'react';
 import { Button, Field, FileUpload, Modal } from '@healthcareos/react';
-import { array, object, string, lazy } from 'yup';
 import { FieldArray, Form, Formik } from 'formik';
 import { DeleteIcon, PlusIcon } from '@healthcare/icons';
-import { schema } from '@healthcare/utils';
+import { helpers, schema } from '@healthcare/utils';
+import { object } from 'yup';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -80,9 +80,9 @@ export function Submit({
               results: schema.requireArray('Results', false).of(
                 object().shape({
                   label: schema.requireString('Label', false),
-                  value: lazy((value) =>
-                    Array.isArray(value) ? array().of(string()) : string()
-                  ),
+                  // value: lazy((value) =>
+                  //   Array.isArray(value) ? array().of(string()) : string()
+                  // ),
                 })
               ),
               report: schema.requireString('Report'),
@@ -97,7 +97,12 @@ export function Submit({
             initialValues={{
               results: parameters?.map((i) => ({
                 label: i.name,
-                value: i.type === 'text' ? '' : [],
+                value:
+                  i.type === 'text'
+                    ? ''
+                    : i.type === 'group'
+                    ? i.options?.map((i) => ({ label: i.label, value: '' }))
+                    : [],
               })) || [{ label: '', value: '' }],
               report: '',
               notes: '',
@@ -184,68 +189,135 @@ export function Submit({
                               )}
 
                               {parameters?.[key] && (
-                                <Field.Group
-                                  label={i.label}
-                                  wrapperClassName="!mb-0"
-                                  name={`results.${key}.value`}
-                                >
-                                  {parameters[key]?.type === 'text' && (
-                                    <Field.Input
-                                      {...(parameters[key]?.unit && {
-                                        value: (i.value as string).replace(
-                                          parameters[key].unit,
-                                          ''
-                                        ),
-                                        onChange: ({
-                                          currentTarget: { value },
-                                        }) => {
-                                          setFieldValue(
-                                            `results.${key}.value`,
-                                            `${value}${parameters[key].unit}`
-                                          );
-                                        },
-                                      })}
-                                      name={`results.${key}.value`}
-                                    />
+                                <>
+                                  {/* non group result capture */}
+                                  {['text', 'select', 'multi-select'].includes(
+                                    parameters[key]?.type
+                                  ) && (
+                                    <>
+                                      <Field.Group
+                                        label={i.label}
+                                        wrapperClassName="!mb-0"
+                                        name={`results.${key}.value`}
+                                      >
+                                        {parameters[key]?.type === 'text' && (
+                                          <Field.Input
+                                            name={`results.${key}.value`}
+                                            {...(parameters[key]?.unit && {
+                                              value: (
+                                                i.value as string
+                                              ).replace(
+                                                parameters[key].unit,
+                                                ''
+                                              ),
+                                              onChange: ({
+                                                currentTarget: { value },
+                                              }) => {
+                                                setFieldValue(
+                                                  `results.${key}.value`,
+                                                  `${value}${parameters[key].unit}`
+                                                );
+                                              },
+                                            })}
+                                          />
+                                        )}
+
+                                        {parameters[key]?.type === 'select' && (
+                                          <Field.Select
+                                            value={i.value}
+                                            onChange={({
+                                              value,
+                                            }: {
+                                              value: string;
+                                            }) =>
+                                              setFieldValue(
+                                                `results.${key}.value`,
+                                                value
+                                              )
+                                            }
+                                            options={parameters[key].options}
+                                          />
+                                        )}
+
+                                        {parameters[key]?.type ===
+                                          'multi-select' && (
+                                          <Field.Select
+                                            isMulti
+                                            value={i.value}
+                                            onChange={(i) =>
+                                              setFieldValue(
+                                                `results.${key}.value`,
+                                                i.map((i) => i.value)
+                                              )
+                                            }
+                                            options={parameters[key].options}
+                                          />
+                                        )}
+
+                                        {parameters[key]?.unit && (
+                                          <span className="block px-4 whitespace-nowrap">
+                                            {parameters[key].unit}
+                                          </span>
+                                        )}
+                                      </Field.Group>
+                                    </>
                                   )}
 
-                                  {parameters[key]?.type === 'select' && (
-                                    <Field.Select
-                                      value={i.value}
-                                      onChange={({
-                                        value,
-                                      }: {
-                                        value: string;
-                                      }) =>
-                                        setFieldValue(
-                                          `results.${key}.value`,
-                                          value
-                                        )
-                                      }
-                                      options={parameters[key].options}
-                                    />
-                                  )}
+                                  {/* for groups */}
+                                  {['group'].includes(
+                                    parameters[key]?.type
+                                  ) && (
+                                    <>
+                                      <div>
+                                        <p className="text-sm mb-2">
+                                          {parameters[key]?.name}
+                                        </p>
+                                        <div
+                                          className={helpers.classNames(
+                                            'p-4',
+                                            'grid grid-cols-1 gap-4',
+                                            'rounded-lg border border-neutral-200'
+                                          )}
+                                        >
+                                          {parameters[key]?.options?.map(
+                                            (item, _key) => (
+                                              <Field.Group
+                                                key={_key}
+                                                label={item.label}
+                                                wrapperClassName="!mb-0"
+                                                name={`results.${key}.value.${_key}.value`}
+                                              >
+                                                <Field.Input
+                                                  name={`results.${key}.value.${_key}.value`}
+                                                  {...(item?.unit && {
+                                                    value: (
+                                                      (i.value[_key] as any)
+                                                        .value as string
+                                                    ).replace(item.unit, ''),
+                                                    onChange: ({
+                                                      currentTarget: { value },
+                                                    }) => {
+                                                      setFieldValue(
+                                                        `results.${key}.value.${_key}.value`,
+                                                        `${value}${item.unit}`
+                                                      );
+                                                    },
+                                                  })}
+                                                />
 
-                                  {parameters[key]?.type === 'multi-select' && (
-                                    <Field.Select
-                                      isMulti
-                                      value={i.value}
-                                      onChange={(i) =>
-                                        setFieldValue(
-                                          `results.${key}.value`,
-                                          i.map((i) => i.value)
-                                        )
-                                      }
-                                      options={parameters[key].options}
-                                    />
+                                                {item?.unit && (
+                                                  <span className="block px-4 whitespace-nowrap">
+                                                    {item.unit}
+                                                  </span>
+                                                )}
+                                              </Field.Group>
+                                            )
+                                          )}
+                                        </div>
+                                      </div>
+                                    </>
                                   )}
-
-                                  {parameters[key]?.unit && (
-                                    <span className="block px-4">
-                                      {parameters[key].unit}
-                                    </span>
-                                  )}
-                                </Field.Group>
+                                </>
                               )}
                             </div>
                           ))}

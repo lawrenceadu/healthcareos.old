@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Field } from '@healthcareos/react';
+import { Field, Paginate } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { MedicineInventoryModel } from '../../../../models';
-import { useLocations } from '../../../../hooks';
-import DropdownFilter from '../../../libs/DropdownFilter';
 import TableRow from './Inventory/TableRow';
 import Skeleton from '../../../libs/Skeleton';
 
@@ -18,12 +16,12 @@ function Inventory() {
   /**
    * hooks
    */
-  const locations = useLocations();
+  // const locations = useLocations();
 
   /**
    * api
    */
-  const { data, error, mutate } = useSWR<{
+  const { data, error } = useSWR<{
     medicines: MedicineInventoryModel[];
     total: number;
   }>(
@@ -42,19 +40,14 @@ function Inventory() {
   return (
     <>
       <div className="grid md:flex gap-4 mb-4">
-        <Field.Search onSearch={() => null} />
-
-        <DropdownFilter
-          name="All locations"
-          value={filters?.location}
-          options={locations.map((i) => ({ label: i.name, value: i.id }))}
-          setValue={(value) =>
-            setFilters((filters) => ({ ...filters, location: value }))
+        <Field.Search
+          onSearch={(search) =>
+            setFilters((filters) => ({ ...filters, search }))
           }
         />
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-8">
         <table>
           <thead>
             <tr>
@@ -83,6 +76,16 @@ function Inventory() {
           </tbody>
         </table>
       </div>
+
+      {data && (
+        <div className="flex justify-end">
+          <Paginate
+            page={filters?.page}
+            pageCount={Math.ceil(data.total / 10)}
+            setPage={(page) => setFilters((filters) => ({ ...filters, page }))}
+          />
+        </div>
+      )}
     </>
   );
 }

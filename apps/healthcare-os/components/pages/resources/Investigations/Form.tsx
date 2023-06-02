@@ -38,18 +38,13 @@ function Form({ mutate, children, params }: FormProps) {
             name: schema.requireString('Name'),
             code: schema.requireString('Type'),
             description: schema.requireString('Description'),
-            params: array().of(
+            parameters: array().of(
               object().shape({
                 name: schema.requireString('Name'),
                 type: schema.requireString('Type'),
                 unit: schema.requireString('Unit', false),
                 required: bool(),
-                options: array().of(
-                  object().shape({
-                    label: schema.requireString('Label'),
-                    value: schema.requireString('Value'),
-                  })
-                ),
+                options: array(),
               })
             ),
           })}
@@ -87,7 +82,7 @@ function Form({ mutate, children, params }: FormProps) {
             }
           }}
         >
-          {({ values, isValid, isSubmitting, setFieldValue }) => (
+          {({ errors, values, isValid, isSubmitting, setFieldValue }) => (
             <BaseForm>
               <div className="p-6">
                 <Field.Group name="name" label="Name">
@@ -117,7 +112,7 @@ function Form({ mutate, children, params }: FormProps) {
                             key={key}
                             className="pb-4 border-b border-gray-200"
                           >
-                            <div className="grid gap-4 md:grid-cols-[repeat(4,minmax(0,1fr))_3rem]">
+                            <div className="grid gap-4 md:grid-cols-[repeat(3,minmax(0,1fr))_3rem]">
                               <Field.Group
                                 label="Field name"
                                 wrapperClassName="!mb-0"
@@ -140,6 +135,7 @@ function Form({ mutate, children, params }: FormProps) {
                                       label: 'Multi-select',
                                       value: 'multi-select',
                                     },
+                                    { label: 'Group', value: 'group' },
                                   ]}
                                   onChange={({ value }: { value: string }) => {
                                     setFieldValue(
@@ -154,11 +150,15 @@ function Form({ mutate, children, params }: FormProps) {
                                     }
 
                                     if (
-                                      ['select', 'multi-select'].includes(value)
+                                      [
+                                        'group',
+                                        'select',
+                                        'multi-select',
+                                      ].includes(value)
                                     ) {
                                       setFieldValue(
                                         `parameters.${key}.options`,
-                                        [{ label: '', value: '' }]
+                                        [{ label: '' }]
                                       );
                                       setFieldValue(
                                         `parameters.${key}.unit`,
@@ -174,24 +174,11 @@ function Form({ mutate, children, params }: FormProps) {
                                 name={`parameters.${key}.unit`}
                                 disabled={param.type !== 'text'}
                               >
-                                <Field.Input name={`parameters.${key}.unit`} />
+                                <Field.Input
+                                  name={`parameters.${key}.unit`}
+                                  value={param.unit || ''}
+                                />
                               </Field.Group>
-
-                              <div>
-                                <Field.Toggle
-                                  className="gap-4 mt-9 mx-auto"
-                                  name={`parameters.${key}.required`}
-                                  checked={param.required}
-                                  onChange={(checked) =>
-                                    setFieldValue(
-                                      `parameters.${key}.required`,
-                                      checked
-                                    )
-                                  }
-                                >
-                                  <span>Required</span>
-                                </Field.Toggle>
-                              </div>
 
                               <div>
                                 <Button
@@ -203,7 +190,8 @@ function Form({ mutate, children, params }: FormProps) {
                                 </Button>
                               </div>
                             </div>
-                            {['select', 'multi-select'].includes(
+
+                            {['group', 'select', 'multi-select'].includes(
                               param.type
                             ) && (
                               <FieldArray name={`parameters.${key}.options`}>
@@ -215,23 +203,46 @@ function Form({ mutate, children, params }: FormProps) {
                                         className="grid gap-4 grid-cols-3"
                                       >
                                         <Field.Group
-                                          label="Label"
                                           wrapperClassName="!mb-0"
                                           name={`parameters.${key}.options.${index}.label`}
+                                          label={
+                                            param.type === 'group'
+                                              ? 'Sub field name'
+                                              : 'Label'
+                                          }
                                         >
                                           <Field.Input
+                                            value={option.label || ''}
                                             name={`parameters.${key}.options.${index}.label`}
                                           />
                                         </Field.Group>
-                                        <Field.Group
-                                          label="Value"
-                                          wrapperClassName="!mb-0"
-                                          name={`parameters.${key}.options.${index}.value`}
-                                        >
-                                          <Field.Input
+
+                                        {param.type !== 'group' && (
+                                          <Field.Group
+                                            label="Value"
+                                            wrapperClassName="!mb-0"
                                             name={`parameters.${key}.options.${index}.value`}
-                                          />
-                                        </Field.Group>
+                                          >
+                                            <Field.Input
+                                              value={option.value || ''}
+                                              name={`parameters.${key}.options.${index}.value`}
+                                            />
+                                          </Field.Group>
+                                        )}
+
+                                        {param.type === 'group' && (
+                                          <Field.Group
+                                            label="Unit"
+                                            wrapperClassName="!mb-0"
+                                            name={`parameters.${key}.options.${index}.unit`}
+                                          >
+                                            <Field.Input
+                                              value={option.unit || ''}
+                                              name={`parameters.${key}.options.${index}.unit`}
+                                            />
+                                          </Field.Group>
+                                        )}
+
                                         {!!index && (
                                           <div className="mt-6">
                                             <Button
@@ -251,11 +262,15 @@ function Form({ mutate, children, params }: FormProps) {
                                         type="button"
                                         className="btn-light !text-sm"
                                         onClick={() =>
-                                          helper.push({ label: '', value: '' })
+                                          helper.push({ label: '' })
                                         }
                                       >
                                         <AddIcon size={18} />
-                                        <span>Add Options</span>
+                                        <span>
+                                          {param.type === 'group'
+                                            ? 'Add sub field'
+                                            : 'Add Options'}
+                                        </span>
                                       </Button>
                                     </div>
                                   </div>

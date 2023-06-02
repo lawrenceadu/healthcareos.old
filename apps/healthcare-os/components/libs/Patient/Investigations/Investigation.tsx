@@ -55,7 +55,31 @@ export function Investigation({
             value: (() => {
               try {
                 const i = JSON.parse(item.value);
-                return i.join(', ');
+
+                if (i[0]?.value) {
+                  return (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            {i.map((j, key) => (
+                              <th key={key}>{j.label}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {i.map((j, key) => (
+                              <td key={key}>{j.value}</td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                } else {
+                  return i.join(', ');
+                }
               } catch (error) {
                 return item.value;
               }
@@ -102,6 +126,7 @@ export function Investigation({
 
   return (
     <Accordion.Item
+      defaultOpen
       header={
         <p className="text-lg font-bold">{investigation.investigation.name}</p>
       }
@@ -140,7 +165,7 @@ export function Investigation({
                   <div className="flex-[0_0_120px]">
                     <small className="text-muted text-sm">{i.label}:</small>
                   </div>
-                  <small className="text-sm">{i.value}</small>
+                  <div className="text-sm w-full">{i.value}</div>
                 </div>
               )}
             </Fragment>
@@ -159,7 +184,7 @@ export function Investigation({
                     <div className="flex-[0_0_120px]">
                       <small className="text-muted text-sm">{i.label}:</small>
                     </div>
-                    <small className="text-sm">{i.value}</small>
+                    <div className="text-sm w-full">{i.value}</div>
                   </div>
                 )}
               </Fragment>

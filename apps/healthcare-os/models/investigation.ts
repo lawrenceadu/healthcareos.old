@@ -8,7 +8,7 @@ export interface InvestigationModel {
     type: string;
     unit: string;
     required: boolean;
-    options: { label: ''; value: '' }[];
+    options: any[];
   }[];
 }
 

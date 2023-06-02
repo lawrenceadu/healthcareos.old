@@ -37,7 +37,30 @@ export function Investigation({ data }: InvestigationProps) {
             value: (() => {
               try {
                 const i = JSON.parse(item.value);
-                return i.join(', ');
+                if (i[0]?.value) {
+                  return (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr>
+                            {i.map((j, key) => (
+                              <th key={key}>{j.label}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {i.map((j, key) => (
+                              <td key={key}>{j.value}</td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                } else {
+                  return i.join(', ');
+                }
               } catch (error) {
                 return item.value;
               }
@@ -76,7 +99,7 @@ export function Investigation({ data }: InvestigationProps) {
                     {i.label}:
                   </small>
                 </div>
-                <small className="text-sm">{i.value}</small>
+                <div className="text-sm">{i.value}</div>
               </div>
             )}
           </Fragment>
@@ -96,7 +119,7 @@ export function Investigation({ data }: InvestigationProps) {
                         {i.label}:
                       </small>
                     </div>
-                    <small className="text-sm">{i.value}</small>
+                    <div className="text-sm">{i.value}</div>
                   </div>
                 )}
               </Fragment>

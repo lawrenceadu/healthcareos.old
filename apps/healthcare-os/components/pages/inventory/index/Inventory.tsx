@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Button, Dropdown, Field } from '@healthcareos/react';
-import { ChevronDownIcon } from '@healthcare/icons';
+import { Field, Paginate } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { ItemInventoryModel } from '../../../../models';
 import { useLocations } from '../../../../hooks';
 import DropdownFilter from '../../../libs/DropdownFilter';
+import Skeleton from '../../../libs/Skeleton';
 import TableRow from './Inventory/TableRow';
 
 function Inventory() {
@@ -54,7 +54,7 @@ function Inventory() {
         />
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-8">
         <table>
           <thead>
             <tr>
@@ -63,12 +63,36 @@ function Inventory() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, key) => (
-              <TableRow key={key} {...{ item }} />
-            ))}
+            {!data && !error && <Skeleton.Table count={2} />}
+
+            {data && (
+              <>
+                {!items.length && (
+                  <tr>
+                    <td colSpan={2}>
+                      <p className="text-center">No inventory yet</p>
+                    </td>
+                  </tr>
+                )}
+
+                {items.map((item, key) => (
+                  <TableRow key={key} {...{ item }} />
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>
+
+      {data && (
+        <div className="flex justify-end">
+          <Paginate
+            page={filters?.page}
+            pageCount={Math.ceil(data.total / 10)}
+            setPage={(page) => setFilters((filters) => ({ ...filters, page }))}
+          />
+        </div>
+      )}
     </>
   );
 }
