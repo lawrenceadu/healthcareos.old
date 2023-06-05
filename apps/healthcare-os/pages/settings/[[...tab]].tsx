@@ -5,8 +5,9 @@ import FiltersProvider from '../../contexts/Filters';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
 
-import Profile from '../../components/pages/settings/Profile';
 import Password from '../../components/pages/settings/Password';
+import Company from '../../components/pages/settings/Company';
+import Profile from '../../components/pages/settings/Profile';
 
 function Index() {
   /**
@@ -19,6 +20,7 @@ function Index() {
    * variables
    */
   const tabs = [
+    { name: 'Company', slug: 'company', component: Company },
     { name: 'Profile', slug: 'profile', component: Profile },
     { name: 'Password', slug: 'password', component: Password },
   ];

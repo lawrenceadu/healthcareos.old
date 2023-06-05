@@ -21,3 +21,10 @@ export const updateLocationService = (payload: object, id: string) =>
 export const deleteLocationService = (id: string) =>
   http.delete<never, any>(`/location/${id}`);
 // end of location
+
+// facility
+export const updateFacilityService = (payload: object) =>
+  http.post<never, any>('/facility', payload, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+// end of facility

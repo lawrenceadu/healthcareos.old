@@ -10,6 +10,7 @@ export interface FacilityModel {
   currency_symbol: string;
   created_at: string;
   active: boolean;
+  nhis_record_number: string;
 
   role: {
     id: string;

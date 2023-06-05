@@ -53,7 +53,7 @@ function TableRow({ department, mutate }) {
   return (
     <tr>
       <td>{department.name}</td>
-      <td>{department.head.name}</td>
+      <td>{department?.head?.name || '--'}</td>
       <td>{department.created_by.name}</td>
       <td>{dayjs(department.created_at).format('ddd DD, MMM YYYY')}</td>
       <td>

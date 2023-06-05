@@ -243,9 +243,19 @@ export function Layout({
             >
               <div className="flex items-center gap-2 text-primary">
                 <div className="w-10 h-10 rounded-full bg-primary flex">
-                  <Icon.HeartHandIcon className="text-white m-auto" />
+                  {store?.facility?.logo ? (
+                    <Image
+                      alt="Logo"
+                      width={40}
+                      height={40}
+                      src={store?.facility?.logo || ''}
+                      className="object-cover object-center rounded-full"
+                    />
+                  ) : (
+                    <Icon.HeartHandIcon className="text-white m-auto" />
+                  )}
                 </div>
-                <p className="font-bold">{process.env.NX_APP_NAME}</p>
+                <p className="font-bold truncate">{store?.facility?.name}</p>
               </div>
 
               <div>

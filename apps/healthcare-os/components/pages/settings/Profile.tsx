@@ -139,7 +139,7 @@ export default function Profile() {
             <Button
               type="submit"
               disabled={!isValid}
-              className="btn btn-primary"
+              className="btn btn-primary w-full"
               onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
