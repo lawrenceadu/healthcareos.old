@@ -42,9 +42,9 @@ function Form({ mutate, children, params }: FormProps) {
               object().shape({
                 name: schema.requireString('Name'),
                 type: schema.requireString('Type'),
-                unit: schema.requireString('Unit', false),
-                required: bool(),
-                options: array(),
+                unit: schema.requireString('Unit', false).nullable(),
+                required: bool().nullable(),
+                options: array().nullable(),
               })
             ),
           })}
