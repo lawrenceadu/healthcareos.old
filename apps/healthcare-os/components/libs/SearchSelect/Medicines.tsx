@@ -10,9 +10,15 @@ export interface MedicinesProps {
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
+  withSystem?: boolean;
 }
 
-function Medicines({ value, disabled, onChange }: MedicinesProps) {
+function Medicines({
+  value,
+  disabled,
+  onChange,
+  withSystem = false,
+}: MedicinesProps) {
   /**
    *
    * @param search
@@ -26,6 +32,7 @@ function Medicines({ value, disabled, onChange }: MedicinesProps) {
             search,
             page: 1,
             per_page: 30,
+            system: withSystem,
           })}`
         )
         .then(({ medicines }: { medicines: MedicineModel[] }) => {

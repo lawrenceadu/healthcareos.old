@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Accordion, Button, Field } from '@healthcareos/react';
 import { PlusIcon } from '@healthcare/icons';
+import { helpers } from '@healthcare/utils';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { usePatient, usePermissions } from '../../../hooks';
 import { InvoiceModel } from '../../../models';
 import AddForm from './Invoice/Add';
-import Float from '../Float';
 import Item from './Invoice/Item';
 
 export function Invoice() {
@@ -49,10 +49,30 @@ export function Invoice() {
 
   return (
     <div>
-      <div className="flex gap-4 items-center mb-6">
+      <div
+        className={helpers.classNames(
+          'mb-6',
+          'flex flex-col gap-4 items-center',
+          'md:flex-row md:justify-between'
+        )}
+      >
         <Field.Search
           onSearch={(key) => setFilters({ ...filters, search: key })}
         />
+
+        {canAdd && (
+          <AddForm {...{ mutate }}>
+            {({ proceed }) => (
+              <Button
+                onClick={() => proceed()}
+                className="btn-primary w-full md:w-auto"
+              >
+                <PlusIcon />
+                <span>Create invoice</span>
+              </Button>
+            )}
+          </AddForm>
+        )}
       </div>
 
       {!data && !error && (
@@ -77,19 +97,6 @@ export function Invoice() {
             </Accordion>
           )}
         </>
-      )}
-
-      {canAdd && (
-        <Float>
-          <AddForm {...{ mutate }}>
-            {({ proceed }) => (
-              <Button onClick={() => proceed()} className="btn-primary">
-                <PlusIcon />
-                <span>Create invoice</span>
-              </Button>
-            )}
-          </AddForm>
-        </Float>
       )}
     </div>
   );

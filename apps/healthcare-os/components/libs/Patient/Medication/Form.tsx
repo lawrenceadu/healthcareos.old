@@ -160,6 +160,7 @@ function Add({
                               name={`medicines.${key}.medicine.label`}
                             >
                               <SearchSelect.Medicines
+                                withSystem
                                 value={pres.medicine}
                                 onChange={(value) =>
                                   setFieldValue(

@@ -7,11 +7,13 @@ import { Group } from '../Group/Group';
 import { Input } from '../Input/Input';
 
 export interface SearchProps extends HtmlHTMLAttributes<HTMLInputElement> {
+  value?: string;
   delay?: number;
   onSearch: (search: string) => void;
 }
 
 export function Search({
+  value,
   delay = 500,
   onSearch,
   className,
@@ -21,7 +23,7 @@ export function Search({
   /**
    * state
    */
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>(() => value || '');
 
   /**
    * function

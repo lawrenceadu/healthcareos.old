@@ -7,7 +7,6 @@ import useSWR from 'swr';
 import { usePatient } from '../../../hooks';
 import { NoteModel } from '../../../models';
 import AddForm from './Notes/Add';
-import Float from '../Float';
 import dayjs from 'dayjs';
 
 export function Notes() {
@@ -69,6 +68,20 @@ export function Notes() {
         />
       </div> */}
 
+      <div className="flex justify-end mb-6">
+        <AddForm {...{ mutate }}>
+          {({ proceed }) => (
+            <Button
+              onClick={() => proceed()}
+              className={helpers.classNames('btn-primary')}
+            >
+              <PlusIcon />
+              <span>Add notes</span>
+            </Button>
+          )}
+        </AddForm>
+      </div>
+
       <Accordion className="flex flex-col gap-4">
         {items.map((item, key) => (
           <Accordion.Item
@@ -89,20 +102,6 @@ export function Notes() {
           </Accordion.Item>
         ))}
       </Accordion>
-
-      <Float>
-        <AddForm {...{ mutate }}>
-          {({ proceed }) => (
-            <Button
-              onClick={() => proceed()}
-              className={helpers.classNames('btn-primary')}
-            >
-              <PlusIcon />
-              <span>Add notes</span>
-            </Button>
-          )}
-        </AddForm>
-      </Float>
     </>
   );
 }

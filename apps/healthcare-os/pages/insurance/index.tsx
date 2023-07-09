@@ -1,0 +1,86 @@
+import { Field, Paginate } from '@healthcareos/react';
+import { useSession } from '@healthcare/utils';
+import useSWR from 'swr';
+
+import { InsuranceClaimModel } from '../../models';
+import Skeleton from '../../components/libs/Skeleton';
+import TableRow from '../../components/pages/insurance/TableRow';
+import Layout from '../../components/libs/Layout';
+
+function Index() {
+  /**
+   * state
+   */
+  const [filters, setFilters] = useSession<any>('insurance');
+
+  /**
+   * api
+   */
+  const { data, mutate, isLoading } = useSWR<{
+    insurances: InsuranceClaimModel[];
+    total: number;
+  }>(`/insurance/claims`);
+
+  /**
+   * variables
+   */
+  const insurances = data?.insurances || [];
+
+  return (
+    <Layout title="Insurance claims">
+      <div className="mb-6 flex">
+        <Field.Search
+          value={filters?.search}
+          onSearch={(search) => {
+            setFilters({ ...filters, search });
+          }}
+        />
+      </div>
+
+      <div className="overflow-x-auto mb-8">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Patient</th>
+              <th>Insurance Type</th>
+              <th>Status</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading && <Skeleton.Table count={5} />}
+
+            {data && (
+              <>
+                {!insurances.length && (
+                  <tr>
+                    <td colSpan={10}>
+                      <p className="text-center">No insurance claims yet</p>
+                    </td>
+                  </tr>
+                )}
+
+                {insurances.map((insurance, key) => (
+                  <TableRow key={key} {...{ insurance, mutate }} />
+                ))}
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* {data && ( */}
+      <div className="flex justify-end">
+        <Paginate
+          page={filters?.page || 0}
+          pageCount={Math.ceil(data?.total || 10 / 10)}
+          setPage={(page) => setFilters({ ...filters, page })}
+        />
+      </div>
+      {/* )} */}
+    </Layout>
+  );
+}
+
+export default Index;

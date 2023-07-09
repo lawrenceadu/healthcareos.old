@@ -53,8 +53,7 @@
       @apply bg-gray-50;
 
       th {
-        font-weight: 600;
-        @apply px-6 py-3;
+        @apply px-6 py-3 font-semibold capitalize;
       }
     }
 

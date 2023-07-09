@@ -1,15 +1,12 @@
 import { useRouter } from 'next/router';
 import { Tabs } from '@healthcareos/react';
 
-import Layout from '../../components/libs/Layout';
-import routes from '../../routes';
-
-import FiltersProvider from '../../contexts/Filters';
-
 import { usePermissions } from '../../hooks';
 import IncomeAndExpenditure from '../../components/pages/dashboard/IncomeAndExpenditure';
+import FiltersProvider from '../../contexts/Filters';
 import Dashboard from '../../components/pages/dashboard/Dashboard';
-// import DHIMS from '../../components/pages/dashboard/DHIMS';
+import Layout from '../../components/libs/Layout';
+import routes from '../../routes';
 
 function Index() {
   /**

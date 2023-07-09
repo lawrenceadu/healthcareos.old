@@ -163,6 +163,15 @@ export function Layout({
           },
         ]
       : []),
+    ...(process.env['NX_ENV'] === 'local'
+      ? [
+          {
+            name: 'Insurance claims',
+            icon: Icon.CoinsHandIcon,
+            link: routes.dashboard.insurance.index,
+          },
+        ]
+      : []),
     ...(canViewResource
       ? [
           {

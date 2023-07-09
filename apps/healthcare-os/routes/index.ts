@@ -46,6 +46,10 @@ const routes = {
     invoices: {
       index: '/invoices',
     },
+    insurance: {
+      index: '/insurance',
+      details: '/insurance/[id]/details',
+    },
     resources: {
       index: '/resources/[tab]',
     },

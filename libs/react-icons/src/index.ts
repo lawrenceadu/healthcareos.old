@@ -36,6 +36,7 @@ export { default as UserEditIcon } from './icons/UserEdit';
 export { default as ArrowDownIcon } from './icons/ArrowDown';
 export { default as ArrowLeftIcon } from './icons/ArrowLeft';
 export { default as ChevronUpIcon } from './icons/ChevronUp';
+export { default as CoinsHandIcon } from './icons/CoinsHand';
 export { default as DashboardIcon } from './icons/Dashboard';
 export { default as DotsHorizIcon } from './icons/DotsHoriz';
 export { default as HeartBookIcon } from './icons/HeartBook';

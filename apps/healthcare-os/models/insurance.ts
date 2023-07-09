@@ -10,3 +10,11 @@ export interface InsuranceModel {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface InsuranceClaimModel {
+  uuid: string;
+  total: string;
+  patient_id: number;
+  insurance_id: number;
+  created_by: number;
+}
