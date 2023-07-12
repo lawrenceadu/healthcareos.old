@@ -6,6 +6,7 @@ import { InsuranceClaimModel } from '../../models';
 import Skeleton from '../../components/libs/Skeleton';
 import TableRow from '../../components/pages/insurance/TableRow';
 import Layout from '../../components/libs/Layout';
+import queryString from 'query-string';
 
 function Index() {
   /**
@@ -17,14 +18,18 @@ function Index() {
    * api
    */
   const { data, mutate, isLoading } = useSWR<{
-    insurances: InsuranceClaimModel[];
+    claims: InsuranceClaimModel[];
     total: number;
-  }>(`/insurance/claims`);
+  }>(
+    `/insurance?${queryString.stringify({
+      ...filters,
+    })}`
+  );
 
   /**
    * variables
    */
-  const insurances = data?.insurances || [];
+  const claims = data?.claims || [];
 
   return (
     <Layout title="Insurance claims">
@@ -41,9 +46,9 @@ function Index() {
         <table>
           <thead>
             <tr>
-              <th>Reference</th>
               <th>Patient</th>
-              <th>Insurance Type</th>
+              <th>Visit</th>
+              <th>Insurance</th>
               <th>Status</th>
               <th>Total</th>
             </tr>
@@ -53,7 +58,7 @@ function Index() {
 
             {data && (
               <>
-                {!insurances.length && (
+                {!claims.length && (
                   <tr>
                     <td colSpan={10}>
                       <p className="text-center">No insurance claims yet</p>
@@ -61,8 +66,8 @@ function Index() {
                   </tr>
                 )}
 
-                {insurances.map((insurance, key) => (
-                  <TableRow key={key} {...{ insurance, mutate }} />
+                {claims.map((claim, key) => (
+                  <TableRow key={key} {...{ claim, mutate }} />
                 ))}
               </>
             )}

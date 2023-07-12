@@ -173,7 +173,7 @@ export function Consultation({ params, children }: ConsultationProps) {
                 </Field.Group>
               </div>
 
-              <div className="px-6 py-3 flex gap-6 justify-end border-t border-gray-200">
+              <div className="modal-footer">
                 <Button
                   type="button"
                   className="btn-light"

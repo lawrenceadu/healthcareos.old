@@ -1,3 +1,8 @@
+import { DiagnosisModel } from './diagnosis';
+import { InvoiceModel } from './invoice';
+import { PatientModel } from './patient';
+import { UserModel } from './user';
+
 export interface InsuranceModel {
   id: string;
   type: string;
@@ -12,9 +17,32 @@ export interface InsuranceModel {
 }
 
 export interface InsuranceClaimModel {
-  uuid: string;
+  insurance: InsuranceModel;
+  patient: PatientModel;
+  status: string;
   total: string;
-  patient_id: number;
-  insurance_id: number;
-  created_by: number;
+  visit: {
+    id: string;
+    created_by: UserModel;
+    patient: PatientModel;
+    invoices: InvoiceModel[];
+    diagnoses: DiagnosisModel[];
+    start_date: string;
+    end_date: string;
+  };
+  claim: {
+    id: string;
+    diagnoses: DiagnosisModel[];
+    notes: string;
+    invoices: InvoiceModel[];
+    patient: PatientModel;
+    history: {
+      status: string;
+      notes: string;
+      id: string;
+      created_by: UserModel;
+      attachment: string;
+      created_at: string;
+    }[];
+  };
 }

@@ -85,7 +85,7 @@ export function Submit({
                   // ),
                 })
               ),
-              report: schema.requireString('Report'),
+              report: schema.requireString('Report', false),
               notes: schema.requireString('Notes', false),
               attachemt: schema.requireFile({
                 size: 10,
