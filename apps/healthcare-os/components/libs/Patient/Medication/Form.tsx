@@ -94,7 +94,9 @@ function Add({
           ...data,
           medicines: medicines.map(({ medicine, ...med }) => ({
             ...med,
-            id: medicine.value,
+            ...(medicine.value === medicine.label
+              ? { id: 'new', name: medicine.label }
+              : { id: medicine.value }),
           })),
         };
 

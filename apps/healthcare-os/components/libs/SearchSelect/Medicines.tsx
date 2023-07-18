@@ -1,6 +1,7 @@
 import { debounce } from 'lodash';
 import { Field } from '@healthcareos/react';
 import { http } from '@healthcare/utils';
+import AsyncCreatableSelect from 'react-select/async-creatable';
 import AsyncSelect from 'react-select/async';
 import queryString from 'query-string';
 
@@ -19,6 +20,11 @@ function Medicines({
   onChange,
   withSystem = false,
 }: MedicinesProps) {
+  /**
+   * variables
+   */
+  const Select = withSystem ? AsyncCreatableSelect : AsyncSelect;
+
   /**
    *
    * @param search
@@ -45,7 +51,7 @@ function Medicines({
   );
 
   return (
-    <AsyncSelect
+    <Select
       cacheOptions
       defaultOptions
       placeholder=""
