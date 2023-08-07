@@ -29,6 +29,7 @@ export default function Members() {
     canView &&
       `/user?${queryString.stringify({
         ...filters,
+        per_page: 10,
         page: (filters?.page || 0) + 1,
       })}`
   );

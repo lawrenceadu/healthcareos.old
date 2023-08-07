@@ -108,9 +108,9 @@ export default function Roles() {
           <Paginate
             page={filters?.page}
             pageCount={Math.ceil(data.total / 10)}
-            setPage={(page) =>
-              setFilters((filters) => setFilters({ ...filters, page }))
-            }
+            setPage={(page) => {
+              setFilters((filters) => setFilters({ ...filters, page }));
+            }}
           />
         </div>
       )}

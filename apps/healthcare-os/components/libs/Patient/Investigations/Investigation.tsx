@@ -48,7 +48,7 @@ export function Investigation({
   ];
 
   const submitItems =
-    investigation.status === 'submitted'
+    investigation.status === 'submitted' && !!investigation.results?.length
       ? [
           ...investigation.results.map((item, key) => ({
             label: item.label,
