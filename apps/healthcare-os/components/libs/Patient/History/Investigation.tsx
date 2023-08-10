@@ -30,42 +30,44 @@ export function Investigation({ data }: InvestigationProps) {
   ];
 
   const submitItems =
-    investigation.status === 'submitted' && !!investigation.results?.length
+    investigation.status === 'submitted'
       ? [
-          ...investigation.results.map((item, key) => ({
-            label: item.label,
-            value: (() => {
-              try {
-                const i = JSON.parse(item.value);
-                if (i[0]?.value) {
-                  return (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr>
-                            {i.map((j, key) => (
-                              <th key={key}>{j.label}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            {i.map((j, key) => (
-                              <td key={key}>{j.value}</td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  );
-                } else {
-                  return i.join(', ');
-                }
-              } catch (error) {
-                return item.value;
-              }
-            })(),
-          })),
+          ...(investigation.results?.length
+            ? investigation.results.map((item, key) => ({
+                label: item.label,
+                value: (() => {
+                  try {
+                    const i = JSON.parse(item.value);
+                    if (i[0]?.value) {
+                      return (
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr>
+                                {i.map((j, key) => (
+                                  <th key={key}>{j.label}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                {i.map((j, key) => (
+                                  <td key={key}>{j.value}</td>
+                                ))}
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      );
+                    } else {
+                      return i.join(', ');
+                    }
+                  } catch (error) {
+                    return item.value;
+                  }
+                })(),
+              }))
+            : []),
           { label: 'Report', value: investigation.report },
           { label: 'Submitted by', value: investigation.submitted_by.name },
           {
