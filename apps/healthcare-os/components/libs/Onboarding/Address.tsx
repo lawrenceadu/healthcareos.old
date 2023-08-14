@@ -110,7 +110,6 @@ export function Address({ button, params = {}, onSubmit }: AddressProps) {
             <Button
               type="submit"
               disabled={!isValid}
-              onClick={() => handleSubmit()}
               className="w-full btn btn-primary"
               {...{ isSubmitting }}
             >

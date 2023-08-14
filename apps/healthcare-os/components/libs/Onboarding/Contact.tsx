@@ -75,7 +75,6 @@ export function Contact({ button, params = {}, onSubmit }: ContactProps) {
             <Button
               type="submit"
               disabled={!isValid}
-              onClick={() => handleSubmit()}
               className="w-full btn btn-primary"
               {...{ isSubmitting }}
             >

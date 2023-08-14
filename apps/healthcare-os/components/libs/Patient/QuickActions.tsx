@@ -10,6 +10,7 @@ import Medication from './Medication';
 import Visitation from './Visitation';
 import Allergies from './Allergies';
 import Discharge from './Discharge';
+import Procedure from './Procedure';
 import Detain from './Detain';
 import Vitals from './Vitals';
 import Admit from './Admit';
@@ -94,6 +95,7 @@ const Actions = () => {
     canAdmit,
     canEndVisit,
     canEndAdmission,
+    canAddProcedureRequest,
   ] = usePermissions(
     'visit_add',
     'patient_edit',
@@ -105,7 +107,8 @@ const Actions = () => {
     'queue_edit',
     'admission_add',
     'visit_edit',
-    'admission_edit'
+    'admission_edit',
+    'procedurerequest_add'
   );
 
   /**
@@ -118,7 +121,7 @@ const Actions = () => {
   const isAdmitted = patient.status === 'admitted';
 
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+    <div className="grid grid-cols-2 gap-4">
       {canAddVisit && !inVisistation && (
         <Visitation>
           {({ proceed }) => (
@@ -198,6 +201,17 @@ const Actions = () => {
             </StyledCard>
           )}
         </Investigations>
+      )}
+
+      {canAddProcedureRequest && inVisistation && (
+        <Procedure>
+          {({ proceed }) => (
+            <StyledCard role="button" onClick={() => proceed()}>
+              <Icon.ScissorsIcon />
+              <p>Procedure</p>
+            </StyledCard>
+          )}
+        </Procedure>
       )}
 
       {canViewPrescription && inVisistation && (

@@ -3,7 +3,7 @@ import useSWR from 'swr/immutable';
 import { RegionModel } from '../models';
 import useStore from './useStore';
 
-function useRegions() {
+function useRegions(): RegionModel[] {
   /**
    * store
    */

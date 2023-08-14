@@ -214,7 +214,6 @@ export function Insurance({
             <Button
               type="submit"
               disabled={!isValid}
-              onClick={() => handleSubmit()}
               className="w-full btn btn-primary"
               {...{ isSubmitting }}
             >

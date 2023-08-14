@@ -7,6 +7,7 @@ import { schema } from '@healthcare/utils';
 import { toast } from 'react-toastify';
 
 import { InvestigationModel } from '../../../../models';
+import { useStore } from '../../../../hooks';
 import * as api from '../../../../services/resource';
 
 export interface FormProps {
@@ -20,6 +21,16 @@ function Form({ mutate, children, params }: FormProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * store
+   */
+  const { store } = useStore();
+
+  /**
+   * variables
+   */
+  const currency = store?.facility?.currency_symbol;
 
   return (
     <>
@@ -47,6 +58,9 @@ function Form({ mutate, children, params }: FormProps) {
                 options: array().nullable(),
               })
             ),
+            regular_price: schema.requireNumber('Regular price'),
+            private_price: schema.requireNumber('Private insurance price'),
+            nhis_price: schema.requireNumber('NHIS price'),
           })}
           initialValues={{
             name: params?.name || '',
@@ -55,6 +69,9 @@ function Form({ mutate, children, params }: FormProps) {
             parameters: params?.parameters || [
               { name: '', type: '', unit: '', required: true, options: [] },
             ],
+            nhis_price: params?.nhis_price || '',
+            regular_price: params?.regular_price || '',
+            private_price: params?.private_price || '',
           }}
           onSubmit={(data, { setSubmitting, setErrors }) => {
             if (params) {
@@ -101,7 +118,7 @@ function Form({ mutate, children, params }: FormProps) {
                   />
                 </Field.Group>
 
-                <div>
+                <div className="mb-6">
                   <p className="font-medium mb-3">Results parameters</p>
 
                   <FieldArray name="parameters">
@@ -293,6 +310,50 @@ function Form({ mutate, children, params }: FormProps) {
                       </div>
                     )}
                   </FieldArray>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
+                  <Field.Group
+                    name="regular_price"
+                    label="Regular price"
+                    wrapperClassName="!mb-0"
+                    containerClassName="px-4"
+                  >
+                    <span>{currency}</span>
+                    <Field.Input
+                      name="regular_price"
+                      type="number"
+                      className="!px-0"
+                    />
+                  </Field.Group>
+
+                  <Field.Group
+                    name="nhis_price"
+                    label="NHIS price"
+                    wrapperClassName="!mb-0"
+                    containerClassName="px-4"
+                  >
+                    <span>{currency}</span>
+                    <Field.Input
+                      name="nhis_price"
+                      type="number"
+                      className="!px-0"
+                    />
+                  </Field.Group>
+
+                  <Field.Group
+                    name="private_price"
+                    label="Private insurance price"
+                    wrapperClassName="!mb-0"
+                    containerClassName="px-4"
+                  >
+                    <span>{currency}</span>
+                    <Field.Input
+                      type="number"
+                      name="private_price"
+                      className="!px-0"
+                    />
+                  </Field.Group>
                 </div>
               </div>
               <div className="modal-footer">

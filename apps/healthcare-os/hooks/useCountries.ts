@@ -2,7 +2,7 @@ import useSWR from 'swr/immutable';
 
 import { CountryModel } from '../models';
 
-function useCountries() {
+function useCountries(): CountryModel[] {
   /**
    * api
    */

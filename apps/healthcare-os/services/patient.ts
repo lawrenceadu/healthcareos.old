@@ -54,6 +54,16 @@ export const addToQueueService = (payload: object) =>
 export const requestInvestigationService = (payload: object) =>
   http.post<never, any>('/investigation/request', payload);
 
+// investigation
+export const requestProcedureService = (payload: object) =>
+  http.post<never, any>('/procedure/request', payload);
+
+export const updateProcedureRequestService = (id: string, payload: object) =>
+  http.patch<never, any>(`/procedure/request/${id}`, payload);
+
+export const deleteProcedureRequestService = (id: string) =>
+  http.delete<never, any>(`/procedure/request/${id}`);
+
 // triage
 export const setPatientTriageService = (payload: object) =>
   http.post<never, any>('/visit/triage', payload);

@@ -203,7 +203,6 @@ export function Vitals({ params, children }: VitalsProps) {
                 <Button
                   type="submit"
                   disabled={!isValid}
-                  onClick={() => handleSubmit()}
                   className="btn btn-primary"
                   {...{ isSubmitting }}
                 >

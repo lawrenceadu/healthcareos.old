@@ -96,7 +96,6 @@ export function Add({
               type="submit"
               disabled={!isValid}
               className="btn btn-primary"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Add allergy

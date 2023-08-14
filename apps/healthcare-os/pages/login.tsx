@@ -125,7 +125,6 @@ function Login() {
               <Button
                 type="submit"
                 disabled={!isValid}
-                onClick={() => handleSubmit()}
                 className="w-full btn btn-primary mb-4"
                 {...{ isSubmitting }}
               >

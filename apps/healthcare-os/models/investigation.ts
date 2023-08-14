@@ -10,6 +10,9 @@ export interface InvestigationModel {
     required: boolean;
     options: any[];
   }[];
+  regular_price: number;
+  private_price: number;
+  nhis_price: number;
 }
 
 export interface InvestigationRequestModel {

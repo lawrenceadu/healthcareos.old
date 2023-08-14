@@ -2,7 +2,7 @@ import useSWR from 'swr/immutable';
 
 import { InstitutionModel } from '../models';
 
-function useInstitutions() {
+function useInstitutions(): InstitutionModel[] {
   /**
    * api
    */

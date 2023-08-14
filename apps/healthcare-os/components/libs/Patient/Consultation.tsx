@@ -88,7 +88,10 @@ export function Consultation({ params, children }: ConsultationProps) {
             // update consultation
             if (params) {
               api
-                .updateConsultationService({ ...formattedData }, params.id)
+                .updateConsultationService(
+                  { ...formattedData, patient: patient.id },
+                  params.id
+                )
                 .then(() => {
                   toast.success('Consultation updated');
                   updateHistory();
@@ -185,7 +188,6 @@ export function Consultation({ params, children }: ConsultationProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   {params ? 'Update consultation' : 'Add consultation'}

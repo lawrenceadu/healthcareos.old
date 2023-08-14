@@ -110,7 +110,6 @@ export function Add({ children }: AddProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary w-full"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   Submit

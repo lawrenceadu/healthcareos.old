@@ -31,6 +31,9 @@ const Triage = dynamic(
   () => import('../../components/pages/resources/Triages')
 );
 const Wards = dynamic(() => import('../../components/pages/resources/Wards'));
+const Procedures = dynamic(
+  () => import('../../components/pages/resources/Procedures')
+);
 
 function Index() {
   /**
@@ -52,6 +55,7 @@ function Index() {
     canViewSupplier,
     canViewInstitution,
     canViewTriage,
+    canViewProcedure,
   ] = usePermissions(
     'department',
     'location',
@@ -60,7 +64,8 @@ function Index() {
     'investigation',
     'supplier',
     'institution',
-    'triage'
+    'triage',
+    'procedure'
   );
 
   const tabs = [
@@ -85,6 +90,9 @@ function Index() {
           },
         ]
       : []),
+    ...(canViewProcedure
+      ? [{ name: 'Procedures', slug: 'procedures', component: Procedures }]
+      : []),
     { name: 'Diagnoses', slug: 'diagnoses', component: Diagnoses },
     ...(canViewSupplier
       ? [{ name: 'Suppliers', slug: 'suppliers', component: Suppliers }]
@@ -98,6 +106,7 @@ function Index() {
           },
         ]
       : []),
+
     ...(canViewTriage
       ? [{ name: 'Triage', slug: 'triage', component: Triage }]
       : []),

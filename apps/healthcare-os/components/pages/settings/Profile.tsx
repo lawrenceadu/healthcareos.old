@@ -140,7 +140,6 @@ export default function Profile() {
               type="submit"
               disabled={!isValid}
               className="btn btn-primary w-full"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Save changes

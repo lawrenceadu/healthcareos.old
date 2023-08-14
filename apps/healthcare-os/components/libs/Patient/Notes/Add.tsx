@@ -77,7 +77,6 @@ export function Add({ children, mutate }: AddProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   Add note

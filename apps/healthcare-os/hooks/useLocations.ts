@@ -2,7 +2,7 @@ import useSWR from 'swr/immutable';
 
 import { LocationModel } from '../models';
 
-function useLocations() {
+function useLocations(): LocationModel[] {
   /**
    * api
    */

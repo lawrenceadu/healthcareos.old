@@ -4,13 +4,13 @@ import { PlusIcon } from '@healthcare/icons';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import { ProcedureModel } from '../../../models';
 import { usePermissions } from '../../../hooks';
-import { LocationModel } from '../../../models';
 import Skeleton from '../../libs/Skeleton';
-import TableRow from './Locations/TableRow';
-import AddForm from './Locations/Form';
+import TableRow from './Procedures/TableRow';
+import AddForm from './Procedures/Form';
 
-function Locations() {
+function Procedures() {
   /**
    * state
    */
@@ -19,20 +19,17 @@ function Locations() {
   /**
    * perm
    */
-  const [canViewLocation, canAddLocation] = usePermissions(
-    'location_view',
-    'location_add'
-  );
+  const [canView, canAdd] = usePermissions('procedure_view', 'procedure_add');
 
   /**
    * api
    */
   const { data, error, mutate } = useSWR<{
-    locations: LocationModel[];
+    procedures: ProcedureModel[];
     total: number;
   }>(
-    canViewLocation &&
-      `/location?${queryString.stringify({
+    canView &&
+      `/procedure?${queryString.stringify({
         ...filters,
         page: (filters?.page || 0) + 1,
         per_page: 10,
@@ -44,7 +41,7 @@ function Locations() {
   /**
    * variables
    */
-  const locations = data?.locations || [];
+  const procedures = data?.procedures || [];
 
   return (
     <>
@@ -56,7 +53,7 @@ function Locations() {
         />
 
         <div className="ml-auto">
-          {canAddLocation && (
+          {canAdd && (
             <AddForm mutate={mutate}>
               {({ proceed }) => (
                 <Button onClick={() => proceed()} className="btn-primary">
@@ -74,27 +71,26 @@ function Locations() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Type</th>
-              <th>Department</th>
-              <th>Created by</th>
+              <th>Code</th>
+              <th>Prices</th>
               <th>Created at</th>
               <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {!data && !error && <Skeleton.Table count={6} />}
+            {!data && !error && <Skeleton.Table count={5} />}
             {data && (
               <>
-                {!locations.length && (
+                {!procedures.length && (
                   <tr>
-                    <td colSpan={6}>
-                      <p className="text-center">No locations yet</p>
+                    <td colSpan={5}>
+                      <p className="text-center">No procedures yet</p>
                     </td>
                   </tr>
                 )}
 
-                {locations.map((location, key) => (
-                  <TableRow key={key} {...{ location, mutate }} />
+                {procedures.map((procedure, key) => (
+                  <TableRow key={key} {...{ procedure, mutate }} />
                 ))}
               </>
             )}
@@ -115,4 +111,4 @@ function Locations() {
   );
 }
 
-export default Locations;
+export default Procedures;

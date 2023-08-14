@@ -70,7 +70,6 @@ export default function Password() {
               type="submit"
               disabled={!isValid}
               className="btn btn-primary"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Reset password

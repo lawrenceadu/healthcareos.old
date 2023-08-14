@@ -245,7 +245,6 @@ function Form({ params, mutate, children }: FormProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   {params ? 'Update medicine' : 'Add medicine'}

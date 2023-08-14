@@ -2,7 +2,7 @@ import useSWR from 'swr/immutable';
 
 import { DistrictModel } from '../models';
 
-function useDistricts(regionId?: string) {
+function useDistricts(regionId?: string): DistrictModel[] {
   /**
    * api
    */

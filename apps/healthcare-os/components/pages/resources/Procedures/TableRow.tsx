@@ -3,23 +3,23 @@ import { Confirm, Dropdown } from '@healthcareos/react';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { deleteInvestigationService } from '../../../../services/resource';
+import { deleteProcedureService } from '../../../../services/resource';
 import { usePermissions, useStore } from '../../../../hooks';
-import { InvestigationModel } from '../../../../models';
+import { ProcedureModel } from '../../../../models';
 import EditForm from './Form';
 
 export interface TableRowProps {
-  investigation: InvestigationModel;
+  procedure: ProcedureModel;
   mutate: () => void;
 }
 
-function TableRow({ investigation, mutate }) {
+function TableRow({ procedure, mutate }) {
   /**
    * perm
    */
   const [canEdit, canDelete] = usePermissions(
-    'investigation_edit',
-    'investigation_delete'
+    'procedure_edit',
+    'procedure_delete'
   );
 
   /**
@@ -37,11 +37,11 @@ function TableRow({ investigation, mutate }) {
    */
   const handleDelete = () =>
     Confirm({
-      header: 'Delete investigation',
+      header: 'Delete procedure',
       message: (
         <>
-          You are about to delete the <b>{investigation.name}</b> investigation?
-          Once you delete it you will lose it forever.
+          You are about to delete the <b>{procedure.name}</b> procedure? Once
+          you delete it you will lose it forever.
         </>
       ),
       buttons: {
@@ -49,33 +49,33 @@ function TableRow({ investigation, mutate }) {
       },
     }).then((proceed) => {
       if (proceed) {
-        deleteInvestigationService(investigation.id)
+        deleteProcedureService(procedure.id)
           .then(() => {
-            toast.success('Delete investigation');
+            toast.success('Delete procedure');
             mutate();
           })
           .catch((error) =>
-            toast.error(error?.message || 'Unable to delete investigation')
+            toast.error(error?.message || 'Unable to delete procedure')
           );
       }
     });
 
   return (
     <tr>
-      <td>{investigation.name}</td>
-      <td>{investigation.code}</td>
+      <td>{procedure.name}</td>
+      <td>{procedure.code}</td>
       <td className="text-sm">
         <p>
-          <b>NHIS:</b> {`${currency} ${investigation.nhis_price || 0}`}
+          <b>NHIS:</b> {`${currency} ${procedure.nhis_price || 0}`}
         </p>
         <p>
-          <b>Regular:</b> {`${currency} ${investigation.regular_price || 0}`}
+          <b>Regular:</b> {`${currency} ${procedure.regular_price || 0}`}
         </p>
         <p>
-          <b>Private:</b> {`${currency} ${investigation.private_price || 0}`}
+          <b>Private:</b> {`${currency} ${procedure.private_price || 0}`}
         </p>
       </td>
-      <td>{dayjs(investigation.created_at).format('ddd DD, MMM YYYY')}</td>
+      <td>{dayjs(procedure.created_at).format('ddd DD, MMM YYYY')}</td>
       <td>
         <Dropdown>
           <Dropdown.Toggle className="mx-auto">
@@ -84,7 +84,7 @@ function TableRow({ investigation, mutate }) {
           {(canEdit || canDelete) && (
             <Dropdown.Menu>
               {canEdit && (
-                <EditForm params={investigation} {...{ mutate }}>
+                <EditForm params={procedure} {...{ mutate }}>
                   {({ proceed }) => (
                     <Dropdown.Item onClick={() => proceed()}>
                       Update

@@ -4,8 +4,9 @@ import { Button, Field, Modal } from '@healthcareos/react';
 import { schema } from '@healthcare/utils';
 import { object } from 'yup';
 import { toast } from 'react-toastify';
+import useSWR from 'swr';
 
-import { LocationModel } from '../../../../models';
+import { DepartmentModel, LocationModel } from '../../../../models';
 import * as api from '../../../../services/resource';
 
 export interface FormProps {
@@ -19,6 +20,16 @@ function Form({ mutate, children, params }: FormProps) {
    * state
    */
   const [show, setShow] = useState(false);
+
+  /**
+   * api
+   */
+  const { data } = useSWR<{ departments: DepartmentModel[] }>(`/department`);
+
+  /**
+   * variables
+   */
+  const departments = data?.departments || [];
 
   return (
     <>
@@ -34,10 +45,12 @@ function Form({ mutate, children, params }: FormProps) {
           validationSchema={object({
             name: schema.requireString('Name'),
             type: schema.requireString('Type'),
+            department: schema.requireString('Department'),
           })}
           initialValues={{
             name: params?.name || '',
             type: params?.type || '',
+            department: params?.department?.id || '',
           }}
           onSubmit={(data, { setSubmitting, setErrors }) => {
             if (params) {
@@ -74,6 +87,21 @@ function Form({ mutate, children, params }: FormProps) {
 
                 <Field.Group name="type" label="Type">
                   <Field.Input name="type" placeholder="eg. pharmacy" />
+                </Field.Group>
+
+                <Field.Group name="department" label="Department">
+                  <Field.Select
+                    value={values.department}
+                    onChange={({ value }: { value: string }) =>
+                      setFieldValue('department', value)
+                    }
+                    options={
+                      departments?.map((i) => ({
+                        label: i.name,
+                        value: i.id,
+                      })) || []
+                    }
+                  />
                 </Field.Group>
               </div>
               <div className="modal-footer">

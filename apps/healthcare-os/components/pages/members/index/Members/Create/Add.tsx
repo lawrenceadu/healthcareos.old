@@ -89,7 +89,6 @@ function Add({ onHide, mutate }: AddProps) {
               type="submit"
               disabled={!isValid}
               className="btn btn-primary"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Send invite

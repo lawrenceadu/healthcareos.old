@@ -10,9 +10,11 @@ import Investigation from './History/Investigation';
 import Consultation from './History/Consultation';
 import Prescription from './History/Prescription';
 import Admission from './History/Admission';
+import Procedure from './History/Procedure';
 import Dispense from './History/Dispense';
 import Location from './History/Location';
 import Allergy from './History/Allergy';
+import Invoice from './History/Invoice';
 import Triage from './History/Triage';
 import Vitals from './History/Vitals';
 import Queue from './History/Queue';
@@ -148,6 +150,12 @@ export function History() {
                       {i.reference === 'dispense' && <Dispense data={i} />}
 
                       {i.reference === 'dispense_print' && <Print data={i} />}
+
+                      {i.reference === 'invoice' && <Invoice data={i} />}
+
+                      {i.reference === 'procedure' && (
+                        <Procedure data={i} isOngoing={!history.end_date} />
+                      )}
                     </Fragment>
                   ))}
                 </div>

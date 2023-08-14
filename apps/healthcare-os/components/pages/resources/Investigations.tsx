@@ -75,17 +75,18 @@ function Investigations() {
             <tr>
               <th>Name</th>
               <th>Code</th>
+              <th>Prices</th>
               <th>Created at</th>
               <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {!data && !error && <Skeleton.Table count={4} />}
+            {!data && !error && <Skeleton.Table count={5} />}
             {data && (
               <>
                 {!investigations.length && (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={5}>
                       <p className="text-center">No investigations yet</p>
                     </td>
                   </tr>

@@ -57,7 +57,8 @@
       }
     }
 
-    tbody {
+    tbody,
+    tfoot {
       @apply divide-y divide-gray-200;
 
       td {

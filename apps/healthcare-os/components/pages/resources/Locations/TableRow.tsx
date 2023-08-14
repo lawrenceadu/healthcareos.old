@@ -1,5 +1,5 @@
-import { DotsHorizIcon } from '@healthcare/icons';
 import { Confirm, Dropdown } from '@healthcareos/react';
+import { DotsHorizIcon } from '@healthcare/icons';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
@@ -54,6 +54,7 @@ function TableRow({ location, mutate }) {
     <tr>
       <td>{location.name}</td>
       <td>{location.type}</td>
+      <td>{location?.department?.name || '--'}</td>
       <td>{location.created_by.name}</td>
       <td>{dayjs(location.created_at).format('ddd DD, MMM YYYY')}</td>
       <td>

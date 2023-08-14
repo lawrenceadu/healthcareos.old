@@ -193,7 +193,6 @@ export function Modal({ ...props }: ModalProps & { prescriptions: string[] }) {
                 type="submit"
                 disabled={!isValid}
                 className="btn btn-primary"
-                onClick={() => handleSubmit()}
                 {...{ isSubmitting }}
               >
                 Dispense

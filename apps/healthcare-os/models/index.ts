@@ -14,6 +14,7 @@ export * from './admission';
 export * from './diagnosis';
 export * from './insurance';
 export * from './inventory';
+export * from './procedure';
 export * from './department';
 export * from './permission';
 export * from './geolocation';

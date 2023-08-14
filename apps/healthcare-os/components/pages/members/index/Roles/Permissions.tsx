@@ -96,6 +96,7 @@ function Permissions({ children, role }: PermissionsProps) {
         { label: 'Location', value: 'location' },
         { label: 'Charge', value: 'charge' },
         { label: 'Investigation', value: 'investigation' },
+        { label: 'Procedure', value: 'procedure' },
         { label: 'Supplier', value: 'supplier' },
         { label: 'Institution', value: 'institution' },
         { label: 'Triage', value: 'triage' },

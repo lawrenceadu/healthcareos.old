@@ -6,7 +6,8 @@ import { object } from 'yup';
 import { toast } from 'react-toastify';
 
 import { startVisitationService, endVisitationService } from '../../../services/patient'; // prettier-ignore
-import { useLocations, usePatient } from '../../../hooks';
+import { useLocations, usePatient, useCharges } from '../../../hooks';
+import { InsuranceModel } from '../../../models';
 
 export interface VisitationProps {
   children: (props: { proceed: () => void }) => void;
@@ -23,6 +24,7 @@ function Visitation({ children }: VisitationProps) {
    */
   const { patient, mutate, updateHistory } = usePatient();
   const locations = useLocations();
+  const charges = useCharges();
 
   /**
    * variable
@@ -58,6 +60,9 @@ function Visitation({ children }: VisitationProps) {
       }
     });
 
+  const getInsurance = (id: string): InsuranceModel =>
+    patient?.insurances?.find((i) => i.id === id);
+
   return (
     <>
       {children({
@@ -73,10 +78,27 @@ function Visitation({ children }: VisitationProps) {
           validateOnMount
           validationSchema={object({
             location: schema.requireString('Location'),
+            charges: schema.requireArray('Charges', false),
+            insurance: schema.requireString('Insurance', false),
+            claim_code: schema
+              .requireString('Claim code', false)
+              .when('insurance', (insurance, sch) =>
+                insurance
+                  ? patient.insurances.find((i) => i.id === insurance)
+                      ?.scheme_name === 'nhis'
+                    ? sch.required('Claim code is required')
+                    : sch
+                  : sch
+              ),
           })}
-          initialValues={{ location: '' }}
-          onSubmit={({ location }, { setSubmitting, setErrors }) => {
-            startVisitationService({ location, patient: patient.id })
+          initialValues={{
+            location: '',
+            charges: [],
+            insurance: '',
+            claim_code: '',
+          }}
+          onSubmit={(params, { setSubmitting, setErrors }) => {
+            startVisitationService({ ...params, patient: patient.id })
               .then(() => {
                 mutate();
                 toast.success('Visitation started');
@@ -86,48 +108,96 @@ function Visitation({ children }: VisitationProps) {
               .finally(() => setSubmitting(false));
           }}
         >
-          {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => (
-            <Form>
-              <div className="py-10 px-6">
-                <Field.Group
-                  name="location"
-                  label="Select the location this patient needs to visit"
-                >
-                  <Field.Select
+          {({ values, isValid, isSubmitting, handleSubmit, setFieldValue }) => {
+            return (
+              <Form>
+                <div className="py-10 px-6">
+                  <Field.Group
                     name="location"
-                    value={values.location}
-                    placeholder="Select location"
-                    options={locations?.map((i) => ({
-                      label: i.name,
-                      value: i.id,
-                    }))}
-                    onChange={({ value }: { value: string }) =>
-                      setFieldValue('location', value)
-                    }
-                  />
-                </Field.Group>
-              </div>
+                    label="Select the location this patient needs to visit *"
+                  >
+                    <Field.Select
+                      name="location"
+                      value={values.location}
+                      placeholder="Select location"
+                      options={locations?.map((i) => ({
+                        label: i.name,
+                        value: i.id,
+                      }))}
+                      onChange={({ value }: { value: string }) =>
+                        setFieldValue('location', value)
+                      }
+                    />
+                  </Field.Group>
 
-              <div className="py-3 px-6 flex justify-end gap-6 border-t border-gray-200">
-                <Button
-                  type="button"
-                  className="btn btn-light"
-                  onClick={() => setShow(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={!isValid}
-                  className="btn btn-primary"
-                  onClick={() => handleSubmit()}
-                  {...{ isSubmitting }}
-                >
-                  Start visitation
-                </Button>
-              </div>
-            </Form>
-          )}
+                  <Field.Group name="insurance" label="Select insurance">
+                    <Field.Select
+                      name="insurance"
+                      value={values.insurance}
+                      placeholder="Select insurance"
+                      onChange={({ value }: { value: string }) => {
+                        const ins = getInsurance(value);
+                        setFieldValue('insurance', value);
+
+                        if (ins?.type !== 'nhis')
+                          setFieldValue('claim_code', '');
+                      }}
+                      options={
+                        patient?.insurances?.map((i) => ({
+                          label: `${i.scheme_name} (${i.membership_number})`,
+                          value: i.id,
+                        })) || []
+                      }
+                    />
+                  </Field.Group>
+
+                  {getInsurance(values.insurance)?.type === 'nhis' && (
+                    <Field.Group name="claim_code" label="Claim code *">
+                      <Field.Input
+                        name="claim_code"
+                        placeholder="Enter claim code"
+                      />
+                    </Field.Group>
+                  )}
+
+                  <Field.Group name="charges" label="Charges">
+                    <Field.Select
+                      isMulti
+                      value={values.charges}
+                      onChange={(value) =>
+                        setFieldValue(
+                          'charges',
+                          value.map((i) => i.value)
+                        )
+                      }
+                      options={
+                        charges?.map((i) => ({ label: i.name, value: i.id })) ||
+                        []
+                      }
+                    />
+                  </Field.Group>
+                </div>
+
+                <div className="py-3 px-6 flex justify-end gap-6 border-t border-gray-200">
+                  <Button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={() => setShow(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={!isValid}
+                    className="btn btn-primary"
+                    {...{ isSubmitting }}
+                  >
+                    Start visitation
+                  </Button>
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </Modal>
     </>

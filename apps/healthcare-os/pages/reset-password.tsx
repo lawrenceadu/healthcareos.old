@@ -1,13 +1,13 @@
+import { schema, useSession } from '@healthcare/utils';
 import { Field, Button } from '@healthcareos/react';
 import { Form, Formik } from 'formik';
 import { object, ref } from 'yup';
 import { useRouter } from 'next/router';
-import { schema, useSession } from '@healthcare/utils';
 import Head from 'next/head';
 
+import { resetPasswordService } from '../services/auth';
 import routes from '../routes';
 import Layout from '../components/pages/auth/Layout';
-import { resetPasswordService } from '../services/auth';
 
 function Login() {
   /**
@@ -79,7 +79,6 @@ function Login() {
                 <Button
                   type="submit"
                   disabled={!isValid}
-                  onClick={() => handleSubmit()}
                   className="w-full btn btn-primary mb-4"
                   {...{ isSubmitting }}
                 >

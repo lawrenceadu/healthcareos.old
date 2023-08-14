@@ -29,6 +29,7 @@ export { default as PackageIcon } from './icons/Package';
 export { default as BarChartIcon } from './icons/BarChart';
 export { default as CalendarIcon } from './icons/Calendar';
 export { default as MedicineIcon } from './icons/Medicine';
+export { default as ScissorsIcon } from './icons/Scissors';
 export { default as PasscodeIcon } from './icons/Passcode';
 export { default as SettingsIcon } from './icons/Settings';
 export { default as SortDescIcon } from './icons/SortDesc';

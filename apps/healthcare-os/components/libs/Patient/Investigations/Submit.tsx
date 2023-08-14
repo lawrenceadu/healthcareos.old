@@ -373,7 +373,6 @@ export function Submit({
                     type="submit"
                     disabled={!isValid}
                     className="btn btn-primary"
-                    onClick={() => handleSubmit()}
                     {...{ isSubmitting }}
                   >
                     Submit results

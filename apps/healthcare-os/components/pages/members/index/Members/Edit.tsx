@@ -67,7 +67,6 @@ export default function Edit({ children }: EditProps) {
                   type="submit"
                   disabled={!isValid}
                   className="btn btn-primary"
-                  onClick={() => handleSubmit()}
                   {...{ isSubmitting }}
                 >
                   Save changes

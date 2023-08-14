@@ -185,7 +185,6 @@ export function Add({ onHide, setTab }: AddProps) {
               type="submit"
               disabled={!isValid}
               className="btn btn-primary"
-              onClick={() => handleSubmit()}
               {...{ isSubmitting }}
             >
               Add investigation
