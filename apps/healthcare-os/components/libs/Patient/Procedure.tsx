@@ -18,6 +18,7 @@ type ParamsProps = {
   procedure: { label: string; value: string };
   diagnosis: { label: string; value: string };
   execution_date: string;
+  users: { label: string; value: string }[];
 };
 
 export interface ProcedureProps {
@@ -63,6 +64,12 @@ export function Procedure({ params, children }: ProcedureProps) {
                 execution_date: schema.requireString('Execution date'),
                 report: schema.requireString('Report'),
                 notes: schema.requireString('Notes', false),
+                users: schema.requireArray('Users').of(
+                  object().shape({
+                    label: schema.requireString('Label'),
+                    value: schema.requireString('Valaue'),
+                  })
+                ),
               })
             ),
           })}
@@ -73,6 +80,7 @@ export function Procedure({ params, children }: ProcedureProps) {
                   {
                     procedure: { label: '', value: '' },
                     diagnosis: { label: '', value: '' },
+                    users: [],
                     execution_date: '',
                     report: '',
                     notes: '',
@@ -81,10 +89,11 @@ export function Procedure({ params, children }: ProcedureProps) {
           }}
           onSubmit={(data, { setSubmitting, setErrors }) => {
             const procedures = data.procedures.map(
-              ({ procedure, diagnosis, ...i }) => ({
+              ({ procedure, diagnosis, users, ...i }) => ({
                 ...i,
                 id: procedure.value,
                 diagnosis: diagnosis.value,
+                users: users.map((i) => i.value),
                 status: 'completed',
               })
             );
@@ -189,6 +198,22 @@ export function Procedure({ params, children }: ProcedureProps) {
                                     maxDate: dayjs().toDate(),
                                   }}
                                   {...{ setFieldValue }}
+                                />
+                              </Field.Group>
+
+                              <Field.Group
+                                label="Participants"
+                                name={`procedures.${key}.users`}
+                              >
+                                <SearchSelect.Users
+                                  isMulti
+                                  value={item.users}
+                                  onChange={(value) =>
+                                    setFieldValue(
+                                      `procedures.${key}.users`,
+                                      value
+                                    )
+                                  }
                                 />
                               </Field.Group>
                             </div>

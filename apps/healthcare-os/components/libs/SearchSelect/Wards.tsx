@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { WardModel } from '../../../models';
 
 export interface WardsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Wards({ value, disabled, onChange }: WardsProps) {
+function Wards({ value, isMulti, disabled, onChange }: WardsProps) {
   /**
    *
    * @param search
@@ -35,11 +36,12 @@ function Wards({ value, disabled, onChange }: WardsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

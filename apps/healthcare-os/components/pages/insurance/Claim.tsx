@@ -5,13 +5,17 @@ import { object, string } from 'yup';
 import { schema } from '@healthcare/utils';
 
 import { InsuranceClaimModel } from '../../../models';
+import SearchSelect from '../../libs/SearchSelect';
 
 type ValueProps = {
   patient: string;
   visit: string;
   invoice: string[];
   diagnosis: { id: string; gdrg: string }[];
+  investigation: string[];
+  procedure: string[];
   notes: string;
+  gdrg: { label: string; value: string };
 };
 
 export interface ClaimProps {
@@ -45,6 +49,8 @@ function Claim({ claim, children, onSubmit }: ClaimProps) {
                 gdrg: schema.requireString('GDRG'),
               })
             ),
+            investigation: schema.requireArray('Investigations', false),
+            procedure: schema.requireArray('Procedures', false),
             notes: schema.requireString('Notes', false),
           })}
           initialValues={{
@@ -56,7 +62,10 @@ function Claim({ claim, children, onSubmit }: ClaimProps) {
                 id: i.id,
                 gdrg: i.gdrg?.[0]?.id,
               })) || [],
+            procedure: claim?.visit?.procedures?.map((i) => i.id),
+            investigation: claim?.visit?.investigations?.map((i) => i.id),
             notes: '',
+            gdrg: { label: '', value: '' },
           }}
           onSubmit={onSubmit}
         >
@@ -104,6 +113,70 @@ function Claim({ claim, children, onSubmit }: ClaimProps) {
                   </div>
                 )}
 
+                {!!claim.visit.investigations.length && (
+                  <div className="border border-neutral-200 rounded-lg p-4 mb-6">
+                    <p className="font-bold mb-4">Investigations</p>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {claim?.visit?.investigations?.map((i, key) => {
+                        return (
+                          <Field.Checkbox
+                            key={key}
+                            checked={values.investigation.includes(i.id)}
+                            onChange={({ currentTarget: { checked } }) => {
+                              if (checked) {
+                                setFieldValue(`investigation`, [
+                                  ...values.investigation,
+                                  i.id,
+                                ]);
+                              } else {
+                                setFieldValue(
+                                  `investigation`,
+                                  values.investigation.filter((j) => j !== i.id)
+                                );
+                              }
+                            }}
+                          >
+                            <div>{i.investigation.name}</div>
+                          </Field.Checkbox>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {!!claim.visit.procedures.length && (
+                  <div className="border border-neutral-200 rounded-lg p-4 mb-6">
+                    <p className="font-bold mb-4">Procedures</p>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {claim?.visit?.procedures?.map((i, key) => {
+                        return (
+                          <Field.Checkbox
+                            key={key}
+                            checked={values.procedure.includes(i.id)}
+                            onChange={({ currentTarget: { checked } }) => {
+                              if (checked) {
+                                setFieldValue(`procedure`, [
+                                  ...values.procedure,
+                                  i.id,
+                                ]);
+                              } else {
+                                setFieldValue(
+                                  `procedure`,
+                                  values.procedure.filter((j) => j !== i.id)
+                                );
+                              }
+                            }}
+                          >
+                            <div>{i.procedure.name}</div>
+                          </Field.Checkbox>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <div className="border border-neutral-200 rounded-lg p-4 mb-6">
                   <p className="font-bold mb-4">Invoices</p>
 
@@ -137,6 +210,13 @@ function Claim({ claim, children, onSubmit }: ClaimProps) {
                     })}
                   </div>
                 </div>
+
+                <Field.Group name="gdrg" label="Principal GDRG">
+                  <SearchSelect.GDRG
+                    value={values.gdrg}
+                    onChange={(value) => setFieldValue('gdrg', value)}
+                  />
+                </Field.Group>
 
                 <Field.Group name="notes" label="Notes">
                   <Field.Input

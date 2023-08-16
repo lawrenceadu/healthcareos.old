@@ -1,12 +1,12 @@
 import { Field, Paginate } from '@healthcareos/react';
 import { useSession } from '@healthcare/utils';
+import queryString from 'query-string';
 import useSWR from 'swr';
 
 import { InsuranceClaimModel } from '../../models';
 import Skeleton from '../../components/libs/Skeleton';
 import TableRow from '../../components/pages/insurance/TableRow';
 import Layout from '../../components/libs/Layout';
-import queryString from 'query-string';
 
 function Index() {
   /**

@@ -52,9 +52,9 @@ function TableRow({ claim, mutate }: TableRowProps) {
       </td>
       <td>
         <p className="font-bold text-neutral-500">
-          {claim.insurance.scheme_name}
+          {claim?.insurance?.scheme_name}
         </p>
-        <p>{claim.insurance.membership_number}</p>
+        <p>{claim?.insurance?.membership_number}</p>
       </td>
       <td>
         <Badge variant={claim.status}>{claim.status}</Badge>

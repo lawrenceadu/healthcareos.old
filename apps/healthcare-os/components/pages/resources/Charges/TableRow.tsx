@@ -60,8 +60,8 @@ function TableRow({ charge, mutate }) {
       <td>{charge.name}</td>
       <td>{charge.type}</td>
       <td>{`${store.facility.currency_symbol} ${charge.regular_price}`}</td>
-      <td>{`${store.facility.currency_symbol} ${charge.private_price}`}</td>
       <td>{`${store.facility.currency_symbol} ${charge.nhis_price}`}</td>
+      <td>{`${store.facility.currency_symbol} ${charge.private_price}`}</td>
       <td>{charge.created_by.name}</td>
       <td>{dayjs(charge.created_at).format('ddd DD, MMM YYYY')}</td>
       <td>

@@ -10,10 +10,12 @@ import Procedures from './SearchSelect/Procedures';
 import Departments from './SearchSelect/Departments';
 import Institutions from './SearchSelect/Institutions';
 import Investigations from './SearchSelect/Investigations';
+import GDRG from './SearchSelect/GDRG';
 
 export default Object.assign(
   {},
   {
+    GDRG,
     Items,
     Users,
     Wards,

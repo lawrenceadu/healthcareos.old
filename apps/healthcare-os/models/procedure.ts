@@ -29,4 +29,5 @@ export interface ProcedureRequestModel {
   status: 'completed' | 'scheduled';
   submitted_at: string;
   submitted_by: UserModel;
+  users: UserModel[];
 }

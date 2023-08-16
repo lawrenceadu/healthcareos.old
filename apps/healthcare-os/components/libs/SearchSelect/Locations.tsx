@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { ItemModel } from '../../../models';
 
 export interface LocationsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Locations({ value, disabled, onChange }: LocationsProps) {
+function Locations({ value, isMulti, disabled, onChange }: LocationsProps) {
   /**
    *
    * @param search
@@ -41,11 +42,12 @@ function Locations({ value, disabled, onChange }: LocationsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

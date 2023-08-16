@@ -4,16 +4,16 @@ import { http } from '@healthcare/utils';
 import AsyncSelect from 'react-select/async';
 import queryString from 'query-string';
 
-import { SupplierModel } from '../../../models';
+import { DiagnosisGDRDModel } from '../../../models';
 
-export interface SuppliersProps {
+export interface GDRGProps {
   isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Suppliers({ value, isMulti, disabled, onChange }: SuppliersProps) {
+function GDRG({ value, isMulti, disabled, onChange }: GDRGProps) {
   /**
    *
    * @param search
@@ -23,14 +23,16 @@ function Suppliers({ value, isMulti, disabled, onChange }: SuppliersProps) {
     (search: string, callback: (options: any) => void) => {
       http
         .get<never, any>(
-          `/supplier?${queryString.stringify({
+          `/gdrg?${queryString.stringify({
             search,
             page: 1,
             per_page: 30,
           })}`
         )
-        .then(({ suppliers }: { suppliers: SupplierModel[] }) => {
-          callback(suppliers.map((i) => ({ label: i.name, value: i.id })));
+        .then(({ gdrgs }: { gdrgs: DiagnosisGDRDModel[] }) => {
+          callback(
+            gdrgs.map((i) => ({ label: `${i.name} (${i.code})`, value: i.id }))
+          );
         });
     },
     500
@@ -50,13 +52,13 @@ function Suppliers({ value, isMulti, disabled, onChange }: SuppliersProps) {
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {
         if (inputValue) {
-          return 'No supplier matches your search query';
+          return 'No GDRG matches your search query';
         } else {
-          return 'Start typing to search for a supplier';
+          return 'Start typing to search for an GDRG';
         }
       }}
     />
   );
 }
 
-export default Suppliers;
+export default GDRG;

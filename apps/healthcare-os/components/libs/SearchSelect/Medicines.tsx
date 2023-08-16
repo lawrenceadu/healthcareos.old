@@ -8,6 +8,7 @@ import queryString from 'query-string';
 import { MedicineModel } from '../../../models';
 
 export interface MedicinesProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
@@ -16,6 +17,7 @@ export interface MedicinesProps {
 
 function Medicines({
   value,
+  isMulti,
   disabled,
   onChange,
   withSystem = false,
@@ -54,11 +56,12 @@ function Medicines({
     <Select
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { ChargeModel } from '../../../models';
 
 export interface ChargesProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Charges({ value, disabled, onChange }: ChargesProps) {
+function Charges({ value, isMulti, disabled, onChange }: ChargesProps) {
   /**
    *
    * @param search
@@ -37,11 +38,12 @@ function Charges({ value, disabled, onChange }: ChargesProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

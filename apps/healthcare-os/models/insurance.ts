@@ -1,3 +1,5 @@
+import { InvestigationModel, InvestigationRequestModel } from './investigation';
+import { ProcedureModel, ProcedureRequestModel } from './procedure';
 import { DiagnosisModel } from './diagnosis';
 import { InvoiceModel } from './invoice';
 import { PatientModel } from './patient';
@@ -27,14 +29,18 @@ export interface InsuranceClaimModel {
     patient: PatientModel;
     invoices: InvoiceModel[];
     diagnoses: DiagnosisModel[];
+    procedures: ProcedureRequestModel[];
+    investigations: InvestigationRequestModel[];
     start_date: string;
     end_date: string;
   };
   claim: {
     id: string;
     diagnoses: DiagnosisModel[];
-    notes: string;
     invoices: InvoiceModel[];
+    procedures: ProcedureModel[];
+    investigations: InvestigationModel[];
+    notes: string;
     patient: PatientModel;
     history: {
       status: string;

@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { UserModel } from '../../../models';
 
 export interface SuppliersProps {
-  value?: { label: string; value: string };
+  isMulti?: boolean;
+  value?: { label: string; value: string } | { label: string; value: string }[];
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Suppliers({ value, disabled, onChange }: SuppliersProps) {
+function Suppliers({ value, isMulti, disabled, onChange }: SuppliersProps) {
   /**
    *
    * @param search
@@ -35,11 +36,12 @@ function Suppliers({ value, disabled, onChange }: SuppliersProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

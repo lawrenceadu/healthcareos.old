@@ -1,5 +1,5 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@healthcare/icons';
 import { components, DropdownIndicatorProps, StylesConfig } from 'react-select'; // prettier-ignore
+import { ChevronDownIcon, ChevronUpIcon } from '@healthcare/icons';
 
 // dropdown indicator
 const DropdownIndicator = ({

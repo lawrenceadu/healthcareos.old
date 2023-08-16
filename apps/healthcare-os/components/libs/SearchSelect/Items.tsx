@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { ItemModel } from '../../../models';
 
 export interface ItemsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Items({ value, disabled, onChange }: ItemsProps) {
+function Items({ value, isMulti, disabled, onChange }: ItemsProps) {
   /**
    *
    * @param search
@@ -35,11 +36,12 @@ function Items({ value, disabled, onChange }: ItemsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

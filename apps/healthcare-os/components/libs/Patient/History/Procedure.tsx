@@ -49,6 +49,10 @@ export function Procedure({ data, isOngoing }: ProcedureProps) {
     procedure.status === 'completed'
       ? [
           { label: 'Report', value: procedure.report },
+          {
+            label: 'Participants',
+            value: procedure?.users?.map((i) => i.name)?.join(', ') || '',
+          },
           { label: 'Submitted by', value: procedure.submitted_by.name },
           {
             label: 'Submitted at',
@@ -91,7 +95,7 @@ export function Procedure({ data, isOngoing }: ProcedureProps) {
       className="py-2"
       header={
         <>
-          <Badge className="bg-red-50 text-red-600">Procedure</Badge>
+          <Badge className="bg-lime-50 text-lime-600">Procedure</Badge>
           <p className="text-sm font-bold mt-1">
             {data.details.procedure?.name}
           </p>
@@ -116,6 +120,11 @@ export function Procedure({ data, isOngoing }: ProcedureProps) {
                       value: procedure.diagnosis.id,
                     },
                     execution_date: procedure.execution_date,
+                    users:
+                      procedure?.users?.map((i) => ({
+                        label: i.name,
+                        value: i.id,
+                      })) || [],
                   }}
                 >
                   {({ proceed }) => (

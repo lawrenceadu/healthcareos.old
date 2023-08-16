@@ -7,12 +7,18 @@ import queryString from 'query-string';
 import { InstitutionModel } from '../../../models';
 
 export interface InstitutionsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Institutions({ value, disabled, onChange }: InstitutionsProps) {
+function Institutions({
+  value,
+  isMulti,
+  disabled,
+  onChange,
+}: InstitutionsProps) {
   /**
    *
    * @param search
@@ -39,11 +45,12 @@ function Institutions({ value, disabled, onChange }: InstitutionsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

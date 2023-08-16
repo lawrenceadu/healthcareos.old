@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { DiagnosisModel } from '../../../models';
 
 export interface DiagnosisProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Diagnosis({ value, disabled, onChange }: DiagnosisProps) {
+function Diagnosis({ value, isMulti, disabled, onChange }: DiagnosisProps) {
   /**
    *
    * @param search
@@ -39,11 +40,12 @@ function Diagnosis({ value, disabled, onChange }: DiagnosisProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

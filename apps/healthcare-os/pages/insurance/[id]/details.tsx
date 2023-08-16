@@ -42,6 +42,8 @@ function Details() {
 
   const diagnoses = isPending ? visit.diagnoses : data?.claim?.claim?.diagnoses;
   const invoices = isPending ? visit.invoices : data?.claim?.claim?.invoices;
+  const procedures = isPending ? visit.procedures : data?.claim?.claim?.procedures; // prettier-ignore
+  const investigations = isPending ? visit.investigations : data?.claim?.claim?.investigations // prettier-ignore
   const histories = !isPending ? data?.claim?.claim?.history : [];
 
   const cards: { label: string; items: { label: string; value: any }[] }[] = [
@@ -121,8 +123,8 @@ function Details() {
             <div className="flex justify-end mb-6">
               <Claim
                 claim={claim}
-                onSubmit={(params, { setSubmitting }) => {
-                  insuranceClaimService(params)
+                onSubmit={({ gdrg, ...params }, { setSubmitting }) => {
+                  insuranceClaimService({ ...params, gdrg: gdrg?.value || '' })
                     .then(() => {
                       mutate();
                       toast.success('Claim generated.');
@@ -168,7 +170,7 @@ function Details() {
 
           <div className="shadow border border-neutral-200 rounded-lg mb-6">
             <div className="p-4">
-              <p className="text-lg font-semibold">Invoice</p>
+              <p className="text-lg font-bold">Invoice</p>
             </div>
             <div className="overflow-x-auto">
               <table>
@@ -208,7 +210,7 @@ function Details() {
 
           <div className="shadow border border-neutral-200 rounded-lg mb-6">
             <div className="p-4">
-              <p className="text-lg font-semibold">Diagnoses</p>
+              <p className="text-lg font-bold">Diagnoses</p>
             </div>
             <div className="overflow-x-auto">
               <table>
@@ -244,6 +246,88 @@ function Details() {
                           `${diagnosis.gdrg?.name}(${diagnosis.gdrg.code})`
                         )}
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="shadow border border-neutral-200 rounded-lg mb-6">
+            <div className="p-4">
+              <p className="text-lg font-bold">Investigations</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!investigations?.length && (
+                    <tr>
+                      <td colSpan={2}>
+                        <p className="text-center">No investigations</p>
+                      </td>
+                    </tr>
+                  )}
+                  {investigations?.map((investigation, key) => (
+                    <tr key={key}>
+                      <td>
+                        {isPending
+                          ? investigation.investigation.name
+                          : investigation.name}
+                      </td>
+                      <td>
+                        {isPending
+                          ? investigation.investigation.code
+                          : investigation.code}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="shadow border border-neutral-200 rounded-lg mb-6">
+            <div className="p-4">
+              <p className="text-lg font-bold">Procedures</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Diagnosis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!procedures?.length && (
+                    <tr>
+                      <td colSpan={3}>
+                        <p className="text-center">No procedures</p>
+                      </td>
+                    </tr>
+                  )}
+                  {procedures?.map((procedure, key) => (
+                    <tr key={key}>
+                      {isPending ? (
+                        <>
+                          <td>{procedure.procedure.name}</td>
+                          <td>{procedure.procedure.code}</td>
+                          <td>{procedure.diagnosis?.name}</td>
+                        </>
+                      ) : (
+                        <>
+                          <td>{procedure.name}</td>
+                          <td>{procedure.code}</td>
+                          <td>{procedure.diagnosis?.name || '--'}</td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>

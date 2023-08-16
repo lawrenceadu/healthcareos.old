@@ -3,7 +3,12 @@ export interface DiagnosisModel {
   code: string;
   name: string;
   description: string;
-  gdrg:
-    | { code: string; name; string; id: string }
-    | { code: string; name: string; id: string }[];
+  gdrg: DiagnosisGDRDModel | DiagnosisGDRDModel[];
+}
+
+export interface DiagnosisGDRDModel {
+  code: string;
+  name: string;
+  id: string;
+  description: string;
 }

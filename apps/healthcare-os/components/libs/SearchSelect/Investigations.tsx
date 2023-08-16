@@ -7,12 +7,18 @@ import queryString from 'query-string';
 import { InvestigationModel } from '../../../models';
 
 export interface InvestigationsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Investigations({ value, disabled, onChange }: InvestigationsProps) {
+function Investigations({
+  value,
+  isMulti,
+  disabled,
+  onChange,
+}: InvestigationsProps) {
   /**
    *
    * @param search
@@ -43,11 +49,12 @@ function Investigations({ value, disabled, onChange }: InvestigationsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

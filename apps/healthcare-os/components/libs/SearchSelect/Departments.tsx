@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { DepartmentModel } from '../../../models';
 
 export interface DepartmentsProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Departments({ value, disabled, onChange }: DepartmentsProps) {
+function Departments({ value, isMulti, disabled, onChange }: DepartmentsProps) {
   /**
    *
    * @param search
@@ -33,11 +34,12 @@ function Departments({ value, disabled, onChange }: DepartmentsProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {

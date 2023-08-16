@@ -7,12 +7,13 @@ import queryString from 'query-string';
 import { ProcedureModel } from '../../../models';
 
 export interface ProcedureProps {
+  isMulti?: boolean;
   value?: { label: string; value: string };
   onChange: (props: any) => void;
   disabled?: boolean;
 }
 
-function Procedures({ value, disabled, onChange }: ProcedureProps) {
+function Procedures({ value, isMulti, disabled, onChange }: ProcedureProps) {
   /**
    *
    * @param search
@@ -39,11 +40,12 @@ function Procedures({ value, disabled, onChange }: ProcedureProps) {
     <AsyncSelect
       cacheOptions
       defaultOptions
+      value={value}
       placeholder=""
+      isMulti={isMulti}
       onChange={onChange}
       isDisabled={disabled}
       loadOptions={loadOptions}
-      value={value?.value ? value : ''}
       styles={Field.Select.Components.styles}
       components={{ ...Field.Select.Components }}
       noOptionsMessage={({ inputValue }) => {
