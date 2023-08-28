@@ -124,3 +124,23 @@
     @apply text-gray-600;
   }
 }
+.flatpickr-rContainer {
+  width: 100%;
+
+  .flatpickr-monthSelect-months {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    .flatpickr-monthSelect-month {
+      padding: 1rem 0;
+
+      &:hover {
+        color: #fff;
+        cursor: pointer;
+        border-radius: 0.5rem;
+        transition: ease-in-out color 0.15s;
+        background: rgba(var(--color-primary-rgb), 0.5);
+      }
+    }
+  }
+}

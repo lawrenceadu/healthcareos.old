@@ -1,12 +1,13 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { ArrowDownIcon, ArrowUpIcon } from '@healthcare/icons';
-import { Field, Tabs } from '@healthcareos/react';
 import { helpers } from '@healthcare/utils';
+import { Tabs } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
 import Breakdown from './IncomeAndExpenditure/Breakdown';
+import DateRange from './Components/DateRange';
 import Trends from './IncomeAndExpenditure/Trends';
 
 function IncomeAndExpenditure() {
@@ -114,38 +115,6 @@ function IncomeAndExpenditure() {
           onSelect={(key) => setActiveKey(key)}
         />
       </div>
-    </div>
-  );
-}
-
-function DateRange({
-  title,
-  dates,
-  setDates,
-}: {
-  title: string;
-  dates: string[];
-  setDates: Dispatch<SetStateAction<string[]>>;
-}) {
-  return (
-    <div
-      className={helpers.classNames(
-        'mb-6',
-        'flex flex-wrap justify-between gap-2'
-      )}
-    >
-      <p className="text-lg font-bold">{title}</p>
-      <Field.Group
-        name="range"
-        withFormik={false}
-        wrapperClassName="w-full max-w-[320px]"
-      >
-        <Field.Date
-          value={dates}
-          options={{ mode: 'range' }}
-          setFieldValue={(name, dates) => setDates(dates as string[])}
-        />
-      </Field.Group>
     </div>
   );
 }

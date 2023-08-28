@@ -4,9 +4,11 @@ import { Tabs } from '@healthcareos/react';
 import { usePermissions } from '../../hooks';
 import IncomeAndExpenditure from '../../components/pages/dashboard/IncomeAndExpenditure';
 import FiltersProvider from '../../contexts/Filters';
-import Dashboard from '../../components/pages/dashboard/Dashboard';
 import Layout from '../../components/libs/Layout';
 import routes from '../../routes';
+
+import Dashboard from '../../components/pages/dashboard/Dashboard';
+import DHIMS from '../../components/pages/dashboard/DHIMS';
 
 function Index() {
   /**
@@ -55,6 +57,11 @@ function Index() {
           },
         ]
       : []),
+    {
+      name: 'DHIMS',
+      slug: 'dhims',
+      component: DHIMS,
+    },
   ];
 
   return (

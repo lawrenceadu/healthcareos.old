@@ -1,12 +1,13 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { helpers } from '@healthcare/utils';
-import { Field, Tabs } from '@healthcareos/react';
+import { Tabs } from '@healthcareos/react';
 import queryString from 'query-string';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
 import { usePermissions } from '../../../hooks';
 import Onboarding from './Dashboard/Onboarding';
+import DateRange from './Components/DateRange';
 import TopTens from './Dashboard/TopTens';
 import PD from './Dashboard/PD';
 
@@ -117,38 +118,6 @@ function Dashboard() {
           />
         </div>
       )}
-    </div>
-  );
-}
-
-function DateRange({
-  title,
-  dates,
-  setDates,
-}: {
-  title: string;
-  dates: string[];
-  setDates: Dispatch<SetStateAction<string[]>>;
-}) {
-  return (
-    <div
-      className={helpers.classNames(
-        'mb-6',
-        'flex flex-wrap items-center justify-between gap-2'
-      )}
-    >
-      <p className="text-lg font-bold">{title}</p>
-      <Field.Group
-        name="range"
-        withFormik={false}
-        wrapperClassName="w-full max-w-[320px]"
-      >
-        <Field.Date
-          value={dates}
-          options={{ mode: 'range' }}
-          setFieldValue={(name, dates) => setDates(dates as string[])}
-        />
-      </Field.Group>
     </div>
   );
 }
