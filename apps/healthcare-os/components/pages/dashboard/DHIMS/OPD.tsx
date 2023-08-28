@@ -1,6 +1,8 @@
 import queryString from 'query-string';
 import useSWR from 'swr';
 
+import Skeleton from '../../../libs/Skeleton';
+
 export interface OPDProps {
   date: string;
 }
@@ -70,8 +72,9 @@ function OPD({ date }: OPDProps) {
           </tr>
         </thead>
         <tbody>
+          {!data && !error && <Skeleton.Table count={11} />}
           {metricKeys.map((metricKey, key) => (
-            <tr key={key} className='divide-x'>
+            <tr key={key} className="divide-x">
               <td>{metricKey}</td>
               <td className="text-center">
                 {metricData[metricKey].insured.new.male}
