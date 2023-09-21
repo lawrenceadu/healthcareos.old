@@ -1,14 +1,14 @@
 import { Badge, Button } from '@healthcareos/react';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
-import { insuranceClaimService } from '../../../services/insurance';
+// import { insuranceClaimService } from '../../../services/insurance';
 import { InsuranceClaimModel } from '../../../models';
 import { useStore } from '../../../hooks';
 import Layout from '../../../components/libs/Layout';
-import Claim from '../../../components/pages/insurance/Claim';
+// import Claim from '../../../components/pages/insurance/Claim';
 
 function Details() {
   /**
@@ -119,7 +119,7 @@ function Details() {
     <Layout title="Claims details">
       {data && (
         <>
-          {claim.status === 'pending' && (
+          {/* {claim.status === 'pending' && (
             <div className="flex justify-end mb-6">
               <Claim
                 claim={claim}
@@ -140,7 +140,7 @@ function Details() {
                 )}
               </Claim>
             </div>
-          )}
+          )} */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {cards.map((card, key) => (

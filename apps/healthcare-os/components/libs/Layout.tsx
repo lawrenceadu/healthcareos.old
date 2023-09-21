@@ -68,6 +68,7 @@ export function Layout({
     canViewMembers,
     canViewInvestigation,
     canViewInventory,
+    canViewInsuranceClaim,
   ] = usePermissions(
     'dashboard',
     'patient',
@@ -78,7 +79,8 @@ export function Layout({
     'pharmacy',
     'user',
     'investigationrequest',
-    'item'
+    'item',
+    'insuranceclaim'
   );
 
   /**
@@ -163,7 +165,7 @@ export function Layout({
           },
         ]
       : []),
-    ...(process.env['NX_ENV'] === 'local'
+    ...(canViewInsuranceClaim
       ? [
           {
             name: 'Insurance claims',

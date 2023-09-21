@@ -89,6 +89,10 @@ function Permissions({ children, role }: PermissionsProps) {
       modules: [{ label: 'Invoice', value: 'invoice' }],
     },
     {
+      label: 'Insurance Claims',
+      modules: [{ label: 'Insurance claims', value: 'insuranceclaim' }],
+    },
+    {
       label: 'Resource',
       modules: [
         { label: 'Resource', value: 'resource', section: true },
