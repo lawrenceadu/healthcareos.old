@@ -1,3 +1,4 @@
+import axios from 'axios';
 import dayjs from 'dayjs';
 
 export const classNames = (...classes: any) => {
@@ -77,3 +78,32 @@ export const medicineRoutes = (() =>
     'Vaginal',
     'Intravenous',
   ].map((i) => ({ label: i, value: i.toLowerCase() })))();
+
+export const downloadFile = async (
+  filePath: string,
+  name: string
+): Promise<void> => {
+  try {
+    const response = await axios.get(filePath, {
+      responseType: 'blob',
+    });
+
+    const file = new Blob([response.data], {
+      type: 'application/octet-stream',
+    });
+
+    const fileURL = URL.createObjectURL(file);
+
+    const tempLink = document.createElement('a');
+    tempLink.href = fileURL;
+    tempLink.setAttribute('download', name);
+    tempLink.click();
+
+    // Clean up
+    URL.revokeObjectURL(fileURL);
+  } catch (error) {
+    console.error('File download error:', error);
+  } finally {
+    // setLoading(false);
+  }
+};

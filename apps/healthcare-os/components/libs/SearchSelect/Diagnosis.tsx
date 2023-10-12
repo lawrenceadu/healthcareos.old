@@ -30,7 +30,9 @@ function Diagnosis({ value, isMulti, disabled, onChange }: DiagnosisProps) {
           })}`
         )
         .then(({ diagnoses }: { diagnoses: DiagnosisModel[] }) => {
-          callback(diagnoses.map((i) => ({ label: i.name, value: i.id })));
+          callback(
+            diagnoses.map((i) => ({ label: i.name, value: i.id, code: i.code }))
+          );
         });
     },
     500

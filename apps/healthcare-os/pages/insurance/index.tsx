@@ -28,7 +28,7 @@ function Index() {
     total: number;
   }>(
     canView &&
-      `/insurance?${queryString.stringify({
+      `/insurance/claim?${queryString.stringify({
         ...filters,
       })}`
   );
