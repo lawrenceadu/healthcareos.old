@@ -1,10 +1,11 @@
-import { AddIcon, ShieldPlusIcon } from '@healthcare/icons';
-import { Button } from '@healthcareos/react';
-import { toast } from 'react-toastify';
+import { AddIcon, DotsHorizIcon, ShieldPlusIcon } from '@healthcare/icons';
+import { startCase } from 'lodash';
+import { Badge, Button, Dropdown } from '@healthcareos/react';
+import dayjs from 'dayjs';
 
-import { updatePatientService } from '../../../services/patient';
+import { InsuranceModel } from '../../../models';
 import { usePatient } from '../../../hooks';
-import Onboarding from '../Onboarding';
+import EditForm from './Insurance/Edit';
 import AddForm from './Insurance/Add';
 
 export function Insurance() {
@@ -16,46 +17,92 @@ export function Insurance() {
   /**
    * variables
    */
-  const insurance = patient.insurances?.[0];
+  const insurances = patient.insurances;
+
+  /**
+   * functions
+   */
+  const handleExpired = (insurance: InsuranceModel) => {
+    return dayjs(insurance.expiry_date).isAfter(dayjs());
+  };
 
   return (
     <div>
-      {insurance && (
-        <div className="max-w-[424px]">
-          <Onboarding.Insurance
-            header={false}
-            button="Save changes"
-            params={{
-              has_insurance: 'yes',
-              insurance_type: insurance.type,
-              insurance_membership_status: insurance.membership_status,
-              insurance_membership_number: insurance.membership_number,
-              insurance_expiry_date: insurance.expiry_date,
-              insurance_claim_code: insurance.claim_code,
-              insurance_scheme_name: insurance.scheme_name,
-            }}
-            onSubmit={(params, { setSubmitting, setErrors }) => {
-              updatePatientService(params, patient.id)
-                .then(() => {
-                  mutate();
-                  toast.success('Insurance updated');
-                })
-                .catch((error) => {
-                  if (error?.fields) {
-                    return setErrors(error.fields);
-                  }
+      {!!insurances?.length && (
+        <>
+          <div className="flex justify-end mb-6">
+            <AddForm>
+              {({ proceed }) => (
+                <Button className="btn btn-primary" onClick={() => proceed()}>
+                  Add new
+                </Button>
+              )}
+            </AddForm>
+          </div>
 
-                  if (error?.message) {
-                    return toast.error(error.message);
-                  }
-                })
-                .finally(() => setSubmitting(false));
-            }}
-          />
-        </div>
+          <div className="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Insurance Name</th>
+                  <th>Membership Status</th>
+                  <th>Membership Number</th>
+                  <th>Expiry date</th>
+                  <th>Status</th>
+                  <th className="text-center">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {insurances.map((insurance, key) => (
+                  <EditForm insurance={insurance} key={key}>
+                    {({ proceed }) => (
+                      <tr>
+                        <td>{insurance.type}</td>
+                        <td>{startCase(insurance.scheme_name) || '--'}</td>
+                        <td>
+                          {startCase(insurance.membership_status || '--')}
+                        </td>
+                        <td>{insurance.membership_number}</td>
+                        <td>
+                          {dayjs(insurance.expiry_date).format('Do MMM, YYYY')}
+                        </td>
+                        <td>
+                          <Badge
+                            variant={
+                              handleExpired(insurance) ? 'success' : 'danger'
+                            }
+                          >
+                            {handleExpired(insurance) ? 'valid' : 'expired'}
+                          </Badge>
+                        </td>
+                        <td>
+                          <Dropdown>
+                            <Dropdown.Toggle className="mx-auto">
+                              <DotsHorizIcon />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item onClick={() => proceed()}>
+                                Edit
+                              </Dropdown.Item>
+                              <Dropdown.Item className="text-red-600">
+                                Delete
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    )}
+                  </EditForm>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
-      {!insurance && (
+      {!insurances?.length && (
         <div className="max-w-[328px] w-full mx-auto text-center">
           <div className="h-10 w-10 rounded-full bg-gray-100 flex mx-auto mb-4">
             <ShieldPlusIcon variant="solid" className="text-primary m-auto" />

@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import { SSRProvider } from '@restart/ui/ssr';
 import { SWRConfig } from 'swr';
 import { AppProps } from 'next/app';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import isBetween from 'dayjs/plugin/isBetween';
 import dayjs from 'dayjs';
@@ -15,6 +16,7 @@ import NoSSR from '../components/libs/NoSSR';
 
 import './styles.scss';
 
+dayjs.extend(advancedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
 

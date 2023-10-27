@@ -9,7 +9,6 @@ type ValueProps = {
   insurance_membership_status: string;
   insurance_membership_number: string;
   insurance_expiry_date: string;
-  insurance_claim_code: string;
   insurance_scheme_name: string;
 };
 
@@ -63,7 +62,6 @@ export function Insurance({
 
           insurance_membership_number: handleValidation('Membership number'),
           insurance_expiry_date: handleValidation('Expiry date'),
-          insurance_claim_code: handleValidation('Claim code'),
 
           // private
           insurance_scheme_name: string().when(
@@ -88,7 +86,6 @@ export function Insurance({
           insurance_membership_status: params.insurance_membership_status || '',
           insurance_membership_number: params.insurance_membership_number || '',
           insurance_expiry_date: params.insurance_expiry_date || '',
-          insurance_claim_code: params.insurance_claim_code || '',
           insurance_scheme_name: params.insurance_scheme_name || '',
         }}
         onSubmit={onSubmit}
@@ -187,26 +184,6 @@ export function Insurance({
                       {...{ setFieldValue, setFieldTouched }}
                     />
                   </Field.Group>
-
-                  <div className="flex gap-6">
-                    <Field.Group
-                      name="insurance_claim_code"
-                      label="Claim check code"
-                      wrapperClassName="w-full !mb-0"
-                    >
-                      <Field.Input
-                        name="insurance_claim_code"
-                        value={values.insurance_claim_code}
-                        placeholder="Enter claim check code"
-                      />
-                    </Field.Group>
-
-                    <div className="mt-6">
-                      <Button type="button" className="btn btn-outline">
-                        Get claim code
-                      </Button>
-                    </div>
-                  </div>
                 </>
               )}
             </div>

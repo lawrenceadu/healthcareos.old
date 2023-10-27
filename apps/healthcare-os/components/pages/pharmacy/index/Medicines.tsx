@@ -80,7 +80,7 @@ function Items() {
               <th>Unit</th>
               <th className="text-right">Minimum Level</th>
               <th className="text-right">Reorder Level</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
