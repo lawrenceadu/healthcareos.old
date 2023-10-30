@@ -59,10 +59,10 @@ export function Insurance() {
                   <EditForm insurance={insurance} key={key}>
                     {({ proceed }) => (
                       <tr>
-                        <td>{insurance.type}</td>
+                        <td>{startCase(insurance.type)}</td>
                         <td>{startCase(insurance.scheme_name) || '--'}</td>
                         <td>
-                          {startCase(insurance.membership_status || '--')}
+                          {startCase(insurance.membership_status) || '--'}
                         </td>
                         <td>{insurance.membership_number}</td>
                         <td>
@@ -86,9 +86,9 @@ export function Insurance() {
                               <Dropdown.Item onClick={() => proceed()}>
                                 Edit
                               </Dropdown.Item>
-                              <Dropdown.Item className="text-red-600">
+                              {/* <Dropdown.Item className="text-red-600">
                                 Delete
-                              </Dropdown.Item>
+                              </Dropdown.Item> */}
                             </Dropdown.Menu>
                           </Dropdown>
                         </td>

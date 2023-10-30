@@ -10,6 +10,7 @@ type ValueProps = {
   insurance_membership_number: string;
   insurance_expiry_date: string;
   insurance_scheme_name: string;
+  insurance_claim_code: string;
 };
 
 export interface InsuranceProps {
@@ -88,7 +89,9 @@ export function Insurance({
           insurance_expiry_date: params.insurance_expiry_date || '',
           insurance_scheme_name: params.insurance_scheme_name || '',
         }}
-        onSubmit={onSubmit}
+        onSubmit={(params, actions) =>
+          onSubmit({ ...params, insurance_claim_code: '1' }, actions)
+        }
       >
         {({
           values,
