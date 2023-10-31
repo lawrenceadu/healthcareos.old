@@ -17,14 +17,6 @@ export function Info({ className, ...props }: InfoProps) {
   const { patient } = usePatient();
 
   /**
-   * variable
-   */
-  const activeInsurance =
-    patient?.insurances?.find((i) => i.active) ||
-    patient.insurances?.[0] ||
-    false;
-
-  /**
    * variables
    */
   const items = [
@@ -50,26 +42,23 @@ export function Info({ className, ...props }: InfoProps) {
     { label: 'Marital status', value: startCase(patient.marital_status) },
     {
       label: 'Insurance',
-      value: (
-        <>
-          {!activeInsurance && <p>None</p>}
-          {activeInsurance && (
-            <Badge variant={activeInsurance.active ? 'success' : 'danger'}>
-              {activeInsurance.active && (
-                <>
-                  <CheckIcon className="w-3 h-3" />
-                  <span>valid</span>
-                </>
-              )}
-
-              {!activeInsurance.active && (
-                <>
-                  <span>not valid</span>
-                </>
-              )}
-            </Badge>
-          )}
-        </>
+      value: patient.insurances?.length ? (
+        <div className="flex flex-wrap items-center gap-1 divide-x divide-neutral-200">
+          {patient.insurances.map((i, key) => (
+            <div key={key} className="flex items-center gap-1 px-2">
+              <p>{i.scheme_name}</p>
+              <Badge
+                variant={
+                  helpers.hasExpired(i.expiry_date) ? 'danger' : 'success'
+                }
+              >
+                {helpers.hasExpired(i.expiry_date) ? 'expired' : 'valid'}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      ) : (
+        ''
       ),
     },
     {
@@ -93,14 +82,16 @@ export function Info({ className, ...props }: InfoProps) {
         header={<p className="text-lg font-bold">Patient information</p>}
       >
         <div className="flex flex-col gap-1">
-          {items.map((item, key) => (
-            <Fragment key={key}>
-              <div className="flex items-center justify-between gap-6">
-                <p className="text-muted">{item.label}</p>
-                <div className="text-right">{item.value}</div>
-              </div>
-            </Fragment>
-          ))}
+          {items
+            .filter((i) => !!i.value)
+            .map((item, key) => (
+              <Fragment key={key}>
+                <div className="flex items-center justify-between gap-6">
+                  <p className="text-muted">{item.label}</p>
+                  <div className="text-right">{item.value}</div>
+                </div>
+              </Fragment>
+            ))}
         </div>
       </Accordion.Item>
     </Accordion>

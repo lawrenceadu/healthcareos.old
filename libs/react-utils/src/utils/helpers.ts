@@ -107,3 +107,7 @@ export const downloadFile = async (
     // setLoading(false);
   }
 };
+
+export const hasExpired = (date: string) => {
+  return dayjs(date).isBefore(dayjs());
+};

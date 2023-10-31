@@ -7,6 +7,7 @@ import { InsuranceModel } from '../../../models';
 import { usePatient } from '../../../hooks';
 import EditForm from './Insurance/Edit';
 import AddForm from './Insurance/Add';
+import { helpers } from '@healthcare/utils';
 
 export function Insurance() {
   /**
@@ -18,13 +19,6 @@ export function Insurance() {
    * variables
    */
   const insurances = patient.insurances;
-
-  /**
-   * functions
-   */
-  const handleExpired = (insurance: InsuranceModel) => {
-    return dayjs(insurance.expiry_date).isAfter(dayjs());
-  };
 
   return (
     <div>
@@ -71,10 +65,14 @@ export function Insurance() {
                         <td>
                           <Badge
                             variant={
-                              handleExpired(insurance) ? 'success' : 'danger'
+                              helpers.hasExpired(insurance.expiry_date)
+                                ? 'danger'
+                                : 'success'
                             }
                           >
-                            {handleExpired(insurance) ? 'valid' : 'expired'}
+                            {helpers.hasExpired(insurance.expiry_date)
+                              ? 'expired'
+                              : 'valid'}
                           </Badge>
                         </td>
                         <td>
