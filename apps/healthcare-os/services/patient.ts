@@ -94,3 +94,11 @@ export const updatePatientNotesService = (payload: object, id: string) =>
 export const administerDrugService = (payload: object) =>
   http.post<never, any>(`/prescription/administration`, payload);
 // end of drug chart
+
+// insurance
+export const createOrUpdateInsuranceService = (payload: object) =>
+  http.post<never, any>(`/insurance`, payload);
+
+export const deleteInsuranceService = (id: string) =>
+  http.delete<never, any>(`/insurance/${id}`);
+// end of insurance

@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { Modal } from '@healthcareos/react';
 import { toast } from 'react-toastify';
 
-import { updatePatientService } from '../../../../services/patient';
+import { createOrUpdateInsuranceService } from '../../../../services/patient';
 import { usePatient } from '../../../../hooks';
 import Insurance from '../../Onboarding/Insurance';
 
 export interface AddProps {
   children: (props: { proceed: () => void }) => void;
+  insuranceMutate: () => void;
 }
 
-export function Add({ children }: AddProps) {
+export function Add({ children, insuranceMutate }: AddProps) {
   /**
    * state
    */
@@ -31,9 +32,10 @@ export function Add({ children }: AddProps) {
             button="Add insurance"
             params={{ has_insurance: 'yes', insurance_type: 'nhis' }}
             onSubmit={(params, { setSubmitting, setErrors }) => {
-              updatePatientService(params, patient.id)
+              createOrUpdateInsuranceService({ ...params, patient: patient.id })
                 .then(() => {
                   toast.success('Insurance added');
+                  insuranceMutate();
                   setShow(false);
                   mutate();
                 })
