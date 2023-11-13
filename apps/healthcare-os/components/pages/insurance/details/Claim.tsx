@@ -67,6 +67,7 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
             value: schema.requireString('GDRG'),
           }),
           notes: schema.requireString('Notes', false),
+          claim_code: schema.requireString('Claim code'),
         })}
         initialValues={{
           patient: claim?.patient?.id,
@@ -108,6 +109,7 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
             })) || [],
           notes: '',
           gdrg: { label: '', value: '' },
+          claim_code: claim?.insurance?.claim_code || '',
         }}
         onSubmit={(params, { setSubmitting }) => {
           const data: any = { ...params };
@@ -194,7 +196,6 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   )}
                 </FieldArray>
               </div>
-
               {/* Medicines */}
               <div className="border border-neutral-200 rounded-lg p-4 mb-6">
                 <FieldArray name="medicine">
@@ -235,7 +236,6 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   )}
                 </FieldArray>
               </div>
-
               {/* Investigations */}
               <div className="border border-neutral-200 rounded-lg p-4 mb-6">
                 <FieldArray name="investigation">
@@ -276,7 +276,6 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   )}
                 </FieldArray>
               </div>
-
               {/* Procedures */}
               <div className="border border-neutral-200 rounded-lg p-4 mb-6">
                 <FieldArray name="procedure">
@@ -317,7 +316,6 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   )}
                 </FieldArray>
               </div>
-
               {/* <div className="border border-neutral-200 rounded-lg p-4 mb-6">
                 <p className="font-bold mb-4">Invoices</p>
 
@@ -348,14 +346,18 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   })}
                 </div>
               </div> */}
-
               <Field.Group name="gdrg" label="Principal GDRG">
                 <SearchSelect.GDRG
                   value={values.gdrg}
                   onChange={(value) => setFieldValue('gdrg', value)}
                 />
               </Field.Group>
-
+              <Field.Group name="claim_code" label="Claim code">
+                <Field.Input
+                  name="claim_code"
+                  placeholder="Claim code here..."
+                />
+              </Field.Group>
               <Field.Group name="notes" label="Notes">
                 <Field.Input
                   name="notes"
