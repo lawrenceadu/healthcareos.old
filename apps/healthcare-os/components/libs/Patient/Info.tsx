@@ -1,7 +1,6 @@
 import { Fragment, HtmlHTMLAttributes } from 'react';
 import { helpers, useWidth } from '@healthcare/utils';
 import { Accordion, Badge } from '@healthcareos/react';
-import { CheckIcon } from '@healthcare/icons';
 import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
@@ -43,7 +42,7 @@ export function Info({ className, ...props }: InfoProps) {
     {
       label: 'Insurance',
       value: patient.insurances?.length ? (
-        <div className="flex flex-wrap items-center gap-1 divide-x divide-neutral-200">
+        <div className="flex flex-wrap items-center justify-end gap-1 divide-x divide-neutral-200">
           {patient.insurances.map((i, key) => (
             <div key={key} className="flex items-center gap-1 px-2">
               <p>{i.scheme_name}</p>

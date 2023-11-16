@@ -31,34 +31,27 @@ function Details() {
    * variables
    */
   const tab = paths && paths[0];
+  const isInPatient = ['admitted', 'detained'].includes(patient?.status);
   const tabs = [
-    ...(['admitted', 'detained'].includes(patient?.status)
-      ? [
-          { name: 'Overview', slug: 'overview', component: Patient.Overview },
-          { name: 'History', slug: 'history', component: Patient.History },
-          { name: 'Notes', slug: 'notes', component: Patient.Notes },
-          { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
-          { name: 'Drug chart', slug: 'drug', component: Patient.DrugChart },
-          ...(canViewInvoice
-            ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
-            : []),
-        ]
+    ...(isInPatient
+      ? [{ name: 'Overview', slug: 'overview', component: Patient.Overview }]
       : []),
-
-    ...(!['admitted', 'detained'].includes(patient?.status)
-      ? [
-          { name: 'History', slug: 'history', component: Patient.History },
-          {
-            name: 'Insurance',
-            slug: 'insurance',
-            component: Patient.Insurance,
-          },
-          ...(canViewInvoice
-            ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
-            : []),
-        ]
+    { name: 'History', slug: 'history', component: Patient.History },
+    { name: 'Notes', slug: 'notes', component: Patient.Notes },
+    { name: 'Vitals', slug: 'vitals', component: Patient.Chart.Vitals },
+    ...(isInPatient
+      ? [{ name: 'Drug chart', slug: 'drug', component: Patient.DrugChart }]
+      : []),
+    {
+      name: 'Insurance',
+      slug: 'insurance',
+      component: Patient.Insurance,
+    },
+    ...(canViewInvoice
+      ? [{ name: 'Invoice', slug: 'invoice', component: Patient.Invoice }]
       : []),
   ];
+
   const isMobile = width && width < 1280;
 
   return (

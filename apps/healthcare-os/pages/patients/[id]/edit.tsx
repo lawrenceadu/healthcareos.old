@@ -28,26 +28,26 @@ export function Edit() {
       slug: 'contact',
       component: (props) => <Onboarding.Contact {...props} params={patient} />,
     },
-    {
-      name: 'Insurance',
-      slug: 'insurance',
-      component: (props) => (
-        <Onboarding.Insurance
-          {...props}
-          {...(insurance && {
-            params: {
-              has_insurance: 'yes',
-              insurance_type: insurance.type,
-              insurance_membership_number: insurance.membership_number,
-              insurance_membership_status: insurance.membership_status,
-              insurance_expiry_date: insurance.expiry_date,
-              insurance_claim_code: insurance.claim_code,
-              insurance_scheme_name: insurance.scheme_name,
-            },
-          })}
-        />
-      ),
-    },
+    // {
+    //   name: 'Insurance',
+    //   slug: 'insurance',
+    //   component: (props) => (
+    //     <Onboarding.Insurance
+    //       {...props}
+    //       {...(insurance && {
+    //         params: {
+    //           has_insurance: 'yes',
+    //           insurance_type: insurance.type,
+    //           insurance_membership_number: insurance.membership_number,
+    //           insurance_membership_status: insurance.membership_status,
+    //           insurance_expiry_date: insurance.expiry_date,
+    //           insurance_claim_code: insurance.claim_code,
+    //           insurance_scheme_name: insurance.scheme_name,
+    //         },
+    //       })}
+    //     />
+    //   ),
+    // },
     {
       name: 'Address',
       slug: 'address',

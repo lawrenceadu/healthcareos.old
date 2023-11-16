@@ -40,6 +40,7 @@ export function Edit({ insurance, insuranceMutate, children }: EditProps) {
               insurance_membership_number: insurance.membership_number,
               insurance_expiry_date: insurance.expiry_date,
               insurance_scheme_name: insurance.scheme_name,
+              insurance_claim_code: insurance.claim_code,
             }}
             onSubmit={(params, { setSubmitting, setErrors }) => {
               createOrUpdateInsuranceService({ ...params, patient: patient.id })

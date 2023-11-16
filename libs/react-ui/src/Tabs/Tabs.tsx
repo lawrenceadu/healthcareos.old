@@ -5,7 +5,7 @@ import { helpers } from '@healthcare/utils';
 import { Tab } from './Components/Tab';
 
 export interface LocalTabsProps extends Omit<TabsProps, 'onSelect'> {
-  tabs: { name: string; slug: string; component: ComponentType }[];
+  tabs: { name: string; slug: string; component: any }[];
   childProps?: { [x: string]: unknown };
   navClassName?: string;
   onSelect: (key: string) => void;

@@ -63,6 +63,7 @@ export function Insurance({
 
           insurance_membership_number: handleValidation('Membership number'),
           insurance_expiry_date: handleValidation('Expiry date'),
+          insurance_claim_code: handleValidation('Claim code'),
 
           // private
           insurance_scheme_name: string().when(
@@ -88,10 +89,9 @@ export function Insurance({
           insurance_membership_number: params.insurance_membership_number || '',
           insurance_expiry_date: params.insurance_expiry_date || '',
           insurance_scheme_name: params.insurance_scheme_name || '',
+          insurance_claim_code: params.insurance_claim_code || '',
         }}
-        onSubmit={(params, actions) =>
-          onSubmit({ ...params, insurance_claim_code: '1' }, actions)
-        }
+        onSubmit={onSubmit}
       >
         {({
           values,
@@ -185,6 +185,18 @@ export function Insurance({
                       name="insurance_expiry_date"
                       value={values.insurance_expiry_date}
                       {...{ setFieldValue, setFieldTouched }}
+                    />
+                  </Field.Group>
+
+                  <Field.Group
+                    name="insurance_claim_code"
+                    label="Claim check code"
+                    wrapperClassName="w-full !mb-0"
+                  >
+                    <Field.Input
+                      name="insurance_claim_code"
+                      value={values.insurance_claim_code}
+                      placeholder="Enter claim check code"
                     />
                   </Field.Group>
                 </>
