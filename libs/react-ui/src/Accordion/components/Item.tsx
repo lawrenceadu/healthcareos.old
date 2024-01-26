@@ -55,6 +55,7 @@ export default function Item({
           {actions}
           <Button
             role="img"
+            type="button"
             aria-label={open ? 'close' : 'open'}
             className="!px-0 !h-auto text-muted"
           >
