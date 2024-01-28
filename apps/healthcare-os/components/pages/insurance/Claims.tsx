@@ -3,13 +3,13 @@ import { useSession } from '@healthcare/utils';
 import queryString from 'query-string';
 import useSWR from 'swr';
 
-import { InsuranceClaimModel } from '../../models';
-import { usePermissions } from '../../hooks';
-import Skeleton from '../../components/libs/Skeleton';
-import TableRow from '../../components/pages/insurance/TableRow';
-import Layout from '../../components/libs/Layout';
+import { InsuranceClaimModel } from '../../../models';
+import { usePermissions } from '../../../hooks';
 
-function Index() {
+import Skeleton from '../../libs/Skeleton';
+import TableRow from './claims/TableRow';
+
+function Claims() {
   /**
    * state
    */
@@ -29,6 +29,8 @@ function Index() {
   }>(
     canView &&
       `/insurance/claim?${queryString.stringify({
+        limit: 10,
+        page: 0,
         ...filters,
       })}`
   );
@@ -39,7 +41,7 @@ function Index() {
   const claims = data?.claims || [];
 
   return (
-    <Layout title="Insurance claims">
+    <>
       {canView && (
         <>
           <div className="mb-6 flex">
@@ -84,19 +86,19 @@ function Index() {
             </table>
           </div>
 
-          {/* {data && ( */}
-          <div className="flex justify-end">
-            <Paginate
-              page={filters?.page || 0}
-              pageCount={Math.ceil(data?.total || 10 / 10)}
-              setPage={(page) => setFilters({ ...filters, page })}
-            />
-          </div>
-          {/* )} */}
+          {data && (
+            <div className="flex justify-end">
+              <Paginate
+                page={filters?.page || 0}
+                pageCount={Math.ceil(data?.total / 10)}
+                setPage={(page) => setFilters({ ...filters, page })}
+              />
+            </div>
+          )}
         </>
       )}
-    </Layout>
+    </>
   );
 }
 
-export default Index;
+export default Claims;

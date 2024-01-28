@@ -68,3 +68,11 @@ export interface InsuranceClaimModel {
     }[];
   };
 }
+
+export interface InsuranceBatchModel {
+  id: string;
+  title: string;
+  status: 'closed' | 'open';
+  no_claims: number;
+  created_at: string;
+}

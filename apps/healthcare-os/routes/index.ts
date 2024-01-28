@@ -48,7 +48,12 @@ const routes = {
     },
     insurance: {
       index: '/insurance',
-      details: '/insurance/[id]/details',
+      claims: {
+        details: '/insurance/claims/[id]/details',
+      },
+      batch: {
+        details: '/insurance/batch/[id]/details',
+      },
     },
     resources: {
       index: '/resources/[tab]',
