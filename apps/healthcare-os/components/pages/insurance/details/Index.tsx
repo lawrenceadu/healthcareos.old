@@ -326,7 +326,7 @@ function Details({
         </div>
       </div>
 
-      <div className="shadow border border-neutral-200 rounded-lg mb-6">
+      <div className="shadow border border-neutral-200 rounded-lg mb-6 hidden">
         <div className="p-4">
           <p className="text-lg font-semibold">History</p>
         </div>

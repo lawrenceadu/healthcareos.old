@@ -75,4 +75,6 @@ export interface InsuranceBatchModel {
   status: 'closed' | 'open';
   no_claims: number;
   created_at: string;
+  attachment: string;
+  created_by: { id: string; name: string };
 }

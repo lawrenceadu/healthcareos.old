@@ -70,11 +70,12 @@ function Batch() {
                   <th>Status</th>
                   <th>Created By</th>
                   <th>Created at</th>
+                  <th>File</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {isLoading && <Skeleton.Table count={5} />}
+                {isLoading && <Skeleton.Table count={7} />}
 
                 {data && (
                   <>
