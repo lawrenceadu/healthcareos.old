@@ -3,15 +3,17 @@ import { Button, Field } from '@healthcareos/react';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
 import { toast } from 'react-toastify';
+import useSWR from 'swr';
 
+import { InsuranceClaimModel, InsuranceBatchModel } from '../../../../models';
 import { insuranceClaimService } from '../../../../services/insurance';
-import { InsuranceClaimModel } from '../../../../models';
 import SearchSelect from '../../../libs/SearchSelect';
 
 import { InvestigationSelect } from './Claim/Investigation';
 import { DiagnosesSelect } from './Claim/Diagnosis';
 import { ProcedureSelect } from './Claim/Procedure';
 import { MedicineSelect } from './Claim/Medicine';
+import Create from '../batch/Create';
 
 export interface ClaimProps {
   claim: InsuranceClaimModel;
@@ -20,14 +22,49 @@ export interface ClaimProps {
 }
 
 function Claim({ claim, mutate, setTab }: ClaimProps) {
+  /**
+   * api
+   */
+  const { data: exportData, mutate: exportMutate } = useSWR<{
+    exports: InsuranceBatchModel[];
+  }>('/export');
+
+  /**
+   * variables
+   */
+  const batches =
+    exportData?.exports
+      ?.filter((i) => i.status === 'open')
+      ?.map((i) => ({ label: i.title, value: i.id })) || [];
+
   return (
     <>
+      {exportData && !batches.length && (
+        <div className="mb-4 rounded-xl bg-red-50 p-4 flex items-center gap-4 justify-between">
+          <p className="text-sm font-medium">
+            Kindly create a batch to add claims to it. Without an open batch,
+            you cannot generate claims
+          </p>
+          <Create onSuccess={() => exportMutate()}>
+            {({ proceed }) => (
+              <Button
+                onClick={() => proceed()}
+                className="btn btn-primary !h-10 !text-xs"
+              >
+                Create Batch
+              </Button>
+            )}
+          </Create>
+        </div>
+      )}
+
       <Formik
         validateOnMount
         enableReinitialize
         validationSchema={object({
           patient: schema.requireString('Patient'),
           visit: schema.requireString('Visit'),
+          export_id: schema.requireString('Batch'),
 
           diagnosis: schema.requireArray('Diagnoses', false).of(
             object().shape({
@@ -73,6 +110,7 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
           patient: claim?.patient?.id,
           visit: claim?.visit?.id,
           invoice: claim?.visit?.invoices?.map((i) => i.id) || [],
+          export_id: '',
 
           diagnosis:
             claim?.visit?.diagnoses?.map((i) => ({
@@ -144,9 +182,7 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
           insuranceClaimService(data)
             .then((response) => {
               mutate();
-              toast.success(
-                'Claim generated. Kindly check history below to download file'
-              );
+              toast.success('Claim added to selected batch.');
               setTab('details');
             })
             .catch((error) => toast.error(error?.message))
@@ -316,40 +352,21 @@ function Claim({ claim, mutate, setTab }: ClaimProps) {
                   )}
                 </FieldArray>
               </div>
-              {/* <div className="border border-neutral-200 rounded-lg p-4 mb-6">
-                <p className="font-bold mb-4">Invoices</p>
 
-                <div className="grid grid-cols-1 gap-4">
-                  {claim?.visit?.invoices?.map((i, key) => {
-                    return (
-                      <Field.Checkbox
-                        key={key}
-                        checked={values.invoice.includes(i.id)}
-                        onChange={({ currentTarget: { checked } }) => {
-                          if (checked) {
-                            setFieldValue(`invoice`, [...values.invoice, i.id]);
-                          } else {
-                            setFieldValue(
-                              `invoice`,
-                              values.invoice.filter((j) => j !== i.id)
-                            );
-                          }
-                        }}
-                      >
-                        <div>
-                          {i.details
-                            .map((detail) => detail.description)
-                            .join(', ')}
-                        </div>
-                      </Field.Checkbox>
-                    );
-                  })}
-                </div>
-              </div> */}
               <Field.Group name="gdrg" label="Principal GDRG">
                 <SearchSelect.GDRG
                   value={values.gdrg}
                   onChange={(value) => setFieldValue('gdrg', value)}
+                />
+              </Field.Group>
+              <Field.Group name="export_id" label="Batch">
+                <Field.Select
+                  options={batches}
+                  value={values.export_id}
+                  placeholder="Select batch to add this claim"
+                  onChange={({ value }: { value: string }) =>
+                    setFieldValue('export_id', value)
+                  }
                 />
               </Field.Group>
               <Field.Group name="claim_code" label="Claim code">

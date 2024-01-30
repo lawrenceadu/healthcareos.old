@@ -3,12 +3,12 @@ import { useRouter } from 'next/router';
 import { Tabs } from '@healthcareos/react';
 import useSWR from 'swr';
 
-import { InsuranceClaimModel } from '../../../models';
-import { useStore } from '../../../hooks';
+import { InsuranceClaimModel } from '../../../../models';
+import { useStore } from '../../../../hooks';
 
-import Details from '../../../components/pages/insurance/details/Index';
-import Layout from '../../../components/libs/Layout';
-import Claim from '../../../components/pages/insurance/details/Claim';
+import Details from '../../../../components/pages/insurance/details/Index';
+import Layout from '../../../../components/libs/Layout';
+import Claim from '../../../../components/pages/insurance/details/Claim';
 
 function Page() {
   /**

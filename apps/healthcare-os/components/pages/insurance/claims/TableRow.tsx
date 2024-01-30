@@ -1,10 +1,10 @@
 import { Badge } from '@healthcareos/react';
 import { useRouter } from 'next/router';
-
-import { InsuranceClaimModel } from '../../../models';
-import { useStore } from '../../../hooks';
-import routes from '../../../routes';
 import dayjs from 'dayjs';
+
+import { InsuranceClaimModel } from '../../../../models';
+import { useStore } from '../../../../hooks';
+import routes from '../../../../routes';
 
 export interface TableRowProps {
   mutate: () => void;
@@ -32,7 +32,10 @@ function TableRow({ claim, mutate }: TableRowProps) {
       role="button"
       onClick={() =>
         router.push(
-          routes.dashboard.insurance.details.replace('[id]', claim.visit.id)
+          routes.dashboard.insurance.claims.details.replace(
+            '[id]',
+            claim.visit.id
+          )
         )
       }
     >
