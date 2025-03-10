@@ -81,6 +81,7 @@ export default function Members() {
           <thead>
             <tr>
               <th>Name</th>
+              <th>Email/Phone</th>
               <th>Role</th>
               <th>Status</th>
               <th className="text-center">Action</th>
@@ -93,7 +94,7 @@ export default function Members() {
               <>
                 {!users.length && (
                   <tr>
-                    <td colSpan={4}>
+                    <td colSpan={5}>
                       <p className="text-center">No members yet</p>
                     </td>
                   </tr>
@@ -104,6 +105,11 @@ export default function Members() {
                     {!user.email.includes('qodehub') && (
                       <tr>
                         <td>{user.name || '--'}</td>
+                        <td>
+                          {user.email || user.phone || '--'}
+                          <br />
+                          {user.phone || '--'}
+                        </td>
                         <td>{user?.role?.name || '--'}</td>
                         <td>
                           <Badge variant="success">active</Badge>
@@ -131,9 +137,7 @@ export default function Members() {
           <Paginate
             page={filters?.page}
             pageCount={Math.ceil(data.total / 10)}
-            setPage={(page) =>
-              setFilters((filters) => setFilters({ ...filters, page }))
-            }
+            setPage={(page) => setFilters((filters) => ({ ...filters, page }))}
           />
         </div>
       )}

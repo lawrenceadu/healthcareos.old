@@ -106,7 +106,7 @@ function Company() {
                 src={
                   values.logo?.name
                     ? URL.createObjectURL(values.logo)
-                    : facility.logo || 'https://via.placeholder.com/150'
+                    : facility.logo || 'https://placehold.co/150x150'
                 }
                 className="w-full h-full object-cover object-center"
               />

@@ -98,7 +98,7 @@ export default function Profile() {
                 src={
                   values.photo?.name
                     ? URL.createObjectURL(values.photo)
-                    : user.photo || 'https://via.placeholder.com/150'
+                    : user.photo || 'https://placehold.co/150x150'
                 }
                 className="w-full h-full object-cover object-center"
               />
