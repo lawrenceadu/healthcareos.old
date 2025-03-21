@@ -34,7 +34,7 @@ function Add({ onHide, mutate }: AddProps) {
       onSubmit={(params, { setSubmitting, setErrors }) => {
         inviteMemberService({ ...params, active: 1 })
           .then(() => {
-            toast.success('Invisitation sent');
+            toast.success('Invitation sent');
             mutate?.();
             onHide?.();
           })
