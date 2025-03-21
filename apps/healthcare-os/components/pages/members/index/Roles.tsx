@@ -109,7 +109,7 @@ export default function Roles() {
             page={filters?.page}
             pageCount={Math.ceil(data.total / 10)}
             setPage={(page) => {
-              setFilters((filters) => setFilters({ ...filters, page }));
+              setFilters((filters) => ({ ...filters, page }));
             }}
           />
         </div>
