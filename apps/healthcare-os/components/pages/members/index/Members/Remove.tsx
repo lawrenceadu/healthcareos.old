@@ -1,12 +1,17 @@
 import { ReactElement } from 'react';
 import { Confirm } from '@healthcareos/react';
 
+import { UserModel } from '../../../../../models';
+import { deleteMemberService } from '../../../../../services/members';
+import { toast } from 'react-toastify';
+
 export interface RemoveProps {
-  member: any;
+  member: UserModel;
+  onSuccess: () => void;
   children: ({ proceed }: { proceed: () => void }) => ReactElement;
 }
 
-export default function Remove({ member, children }: RemoveProps) {
+export default function Remove({ member, onSuccess, children }: RemoveProps) {
   /**
    * functions
    */
@@ -15,7 +20,7 @@ export default function Remove({ member, children }: RemoveProps) {
       header: 'Remove member',
       message: (
         <>
-          You are about to remove <b>Hilda Quansah</b> from your organization.
+          You are about to remove <b>{member.name}</b> from your organization.
         </>
       ),
       buttons: {
@@ -26,7 +31,13 @@ export default function Remove({ member, children }: RemoveProps) {
       },
     }).then((proceed) => {
       if (proceed) {
-        return;
+        deleteMemberService(member.id)
+          .then(() => {
+            onSuccess();
+          })
+          .catch((error) => {
+            toast.error(error?.message || 'Unable to delete member');
+          });
       }
     });
 

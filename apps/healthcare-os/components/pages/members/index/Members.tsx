@@ -10,6 +10,7 @@ import DropdownFilter from '../../../libs/DropdownFilter';
 
 import CreateForm from './Members/Create';
 import Skeleton from '../../../libs/Skeleton';
+import Remove from './Members/Remove';
 
 export default function Members() {
   /**
@@ -20,7 +21,11 @@ export default function Members() {
   /**
    * perm
    */
-  const [canView, canAdd] = usePermissions('user_view', 'user_add');
+  const [canView, canAdd, canDelete] = usePermissions(
+    'user_view',
+    'user_add',
+    'user_delete'
+  );
 
   /**
    * api
@@ -119,7 +124,17 @@ export default function Members() {
                             <Dropdown.Toggle className="mx-auto">
                               <DotsHorizIcon />
                             </Dropdown.Toggle>
-                            <Dropdown.Menu></Dropdown.Menu>
+                            <Dropdown.Menu>
+                              {canDelete && (
+                                <Remove member={user} onSuccess={mutate}>
+                                  {({ proceed }) => (
+                                    <Dropdown.Item onClick={proceed}>
+                                      Delete member
+                                    </Dropdown.Item>
+                                  )}
+                                </Remove>
+                              )}
+                            </Dropdown.Menu>
                           </Dropdown>
                         </td>
                       </tr>
