@@ -20,3 +20,6 @@ export const updateRolePermissionService = (payload: object, id: string) =>
 export const inviteMemberService = (payload: object) =>
   http.post<never, any>(`/user`, payload);
 // end of members
+
+export const deleteMemberService = (id: string) =>
+  http.delete<never, any>(`/user/${id}`);
