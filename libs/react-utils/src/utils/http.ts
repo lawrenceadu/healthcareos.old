@@ -8,7 +8,7 @@ export const injectStore = (_store: any) => {
 
 export const http = axios.create({
   timeout: 45000,
-  baseURL: process.env['NX_BASE_API'],
+  baseURL: process.env['NEXT_PUBLIC_BASE_API'],
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

@@ -34,7 +34,9 @@ const StoreProvider = ({ children }: { children: any }) => {
    */
   const [store, setStore] = useState<Partial<StoreInterface>>(() => {
     if (typeof window !== 'undefined') {
-      const store = window.localStorage.getItem(process.env['NX_STORAGE_KEY']);
+      const store = window.localStorage.getItem(
+        process.env['NEXT_PUBLIC_STORAGE_KEY']
+      );
 
       if (store) {
         return JSON.parse(store);
@@ -72,7 +74,7 @@ const StoreProvider = ({ children }: { children: any }) => {
   useEffect(() => {
     if (store) {
       window.localStorage.setItem(
-        process.env['NX_STORAGE_KEY'],
+        process.env['NEXT_PUBLIC_STORAGE_KEY'],
         JSON.stringify(store)
       );
     }

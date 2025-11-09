@@ -116,3 +116,5 @@ apps/healthcare-mobile-e2e/artifacts
 # ENV
 .env 
 .env.*
+.nx/cache
+.nx/workspace-data
