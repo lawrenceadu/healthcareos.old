@@ -70,5 +70,7 @@
     }
   },
   "useInferencePlugins": false,
-  "defaultBase": "develop"
+  "defaultBase": "develop",
+  "nxCloudId": "69111794ad96141978700048",
+  "useLegacyCache": true
 }
