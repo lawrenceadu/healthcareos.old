@@ -40,7 +40,6 @@ export function FilterDropdown({
         {withSearch && (
           <Search
             delay={0}
-            placeholder="Search ..."
             onSearch={(key: string) => setSearch(key)}
           />
         )}

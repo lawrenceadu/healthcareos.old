@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { ItemAdjustmentModel } from '../../../../../models';
-import { useStore } from '../../../../../hooks';
 import * as api from '../../../../../services/inventory';
 import Form from './Form';
 
@@ -24,11 +23,6 @@ function TableRow({ stock, mutate }: TableRowProps) {
    * state
    */
   const [toggle, setToggle] = useState(false);
-
-  /**
-   * store
-   */
-  const { store } = useStore();
 
   /**
    * function

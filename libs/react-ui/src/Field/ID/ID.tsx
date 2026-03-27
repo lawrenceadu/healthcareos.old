@@ -3,10 +3,12 @@ import { ChevronDownIcon } from '@healthcare/icons';
 import { getCountries } from 'react-phone-number-input';
 import styled from 'styled-components';
 import alpha from 'i18n-iso-countries';
-import Input from 'react-input-autosize';
+import InputBase from 'react-input-autosize';
 import Flag from 'react-country-flag';
 
 import Dropdown from '../../Dropdown/Dropdown';
+
+const Input = InputBase as any;
 
 export interface IDProps {
   name: string;
@@ -133,7 +135,7 @@ function ID({
         disabled={disabled}
         placeholder="XXXXXXXXX"
         value={cardPrefix || ''}
-        inputRef={(ref) => setPrefixRef(ref)}
+        inputRef={(ref: HTMLInputElement) => setPrefixRef(ref)}
         onChange={({
           currentTarget: { value },
         }: ChangeEvent<HTMLInputElement>) => {
@@ -183,7 +185,7 @@ function ID({
 /**
  * styles
  */
-const DropdownMenu = styled(Dropdown.Menu)`
+const DropdownMenu = styled(Dropdown.Menu as any)`
   max-height: 20rem;
 `;
 

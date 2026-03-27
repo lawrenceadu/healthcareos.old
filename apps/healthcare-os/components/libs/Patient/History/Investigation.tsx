@@ -40,7 +40,7 @@ export function Investigation({ data }: InvestigationProps) {
                     const i = JSON.parse(item.value);
                     if (i[0]?.value) {
                       return (
-                        <div className="overflow-x-auto">
+                        <div key={key} className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
                               <tr>

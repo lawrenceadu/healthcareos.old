@@ -44,13 +44,32 @@ function Claims() {
     <>
       {canView && (
         <>
-          <div className="mb-6 flex">
+          <div className="mb-6 flex gap-3 items-center">
             <Field.Search
               value={filters?.search}
               onSearch={(search) => {
                 setFilters({ ...filters, search });
               }}
             />
+            <Field.Group
+              withFormik={false}
+              name="date"
+              className="shrink-0 w-80"
+            >
+              <Field.Date
+                name="from"
+                placeholder="Filter by date"
+                options={{ mode: 'range' }}
+                value={[filters?.start_date, filters?.end_date]}
+                setFieldValue={(_, date) => {
+                  setFilters((f) => ({
+                    ...f,
+                    start_date: date[0],
+                    end_date: date[1],
+                  }));
+                }}
+              />
+            </Field.Group>
           </div>
 
           <div className="overflow-x-auto mb-8">

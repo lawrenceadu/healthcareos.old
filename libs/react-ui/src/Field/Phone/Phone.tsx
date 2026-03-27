@@ -5,10 +5,12 @@ import { ChevronDownIcon } from '@healthcare/icons';
 import { CountryCode } from 'libphonenumber-js/types';
 import countryList from 'react-select-country-list';
 import styled from 'styled-components';
-import PhoneInput from 'react-phone-number-input/input';
+import PhoneInputBase from 'react-phone-number-input/input';
 import Flag from 'react-country-flag';
 
 import Dropdown from '../../Dropdown/Dropdown';
+
+const PhoneInput = PhoneInputBase as any;
 
 export interface PhoneInputProps {
   name: string;
@@ -47,7 +49,7 @@ export function Phone({
       label: string;
     }[]
   >();
-  
+
   const [country, setCountry] = useState<{
     code: CountryCode | undefined;
     callingCode?: string;
@@ -155,7 +157,7 @@ export function Phone({
  * styles
  */
 
-const Menu = styled(Dropdown.Menu)`
+const Menu = styled(Dropdown.Menu as any)`
   overflow-y: auto;
   max-height: 25rem;
 `;

@@ -47,7 +47,7 @@ export const Menu = ({ role, className, children, ...rest }: MenuProps) => {
 /**
  * styles
  */
-const StyledMenu = styled(motion.div)`
+const StyledMenu = styled(motion.div as any)`
   display: flex;
   overflow: auto;
   min-width: 240px;

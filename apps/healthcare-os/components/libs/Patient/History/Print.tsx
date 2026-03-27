@@ -1,5 +1,4 @@
 import { Accordion, Badge } from '@healthcareos/react';
-import { startCase } from 'lodash';
 import dayjs from 'dayjs';
 
 import { HistoryLog, PrescriptionPrintModel } from '../../../../models'; // prettier-ignore

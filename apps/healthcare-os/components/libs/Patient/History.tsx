@@ -4,8 +4,8 @@ import { helpers } from '@healthcare/utils';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 
-import { usePatient, useStore } from '../../../hooks';
 import { HistoryModel } from '../../../models/history';
+import { usePatient } from '../../../hooks';
 import Investigation from './History/Investigation';
 import Consultation from './History/Consultation';
 import Prescription from './History/Prescription';
@@ -32,12 +32,7 @@ export function History() {
   /**
    * context
    */
-  const { store } = useStore();
-
-  /**
-   * context
-   */
-  const { patient, updateHistory } = usePatient();
+  const { patient } = usePatient();
 
   /**
    * api

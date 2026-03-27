@@ -21,5 +21,8 @@ export const inviteMemberService = (payload: object) =>
   http.post<never, any>(`/user`, payload);
 // end of members
 
+export const updateMemberService = (payload: object, id: string) =>
+  http.patch<never, any>(`/user/${id}`, payload);
+
 export const deleteMemberService = (id: string) =>
   http.delete<never, any>(`/user/${id}`);

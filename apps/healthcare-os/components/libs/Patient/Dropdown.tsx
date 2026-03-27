@@ -1,12 +1,12 @@
 import { Dropdown as BaseDropdown } from '@healthcareos/react';
 import { ChevronDownIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
+import { toast } from 'react-toastify';
 import useSWR from 'swr/immutable';
 
 import { setPatientTriageService } from '../../../services/patient';
 import { TriageModel } from '../../../models';
 import { usePatient } from '../../../hooks';
-import { toast } from 'react-toastify';
 
 function Dropdown() {
   /**

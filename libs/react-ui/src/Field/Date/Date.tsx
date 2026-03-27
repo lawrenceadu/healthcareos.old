@@ -1,7 +1,9 @@
-import Flatpickr, { DateTimePickerProps } from 'react-flatpickr';
+import FlatpickrBase, { DateTimePickerProps } from 'react-flatpickr';
 import { CalendarIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import dayjs from 'dayjs';
+
+const Flatpickr = FlatpickrBase as any;
 
 // eslint-disable-next-line
 export interface DateProps extends DateTimePickerProps {
@@ -47,10 +49,10 @@ export function Date({
           'input block outline-none w-full px-4',
           'disabled:bg-gray-100 disabled:text-gray-500'
         )}
-        onChange={(date) => {
+        onChange={(date: Date[]) => {
           const value =
             _options?.mode === 'range'
-              ? date.map((d) => dayjs(d).format('YYYY-MM-DD'))
+              ? date.map((d: Date) => dayjs(d).format('YYYY-MM-DD'))
               : dayjs(date[0]).format(
                   _options?.enableTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD'
                 );

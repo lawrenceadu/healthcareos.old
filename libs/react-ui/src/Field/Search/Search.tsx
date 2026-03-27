@@ -1,4 +1,4 @@
-import { ChangeEvent, HtmlHTMLAttributes, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { SearchIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import debounce from 'lodash/debounce';
@@ -6,9 +6,11 @@ import debounce from 'lodash/debounce';
 import { Group } from '../Group/Group';
 import { Input } from '../Input/Input';
 
-export interface SearchProps extends HtmlHTMLAttributes<HTMLInputElement> {
+export interface SearchProps {
   value?: string;
   delay?: number;
+  className?: string;
+  placeholder?: string;
   onSearch: (search: string) => void;
 }
 
@@ -18,7 +20,6 @@ export function Search({
   onSearch,
   className,
   placeholder,
-  ...props
 }: SearchProps) {
   /**
    * state
