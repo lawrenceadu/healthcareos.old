@@ -60,7 +60,10 @@ function Claims() {
                 name="from"
                 placeholder="Filter by date"
                 options={{ mode: 'range' }}
-                value={[filters?.start_date, filters?.end_date]}
+                value={
+                  [filters?.start_date, filters?.end_date].filter(Boolean) ||
+                  null
+                }
                 setFieldValue={(_, date) => {
                   setFilters((f) => ({
                     ...f,
