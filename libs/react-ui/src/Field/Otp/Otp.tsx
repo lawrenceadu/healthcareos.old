@@ -17,7 +17,7 @@ export function Otp(props: InputProps) {
 /**
  * styles
  */
-const StyledOtpInput = styled(OtpInput)`
+const StyledOtpInput = styled(OtpInput as any)`
   input {
     padding: 0;
     height: 3rem;

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Modal, Tabs } from '@healthcareos/react';
 
-import Upload from './Create/Upload';
 import Add from './Create/Add';
 
 export interface CreateProps {

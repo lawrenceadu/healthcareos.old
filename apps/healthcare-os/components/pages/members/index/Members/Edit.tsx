@@ -4,20 +4,27 @@ import { Form, Formik } from 'formik';
 import { object } from 'yup';
 import { schema } from '@healthcare/utils';
 
+import { updateMemberService } from '../../../../../services/members';
+import { UserModel } from '../../../../../models';
+
 export interface EditProps {
+  params: UserModel;
   children: (props: { proceed: () => void }) => void;
 }
 
-export default function Edit({ children }: EditProps) {
+export default function Edit({
+  params: { id, ...params },
+  children,
+}: EditProps) {
   /**
    * state
    */
-  const [state, setState] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      {children({ proceed: () => setState(true) })}
-      <Modal show={state} onHide={() => setState(false)} header="Edit role">
+      {children({ proceed: () => setOpen(true) })}
+      <Modal show={open} onHide={() => setOpen(false)} header="Edit role">
         <Formik
           validateOnMount
           validationSchema={object({
@@ -25,11 +32,15 @@ export default function Edit({ children }: EditProps) {
             role: schema.requireString('Role'),
           })}
           initialValues={{
-            name: 'Lawrence Adu',
-            role: 'doctor',
+            name: params.name,
+            role: params.role,
           }}
           onSubmit={(params, { setSubmitting }) => {
-            return;
+            updateMemberService(params, String(id))
+              .then(() => {
+                setOpen(false);
+              })
+              .finally(() => setSubmitting(false));
           }}
         >
           {({

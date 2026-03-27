@@ -25,10 +25,10 @@ export default function Item({
 /**
  * styles
  */
-const StyledItem = styled(DropdownItem)`
+const StyledItem = styled(DropdownItem as any)`
   display: flex;
   text-align: left;
   align-items: center;
   font-size: 0.875rem;
   padding: 0.75rem 1rem;
-`;
+` as any;

@@ -3,12 +3,9 @@ import { ChevronDownIcon, ChevronUpIcon, DotsHorizIcon } from '@healthcare/icons
 import { Badge, Confirm, Dropdown } from '@healthcareos/react';
 import { startCase } from 'lodash';
 import { helpers } from '@healthcare/utils';
-import { toast } from 'react-toastify';
-import dayjs from 'dayjs';
 
 import { ItemIssueModel } from '../../../../../models';
 import { useStore } from '../../../../../hooks';
-import * as api from '../../../../../services/inventory';
 import Form from './Form';
 
 export interface TableRowProps {

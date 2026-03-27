@@ -16,7 +16,6 @@ export function Edit() {
   /**
    * variables
    */
-  const insurance = patient?.insurances?.[0];
   const tabs = [
     {
       name: 'Patient Details',
