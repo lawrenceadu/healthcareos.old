@@ -48,7 +48,7 @@ function Claims() {
             <Field.Search
               value={filters?.search}
               onSearch={(search) => {
-                setFilters({ ...filters, search });
+                setFilters({ ...filters, page: 0, search });
               }}
             />
             <Field.Group
@@ -67,6 +67,7 @@ function Claims() {
                 setFieldValue={(_, date) => {
                   setFilters((f) => ({
                     ...f,
+                    page: 0,
                     start_date: date[0],
                     end_date: date[1],
                   }));
