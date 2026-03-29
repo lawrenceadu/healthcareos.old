@@ -1,5 +1,6 @@
+import { useMemo, useRef } from 'react';
 import FlatpickrBase, { DateTimePickerProps } from 'react-flatpickr';
-import { CalendarIcon } from '@healthcare/icons';
+import { CalendarIcon, XMarkIcon } from '@healthcare/icons';
 import { helpers } from '@healthcare/utils';
 import dayjs from 'dayjs';
 
@@ -29,20 +30,39 @@ export function Date({
   setFieldTouched,
   ...props
 }: DateProps) {
+  const flp = useRef<FlatpickrBase>(null);
   /**
    * variables
    */
-  const _options = { noCalendar: false, ...options };
+  const memoizedOptions = useMemo(
+    () => ({
+      ...options,
+      disableMobile: true,
+      ...(!options?.noCalendar && {
+        dateFormat: options?.enableTime ? 'd - M - Y @ h:i K' : 'd - M - Y',
+      }),
+    }),
+    [options]
+  );
+
+  const hasValue = (() => {
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    return !!value;
+  })();
 
   return (
     <>
       <Flatpickr
+        ref={flp}
         value={
           value
             ? Array.isArray(value)
               ? value.map((i) => dayjs(i).toDate())
               : dayjs(value as string).toDate()
-            : ''
+            : undefined
         }
         className={helpers.classNames(
           className,
@@ -51,13 +71,15 @@ export function Date({
         )}
         onChange={(date: Date[]) => {
           const value =
-            _options?.mode === 'range'
+            memoizedOptions?.mode === 'range'
               ? date.map((d: Date) => dayjs(d).format('YYYY-MM-DD'))
               : dayjs(date[0]).format(
-                  _options?.enableTime ? 'YYYY-MM-DDTHH:mm' : 'YYYY-MM-DD'
+                  memoizedOptions?.enableTime
+                    ? 'YYYY-MM-DDTHH:mm'
+                    : 'YYYY-MM-DD'
                 );
 
-          if (_options?.mode === 'range') {
+          if (memoizedOptions?.mode === 'range') {
             if (value.length === 2) {
               setFieldValue(String(name), value);
             }
@@ -68,24 +90,40 @@ export function Date({
           setTimeout(() => setFieldTouched?.(String(name), true));
         }}
         options={{
-          ..._options,
+          ...memoizedOptions,
           disableMobile: true,
-          ...(!_options?.noCalendar && {
-            dateFormat: _options?.enableTime
+          ...(!memoizedOptions?.noCalendar && {
+            dateFormat: memoizedOptions?.enableTime
               ? 'd - M - Y @ h:i K'
               : 'd - M - Y',
           }),
         }}
         placeholder={
           placeholder ||
-          (_options?.enableTime
+          (memoizedOptions?.enableTime
             ? '01 - jan - 2023 @ 6:00 PM'
             : '01 -  jan - 2023')
         }
         {...props}
       />
-      <span className="px-4 pointer-events-none absolute right-0">
-        <CalendarIcon className="text-neutral-500" />
+      <span className="px-4 absolute right-0">
+        {hasValue ? (
+          <span
+            role="button"
+            className="cursor-pointer"
+            onClick={() => {
+              setFieldValue(
+                String(name),
+                memoizedOptions?.mode === 'range' ? [] : ''
+              );
+              flp?.current?.flatpickr.clear();
+            }}
+          >
+            <XMarkIcon />
+          </span>
+        ) : (
+          <CalendarIcon className="text-neutral-500" />
+        )}
       </span>
     </>
   );

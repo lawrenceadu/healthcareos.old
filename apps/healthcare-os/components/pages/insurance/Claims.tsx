@@ -29,9 +29,9 @@ function Claims() {
   }>(
     canView &&
       `/insurance/claim?${queryString.stringify({
-        limit: 10,
-        page: 0,
         ...filters,
+        limit: 10,
+        page: filters?.page ? Number(filters?.page) + 1 : 1,
       })}`
   );
 
@@ -111,7 +111,7 @@ function Claims() {
           {data && (
             <div className="flex justify-end">
               <Paginate
-                page={filters?.page || 0}
+                page={Number(filters?.page || 0)}
                 pageCount={Math.ceil(data?.total / 10)}
                 setPage={(page) => setFilters({ ...filters, page })}
               />
