@@ -1,6 +1,6 @@
 {
   "name": "healthcare-os",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "scripts": {
     "dev": "nx run healthcare-os:serve:development --port=13001",
